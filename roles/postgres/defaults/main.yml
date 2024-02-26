@@ -1,0 +1,61 @@
+---
+# defaults file for AnsibleAIConnect
+
+deployment_type: 'ansible-ai-connect'
+database_name: 'wisdom'
+database_username: 'wisdom_service_user'
+
+_postgres_image: quay.io/sclorg/postgresql-13-c9s
+_postgres_image_version: latest
+
+# Add a nodeSelector for the Postgres pods.
+# It must match a node's labels for the pod to be scheduled on that node.
+# Specify as literal block. E.g.:
+# postgres:
+#   postgres_selector: |
+#     disktype: ssd
+#     kubernetes.io/arch: amd64
+#     kubernetes.io/os: linux
+
+# Add node tolerations for the Postgres pods.
+# Specify as literal block. E.g.:
+# postgres:
+#   postgres_tolerations: |
+#     - key: "dedicated"
+#       operator: "Equal"
+#       value: "EDA"
+#       effect: "NoSchedule"
+
+
+# Assign a preexisting priority class to the postgres pod
+database: {}
+_database:
+  # Name of k8s secret containing:
+  # - postgres host
+  # - username
+  # - password
+  # - database
+  # - port
+  # - type
+  database_secret: ''
+  # Explicit parameters
+  resource_requirements:
+    requests:
+      cpu: 50m
+      memory: 100Mi
+  storage_requirements:
+    requests:
+      storage: 8Gi
+  node_selector: ''
+  tolerations: ''
+  priority_class: ''
+  postgres_data_path: '/var/lib/pgsql/data/userdata'
+  postgres_extra_args: ''
+  postgres_storage_class: ''
+
+
+image_pull_policy: IfNotPresent
+image_pull_secrets: []
+
+# Labels defined on the resource, which should be propagated to child resources
+additional_labels: []

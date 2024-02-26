@@ -1,0 +1,210 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    {{ lookup("template", "../common/templates/labels/common.yaml.j2")  | indent(width=4) | trim }}
+    {{ lookup("template", "../common/templates/labels/version.yaml.j2") | indent(width=4) | trim }}
+    app.kubernetes.io/component: '{{ deployment_type }}-api'
+  name: '{{ ansible_operator_meta.name }}-api'
+  namespace: '{{ ansible_operator_meta.namespace }}'
+spec:
+  replicas: {{ combined_ai.replicas }}
+{% if combined_ai.strategy is defined %}
+  strategy:
+    type: {{ combined_ai.strategy.type }}
+{% if combined_ai.strategy.type == "Recreate" %}
+    rollingUpdate: null
+{% elif combined_ai.strategy.type == "RollingUpdate" %}
+    rollingUpdate:
+      maxSurge:  {{ combined_ai.strategy.rollingUpdate.maxSurge | default("25%")}}
+      maxUnavailable: {{ combined_ai.strategy.rollingUpdate.maxUnavailable | default("25%")}}
+{% endif %}
+{% endif %}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: '{{ ansible_operator_meta.name }}'
+      app.kubernetes.io/managed-by: '{{ deployment_type }}-operator'
+      app.kubernetes.io/component: '{{ deployment_type }}-api'
+  template:
+    metadata:
+      labels:
+        {{ lookup("template", "../common/templates/labels/common.yaml.j2")  | indent(width=8) | trim }}
+        {{ lookup("template", "../common/templates/labels/version.yaml.j2") | indent(width=8) | trim }}
+        app.kubernetes.io/component: '{{ deployment_type }}-api'
+      annotations:
+        kubectl.kubernetes.io/default-container: 'ai-api'
+    spec:
+      serviceAccountName: '{{ ansible_operator_meta.name }}'
+{% if image_pull_secrets | length > 0 %}
+      imagePullSecrets:
+{% for secret in image_pull_secrets %}
+        - name: {{ secret }}
+{% endfor %}
+{% endif %}
+{% if combined_ai.node_selector is defined %}
+      nodeSelector:
+        {{ combined_ai.node_selector | indent(width=8) }}
+{% endif %}
+{% if combined_ai.tolerations is defined %}
+      tolerations:
+        {{ combined_ai.tolerations | indent(width=8) }}
+{% endif %}
+{% if combined_ai.topology_spread_constraints is defined %}
+      topologySpreadConstraints:
+        {{ combined_ai.topology_spread_constraints | indent(width=8) }}
+{% endif %}
+      initContainers:
+{% if bundle_ca_crt  %}
+      - name: configure-bundle-ca-cert
+        image: {{ _image }}
+        imagePullPolicy: '{{ image_pull_policy }}'
+        command:
+          - /bin/sh
+          - -c
+          - |
+            mkdir -p /etc/pki/ca-trust/extracted/{java,pem,openssl,edk2}
+            update-ca-trust
+{% if combined_ai.resource_requirements is defined %}
+        resources: {{ combined_ai.resource_requirements }}
+{% endif %}
+        volumeMounts:
+          - name: "ca-trust-extracted"
+            mountPath: "/etc/pki/ca-trust/extracted"
+          - name: "{{ ansible_operator_meta.name }}-bundle-cacert"
+            mountPath: /etc/pki/ca-trust/source/anchors/bundle-ca.crt
+            subPath: bundle-ca.crt
+            readOnly: true
+{% endif %}
+      containers:
+      - name: ai-api
+        image: {{ _image }}
+        imagePullPolicy: '{{ image_pull_policy }}'
+        envFrom:
+          - configMapRef:
+              name: '{{ ansible_operator_meta.name }}-{{ deployment_type }}-env-properties'
+        env:
+        - name: PYTHONUNBUFFERED
+          value: "1"
+        - name: SOCIAL_AUTH_GITHUB_KEY
+          valueFrom:
+            secretKeyRef:
+              name: '{{ __auth_secret_name }}'
+              key: git_hub_key
+        - name: SOCIAL_AUTH_GITHUB_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: '{{ __auth_secret_name }}'
+              key: git_hub_secret
+        - name: SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: '{{ __db_fields_encryption_secret_name }}'
+              key: secret_key
+        - name: ANSIBLE_AI_DATABASE_HOST
+          valueFrom:
+            secretKeyRef:
+              name: '{{ __database_secret_name }}'
+              key: host
+        - name: ANSIBLE_AI_DATABASE_NAME
+          valueFrom:
+            secretKeyRef:
+              name: '{{ __database_secret_name }}'
+              key: database
+        - name: ANSIBLE_AI_DATABASE_PORT
+          valueFrom:
+            secretKeyRef:
+              name: '{{ __database_secret_name }}'
+              key: port
+        - name: ANSIBLE_AI_DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              name: '{{ __database_secret_name }}'
+              key: username
+        - name: ANSIBLE_AI_DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: '{{ __database_secret_name }}'
+              key: password
+        - name: ANSIBLE_WCA_INFERENCE_URL
+          valueFrom:
+            secretKeyRef:
+              name: '{{ __wca_secret_name }}'
+              key: inference_url
+        - name: ANSIBLE_AI_MODEL_MESH_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: '{{ __wca_secret_name }}'
+              key: model_mesh_api_key
+        - name: ANSIBLE_AI_MODEL_MESH_MODEL_NAME
+          valueFrom:
+            secretKeyRef:
+              name: '{{ __wca_secret_name }}'
+              key: model_mesh_model_name
+        - name: ENABLE_HEALTHCHECK_WCA
+          value: 'true'
+        - name: ANSIBLE_WCA_HEALTHCHECK_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: '{{ __wca_secret_name }}'
+              key: health_check_api_key
+        - name: ANSIBLE_WCA_HEALTHCHECK_MODEL_ID
+          valueFrom:
+            secretKeyRef:
+              name: '{{ __wca_secret_name }}'
+              key: health_check_model_name
+        ports:
+        - containerPort: 8000
+          protocol: TCP
+        readinessProbe:
+          exec:
+            command:
+            - venv/bin/uwsgi-is-ready
+            - --stats-socket
+            - /tmp/uwsgi-stats
+            - --queue-threshold
+            - "0.7"
+          failureThreshold: 2
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          successThreshold: 1
+          timeoutSeconds: 1
+        volumeMounts:
+            - name: mnt
+              mountPath: /etc/wisdom/uwsgi.ini
+              subPath: uwsgi_ini
+        securityContext:
+          runAsNonRoot: true
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - "ALL"
+          seccompProfile:
+            type: RuntimeDefault
+{% if combined_ai.resource_requirements is defined %}
+        resources: {{ combined_ai.resource_requirements }}
+{% endif %}
+{% if bundle_ca_crt %}
+        volumeMounts:
+          - name: "ca-trust-extracted"
+            mountPath: "/etc/pki/ca-trust/extracted"
+          - name: "{{ ansible_operator_meta.name }}-bundle-cacert"
+            mountPath: /etc/pki/ca-trust/source/anchors/bundle-ca.crt
+            subPath: bundle-ca.crt
+            readOnly: true
+{% endif %}
+      restartPolicy: Always
+      volumes:
+        - name: mnt
+          configMap:
+            name: wisdom-service-uwsgi-configmap
+{% if bundle_ca_crt %}
+        - name: "ca-trust-extracted"
+          emptyDir: {}
+        - name: "{{ ansible_operator_meta.name }}-bundle-cacert"
+          secret:
+            secretName: "{{ bundle_cacert_secret }}"
+            items:
+              - key: bundle-ca.crt
+                path: 'bundle-ca.crt'
+{% endif %}

@@ -1,0 +1,403 @@
+apiVersion: operators.coreos.com/v1alpha1
+kind: ClusterServiceVersion
+metadata:
+  annotations:
+    alm-examples: '[]'
+    capabilities: Basic Install
+  name: ansible-ai-connect-operator.v0.0.0
+  namespace: placeholder
+spec:
+  apiservicedefinitions: {}
+  customresourcedefinitions:
+    owned:
+    - description: Deploy a new instance of Ansible AI Connect.
+      displayName: AnsibleAIConnect
+      kind: AnsibleAIConnect
+      name: ansibleaiconnects.aiconnect.ansible.com
+      specDescriptors:
+        - displayName: External authentication configuration secret
+          path: auth.auth_secret_name
+          x-descriptors:
+            - urn:alm:descriptor:io.kubernetes:Secret
+        - displayName: External IBM watsonX Code Assistant configuration secret
+          path: wca.wca_secret_name
+          x-descriptors:
+            - urn:alm:descriptor:io.kubernetes:Secret
+        - displayName: GitHub OAuth Client ID for VSCode authentication
+          path: auth.git_hub_key
+          x-descriptors:
+            - urn:alm:descriptor:com.tectonic.ui:text
+        - displayName: GitHub OAuth Client Secret for VSCode authentication
+          path: auth.git_hub_secret
+          x-descriptors:
+            - urn:alm:descriptor:com.tectonic.ui:text
+        - displayName: IBM watsonX Code Assistant endpoint
+          path: wca.inference_url
+          x-descriptors:
+            - urn:alm:descriptor:com.tectonic.ui:text
+        - displayName: IBM watsonX Code Assistant API Key
+          path: wca.model_mesh_api_key
+          x-descriptors:
+            - urn:alm:descriptor:com.tectonic.ui:text
+        - displayName: IBM watsonX Code Assistant Model Name
+          path: wca.model_mesh_model_name
+          x-descriptors:
+            - urn:alm:descriptor:com.tectonic.ui:text
+        - displayName: IBM watsonX Code Assistant API Key used for health checks
+          path: wca.health_check_api_key
+          x-descriptors:
+            - urn:alm:descriptor:com.tectonic.ui:text
+        - displayName: IBM watsonX Code Assistant Model Name used for health checks
+          path: wca.health_check_model_name
+          x-descriptors:
+            - urn:alm:descriptor:com.tectonic.ui:text
+        - displayName: Image Pull Policy
+          path: image_pull_policy
+          x-descriptors:
+            - urn:alm:descriptor:com.tectonic.ui:advanced
+            - urn:alm:descriptor:com.tectonic.ui:imagePullPolicy
+        - displayName: Image Pull Secrets
+          path: image_pull_secrets
+          x-descriptors:
+            - urn:alm:descriptor:com.tectonic.ui:advanced
+            - urn:alm:descriptor:io.kubernetes:Secret
+        - displayName: AI Image
+          path: image
+          x-descriptors:
+            - urn:alm:descriptor:com.tectonic.ui:advanced
+            - urn:alm:descriptor:com.tectonic.ui:hidden
+        - displayName: AI Image Version
+          path: image_version
+          x-descriptors:
+            - urn:alm:descriptor:com.tectonic.ui:advanced
+            - urn:alm:descriptor:com.tectonic.ui:hidden
+        - displayName: Additional labels defined on the resource, which should be propagated to child resources
+          path: additional_labels
+          x-descriptors:
+            - urn:alm:descriptor:com.tectonic.ui:advanced
+            - urn:alm:descriptor:com.tectonic.ui:hidden
+        - displayName: No Log Configuration
+          path: no_log
+          x-descriptors:
+            - urn:alm:descriptor:com.tectonic.ui:advanced
+            - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+        - description: Defines desired state of AI deployment resources
+          displayName: AI deployment configuration
+          path: ai
+          x-descriptors:
+            - urn:alm:descriptor:com.tectonic.ui:advanced
+        - description: The number of AI replicas.
+          displayName: Replicas
+          path: ai.replicas
+          x-descriptors:
+            - urn:alm:descriptor:com.tectonic.ui:podCount
+        - displayName: AI server resource requirements
+          path: ai.resource_requirements
+          x-descriptors:
+            - urn:alm:descriptor:com.tectonic.ui:resourceRequirements
+        - displayName: Node Selector
+          path: ai.node_selector
+          x-descriptors:
+            - urn:alm:descriptor:com.tectonic.ui:advanced
+        - description: The deployment strategy to use to replace existing pods with new ones.
+          displayName: Strategy
+          path: ai.strategy
+          x-descriptors:
+            - urn:alm:descriptor:com.tectonic.ui:updateStrategy
+            - urn:alm:descriptor:com.tectonic.ui:advanced
+        - description: Node tolerations for the pods.
+          displayName: Tolerations
+          path: ai.tolerations
+          x-descriptors:
+            - urn:alm:descriptor:com.tectonic.ui:advanced
+        - description: Topology rule(s) for the pods.
+          displayName: Topology Spread Constraints
+          path: ai.topology_spread_constraints
+          x-descriptors:
+            - urn:alm:descriptor:com.tectonic.ui:advanced
+        - displayName: PostgreSQL Database configuration
+          path: database
+          x-descriptors:
+            - urn:alm:descriptor:com.tectonic.ui:advanced
+        - displayName: External database configuration secret
+          path: database.database_secret
+          x-descriptors:
+            - urn:alm:descriptor:io.kubernetes:Secret
+        - displayName: Database resource requirements
+          path: database.resource_requirements
+          x-descriptors:
+            - urn:alm:descriptor:com.tectonic.ui:resourceRequirements
+        - description: Define Database storage requirements
+          displayName: Database Storage Requirements
+          path: database.storage_requirements
+        - displayName: Database Selector
+          path: database.node_selector
+          x-descriptors:
+            - urn:alm:descriptor:com.tectonic.ui:advanced
+        - displayName: Database Tolerations
+          path: database.tolerations
+          x-descriptors:
+            - urn:alm:descriptor:com.tectonic.ui:advanced
+            - urn:alm:descriptor:com.tectonic.ui:hidden
+        - displayName: Database Priority Class
+          path: database.priority_class
+          x-descriptors:
+            - urn:alm:descriptor:com.tectonic.ui:advanced
+        - displayName: Database data path
+          path: database.postgres_data_path
+          x-descriptors:
+            - urn:alm:descriptor:com.tectonic.ui:advanced
+            - urn:alm:descriptor:com.tectonic.ui:hidden
+        - displayName: Database Extra Arguments
+          path: database.postgres_extra_args
+          x-descriptors:
+            - urn:alm:descriptor:com.tectonic.ui:advanced
+            - urn:alm:descriptor:com.tectonic.ui:hidden
+        - description: Name of the StorageClass required by the claim.
+          displayName: Database Storage Class
+          path: database.postgres_storage_class
+          x-descriptors:
+            - urn:alm:descriptor:io.kubernetes:StorageClass
+            - urn:alm:descriptor:com.tectonic.ui:advanced
+        - displayName: PostgreSQL Image
+          path: postgres_image
+          x-descriptors:
+            - urn:alm:descriptor:com.tectonic.ui:advanced
+            - urn:alm:descriptor:com.tectonic.ui:hidden
+        - displayName: PostgreSQL Image Version
+          path: postgres_image_version
+          x-descriptors:
+            - urn:alm:descriptor:com.tectonic.ui:advanced
+            - urn:alm:descriptor:com.tectonic.ui:hidden
+
+        - displayName: Service Type
+          path: service_type
+          x-descriptors:
+            - urn:alm:descriptor:com.tectonic.ui:advanced
+            - urn:alm:descriptor:com.tectonic.ui:select:ClusterIP
+            - urn:alm:descriptor:com.tectonic.ui:select:LoadBalancer
+            - urn:alm:descriptor:com.tectonic.ui:select:NodePort
+        - displayName: LoadBalancer Protocol
+          path: loadbalancer_protocol
+          x-descriptors:
+            - urn:alm:descriptor:com.tectonic.ui:advanced
+            - urn:alm:descriptor:com.tectonic.ui:select:http
+            - urn:alm:descriptor:com.tectonic.ui:select:https
+            - urn:alm:descriptor:com.tectonic.ui:fieldDependency:service_type:LoadBalancer
+        - displayName: LoadBalancer Port
+          path: loadbalancer_port
+          x-descriptors:
+            - urn:alm:descriptor:com.tectonic.ui:advanced
+            - urn:alm:descriptor:com.tectonic.ui:number
+            - urn:alm:descriptor:com.tectonic.ui:fieldDependency:service_type:LoadBalancer
+        - displayName: Nodeport Port
+          path: nodeport_port
+          x-descriptors:
+            - urn:alm:descriptor:com.tectonic.ui:advanced
+            - urn:alm:descriptor:com.tectonic.ui:fieldDependency:service_type:NodePort
+        - displayName: Ingress Type
+          path: ingress_type
+          x-descriptors:
+            - urn:alm:descriptor:com.tectonic.ui:advanced
+            - urn:alm:descriptor:com.tectonic.ui:select:none
+            - urn:alm:descriptor:com.tectonic.ui:select:Ingress
+            - urn:alm:descriptor:com.tectonic.ui:select:Route
+        - displayName: Ingress Class Name
+          path: ingress_class_name
+          x-descriptors:
+            - urn:alm:descriptor:com.tectonic.ui:advanced
+            - urn:alm:descriptor:com.tectonic.ui:text
+            - urn:alm:descriptor:com.tectonic.ui:fieldDependency:ingress_type:Ingress
+        - displayName: Ingress Path
+          path: ingress_path
+          x-descriptors:
+            - urn:alm:descriptor:com.tectonic.ui:advanced
+            - urn:alm:descriptor:com.tectonic.ui:text
+            - urn:alm:descriptor:com.tectonic.ui:fieldDependency:ingress_type:Ingress
+        - displayName: Ingress Path Type
+          path: ingress_path_type
+          x-descriptors:
+            - urn:alm:descriptor:com.tectonic.ui:advanced
+            - urn:alm:descriptor:com.tectonic.ui:text
+            - urn:alm:descriptor:com.tectonic.ui:fieldDependency:ingress_type:Ingress
+        - displayName: Ingress API Version
+          path: ingress_api_version
+          x-descriptors:
+            - urn:alm:descriptor:com.tectonic.ui:advanced
+            - urn:alm:descriptor:com.tectonic.ui:hidden
+            - urn:alm:descriptor:com.tectonic.ui:text
+        - displayName: Hostname
+          path: hostname
+          x-descriptors:
+            - urn:alm:descriptor:com.tectonic.ui:advanced
+            - urn:alm:descriptor:com.tectonic.ui:text
+        - displayName: Ingress Annotations
+          path: ingress_annotations
+          x-descriptors:
+            - urn:alm:descriptor:com.tectonic.ui:advanced
+            - urn:alm:descriptor:com.tectonic.ui:text
+            - urn:alm:descriptor:com.tectonic.ui:fieldDependency:ingress_type:Ingress
+        - displayName: Ingress TLS Secret
+          path: ingress_tls_secret
+          x-descriptors:
+            - urn:alm:descriptor:com.tectonic.ui:advanced
+            - urn:alm:descriptor:io.kubernetes:Secret
+            - urn:alm:descriptor:com.tectonic.ui:fieldDependency:ingress_type:Ingress
+        - displayName: Route TLS Termination Mechanism
+          path: route_tls_termination_mechanism
+          x-descriptors:
+            - urn:alm:descriptor:com.tectonic.ui:advanced
+            - urn:alm:descriptor:com.tectonic.ui:select:Edge
+            - urn:alm:descriptor:com.tectonic.ui:select:Passthrough
+            - urn:alm:descriptor:com.tectonic.ui:fieldDependency:ingress_type:Route
+        - displayName: Route TLS Credential Secret
+          path: route_tls_secret
+          x-descriptors:
+            - urn:alm:descriptor:com.tectonic.ui:advanced
+            - urn:alm:descriptor:io.kubernetes:Secret
+            - urn:alm:descriptor:com.tectonic.ui:fieldDependency:ingress_type:Route
+        - displayName: Route API Version
+          path: route_api_version
+          x-descriptors:
+            - urn:alm:descriptor:com.tectonic.ui:advanced
+            - urn:alm:descriptor:com.tectonic.ui:hidden
+            - urn:alm:descriptor:com.tectonic.ui:text
+        - displayName: Route DNS host
+          path: route_host
+          x-descriptors:
+            - urn:alm:descriptor:com.tectonic.ui:advanced
+            - urn:alm:descriptor:com.tectonic.ui:text
+            - urn:alm:descriptor:com.tectonic.ui:fieldDependency:ingress_type:Route
+        - displayName: Service Account Annotations
+          path: service_account_annotations
+          x-descriptors:
+            - urn:alm:descriptor:com.tectonic.ui:advanced
+            - urn:alm:descriptor:com.tectonic.ui:text
+        - displayName: Service Annotations
+          path: service_annotations
+          x-descriptors:
+            - urn:alm:descriptor:com.tectonic.ui:advanced
+            - urn:alm:descriptor:com.tectonic.ui:text
+        - description: Secret where the trusted Certificate Authority Bundle is stored
+          path: bundle_cacert_secret
+          x-descriptors:
+            - urn:alm:descriptor:com.tectonic.ui:advanced
+            - urn:alm:descriptor:io.kubernetes:Secret
+        - description: Name of the k8s secret the DB fields encryption key is stored in.
+          displayName: DB Fields Encryption Key
+          path: db_fields_encryption_secret
+          x-descriptors:
+            - urn:alm:descriptor:com.tectonic.ui:advanced
+            - urn:alm:descriptor:io.kubernetes:Secret
+        - displayName: Admin Account Username
+          path: admin_user
+          x-descriptors:
+            - urn:alm:descriptor:com.tectonic.ui:advanced
+            - urn:alm:descriptor:com.tectonic.ui:text
+        - displayName: Admin Password Secret
+          path: admin_password_secret
+          x-descriptors:
+            - urn:alm:descriptor:com.tectonic.ui:advanced
+            - urn:alm:descriptor:io.kubernetes:Secret
+        # - displayName: Disable IPv6 listener?
+        #   path: ipv6_disabled
+        #   x-descriptors:
+        #     - urn:alm:descriptor:com.tectonic.ui:advanced
+        #     - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+        - displayName: API Extra Settings
+          path: extra_settings
+          x-descriptors:
+            - urn:alm:descriptor:com.tectonic.ui:advanced
+            - urn:alm:descriptor:com.tectonic.ui:hidden
+        - displayName: Set default labels on AI resource
+          path: set_self_labels
+          x-descriptors:
+            - urn:alm:descriptor:com.tectonic.ui:advanced
+            - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+            - urn:alm:descriptor:com.tectonic.ui:hidden
+
+      statusDescriptors:
+        - description: Admin password for the instance deployed
+          displayName: Admin Password
+          path: adminPasswordSecret
+          x-descriptors:
+            - urn:alm:descriptor:io.kubernetes:Secret
+        - description: Admin user for the instance deployed
+          displayName: Admin User
+          path: adminUser
+          x-descriptors:
+            - urn:alm:descriptor:com.tectonic.ui:text
+        - description: Authentication Configuration secret name of the deployed instance
+          displayName: Authentication Configuration
+          path: authConfigurationSecret
+          x-descriptors:
+            - urn:alm:descriptor:io.kubernetes:Secret
+        - description: Database Configuration secret name of the deployed instance
+          displayName: Database Configuration
+          path: databaseConfigurationSecret
+          x-descriptors:
+            - urn:alm:descriptor:io.kubernetes:Secret
+        - description: WCA Configuration secret name of the deployed instance
+          displayName: WCA Configuration
+          path: wcaConfigurationSecret
+          x-descriptors:
+            - urn:alm:descriptor:io.kubernetes:Secret
+        - description: Database Fields Encryption secret name of the deployed instance
+          displayName: Database Fields Encryption
+          path: dbFieldsEncryptionSecret
+          x-descriptors:
+            - urn:alm:descriptor:io.kubernetes:Secret
+        - description: Image of the instance deployed
+          displayName: Image
+          path: image
+          x-descriptors:
+            - urn:alm:descriptor:com.tectonic.ui:text
+        - description: Version of the instance deployed
+          displayName: Version
+          path: version
+          x-descriptors:
+            - urn:alm:descriptor:com.tectonic.ui:text
+        - description: Route to access the instance deployed
+          displayName: URL
+          path: URL
+          x-descriptors:
+            - urn:alm:descriptor:org.w3:link
+      version: v1alpha1
+  description: |
+    An Ansible operator for managing the lifecycle of an Ansible AI Connect instance.
+  displayName: Ansible AI Connect
+  icon:
+    # [manstis] This is the Lightspeed icon.
+  - base64data: PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGlkPSJ1dWlkLTNhNTAyZTQ2LWM3ZDYtNDFkMC05YWYzLWRjNDkxNzhkNDZkYiIgdmlld0JveD0iMCAwIDM4IDM4Ij48ZGVmcz48c3R5bGU+LnV1aWQtMTk4YTE0YjgtNWE3NC00OGMxLTg5NDItNDRhZmZlZTQyNDkwe2ZpbGw6I2UwMH08L3N0eWxlPjwvZGVmcz48ZyBpZD0idXVpZC1mMmU0YmIxOC0wY2ZiLTQ4M2ItODEwNC0yNzAzOTUwMTAzZjQiPjxwYXRoIGQ9Ik0yNy43IDEuNTk4SDEwLjNBOC43IDguNyAwIDAgMCAxLjU5NyAxMC4zdjE3LjQwMmE4LjcgOC43IDAgMCAwIDguNzAxIDguN2gxNy40MDJhOC43IDguNyAwIDAgMCA4LjctOC43VjEwLjI5OWE4LjcgOC43IDAgMCAwLTguNy04LjdaIiBzdHlsZT0iZmlsbDojZmZmIi8+PHBhdGggZD0iTTI4IDIuMjVjNC4yNzMgMCA3Ljc1IDMuNDc3IDcuNzUgNy43NXYxOGMwIDQuMjczLTMuNDc3IDcuNzUtNy43NSA3Ljc1SDEwYy00LjI3MyAwLTcuNzUtMy40NzctNy43NS03Ljc1VjEwYzAtNC4yNzMgMy40NzctNy43NSA3Ljc1LTcuNzVoMThNMjggMUgxMGE5IDkgMCAwIDAtOSA5djE4YTkgOSAwIDAgMCA5IDloMThhOSA5IDAgMCAwIDktOVYxMGE5IDkgMCAwIDAtOS05WiIvPjwvZz48cGF0aCBkPSJNMjAgNy4zNzVhLjYyNS42MjUgMCAwIDAtLjYyNS42MjV2N2EuNjI1LjYyNSAwIDAgMCAxLjI1IDBWOEEuNjI1LjYyNSAwIDAgMCAyMCA3LjM3NVpNMTYuNjI1IDE5YS42MjUuNjI1IDAgMCAwLS42MjUtLjYyNUg5YS42MjUuNjI1IDAgMCAwIDAgMS4yNWg3Yy4zNDUgMCAuNjI1LS4yOC42MjUtLjYyNVpNMjAgMjIuMzc1YS42MjUuNjI1IDAgMCAwLS42MjUuNjI1djdhLjYyNS42MjUgMCAwIDAgMS4yNSAwdi03YS42MjUuNjI1IDAgMCAwLS42MjUtLjYyNVpNMTcuNjExIDEwLjg3YS42MjUuNjI1IDAgMCAwLTEuMjIyLjI2bC40MjUgMmEuNjI1LjYyNSAwIDAgMCAxLjIyMi0uMjZsLS40MjUtMlpNMTEuODcgMTYuNjExbDIgLjQyNmEuNjI1LjYyNSAwIDAgMCAuMjYtMS4yMjNsLTItLjQyNWEuNjI1LjYyNSAwIDEgMC0uMjYgMS4yMjJaTTE3LjU1NSAyNC4zODlhLjYyNC42MjQgMCAwIDAtLjc0MS40ODFsLS40MjUgMmEuNjI1LjYyNSAwIDAgMCAxLjIyMi4yNmwuNDI1LTJhLjYyNS42MjUgMCAwIDAtLjQ4MS0uNzQxWk0xMy44NyAyMC45NjNsLTIgLjQyNmEuNjI0LjYyNCAwIDEgMCAuMjYgMS4yMjJsMi0uNDI1YS42MjQuNjI0IDAgMSAwLS4yNi0xLjIyM1oiIGNsYXNzPSJ1dWlkLTE5OGExNGI4LTVhNzQtNDhjMS04OTQyLTQ0YWZmZWU0MjQ5MCIvPjxwYXRoIGQ9Ik0zMC42MiAxOC45N2EuNjIyLjYyMiAwIDAgMC0uMDQzLS4yMDkuNjE3LjYxNyAwIDAgMC0uMTA2LS4xNmMtLjAxMS0uMDEzLS4wMTYtLjAzLS4wMjktLjA0M2wtMi0yYS42MjYuNjI2IDAgMCAwLS44ODQuODg0bC45MzMuOTMzSDE5YS42MjUuNjI1IDAgMCAwIDAgMS4yNWg5LjQ5MWwtLjkzMy45MzNhLjYyNi42MjYgMCAwIDAgLjg4NC44ODRsMi0yYy4wMTMtLjAxMy4wMTgtLjAzLjAyOS0uMDQzYS42Mi42MiAwIDAgMCAuMTA2LS4xNi42MjQuNjI0IDAgMCAwIC4wNDItLjIxYzAtLjAxLjAwNi0uMDE5LjAwNi0uMDMgMC0uMDEtLjAwNS0uMDE4LS4wMDYtLjAyOFpNMTMuNDQyIDExLjU1OGEuNjI2LjYyNiAwIDAgMC0uODg0Ljg4NGw0IDRhLjYyNC42MjQgMCAwIDAgLjg4NCAwIC42MjYuNjI2IDAgMCAwIDAtLjg4NGwtNC00Wk0xNi41NTggMjEuNTU4bC00IDRhLjYyNi42MjYgMCAwIDAgLjg4NC44ODRsNC00YS42MjYuNjI2IDAgMCAwLS44ODQtLjg4NFpNOS40NCAxNC41NmEuNjM3LjYzNyAwIDAgMC0xLjAyLjJjLS4wMy4wOC0uMDUuMTYtLjA1LjI0IDAgLjE2LjA3LjMyLjE5LjQ0cy4yOC4xOS40NC4xOWMuMTcgMCAuMzMtLjA3LjQ0LS4xOS4xMi0uMTEuMTktLjI4LjE5LS40NCAwLS4wOC0uMDItLjE2LS4wNS0uMjRhLjY1Ni42NTYgMCAwIDAtLjE0LS4yWk04LjU2IDIyLjU2Yy0uMTIuMTItLjE5LjI4LS4xOS40NCAwIC4xNi4wNy4zMy4xOS40NC4xMi4xMi4yOC4xOS40NC4xOS4xNyAwIC4zMy0uMDcuNDQtLjE5LjEyLS4xMS4xOS0uMjguMTktLjQ0YS42My42MyAwIDAgMC0uMTktLjQ0Yy0uMjMtLjIzLS42NC0uMjMtLjg4IDBaIi8+PC9zdmc+
+    mediatype: image/svg+xml
+  install:
+    spec:
+      deployments: null
+    strategy: ""
+  installModes:
+  - supported: true
+    type: OwnNamespace
+  - supported: true
+    type: SingleNamespace
+  - supported: true
+    type: MultiNamespace
+  - supported: false
+    type: AllNamespaces
+  keywords:
+  - ansible
+  - ai-connect
+  - ai
+  links:
+  - name: Ansible AI Connect Operator
+    url: https://github.com/ansible/ansible-ai-connect-operator
+  - name: Ansible Wisdom Service
+    url: https://github.com/ansible/ansible-wisdom-service
+  maintainers:
+  - email: ai-connect@googlegroups.com
+    name: AnsibleAIConnect team
+  maturity: alpha
+  minKubeVersion: 1.22.15
+  provider:
+    name: Ansible
+    url: https://github.com/ansible/ansible-ai-connect-operator
+  version: 0.0.0

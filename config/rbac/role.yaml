@@ -1,0 +1,142 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: ansibleaiconnect-manager-role
+rules:
+  ##
+  ## Base operator rules
+  ##
+  - apiGroups:
+      - ""
+    resources:
+      - secrets
+      - pods
+      - pods/exec
+      - pods/log
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - apps
+    resources:
+      - deployments
+      - daemonsets
+      - replicasets
+      - statefulsets
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  ##
+  ## Rules for AnsibleAIConnect Route
+  ##
+  - apiGroups:
+      - route.openshift.io
+    resources:
+      - routes
+      - routes/custom-host
+    verbs:
+      - get
+      - list
+      - create
+      - delete
+      - patch
+      - update
+      - watch
+  ##
+  ## Rules for AnsibleAIConnect role
+  ##
+  - apiGroups:
+      - ""
+      - "rbac.authorization.k8s.io"
+    resources:
+      - pods
+      - services
+      - services/finalizers
+      - serviceaccounts
+      - endpoints
+      - persistentvolumeclaims
+      - events
+      - configmaps
+      - secrets
+      - roles
+      - rolebindings
+    verbs:
+      - get
+      - list
+      - create
+      - delete
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - apps
+      - networking.k8s.io
+    resources:
+      - deployments
+      - daemonsets
+      - replicasets
+      - statefulsets
+      - ingresses
+    verbs:
+      - get
+      - list
+      - create
+      - delete
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - pods/exec
+      - pods/attach
+      - pods/log  # log & attach rules needed to be able to grant them to AnsibleAIConnect service account
+    verbs:
+      - create
+      - get
+
+  ## Rule for Operator SA so it can grant them to worker deployment SA
+  - apiGroups:
+      - ""
+      - batch
+      - extensions
+    resources:
+      - jobs
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
+
+  ##
+  ## Rules for aiconnect.ansible.com/v1alpha1, Kind: AnsibleAIConnect
+  ##
+  - apiGroups:
+      - aiconnect.ansible.com
+    resources:
+      - ansibleaiconnects
+      - ansibleaiconnects/status
+      - ansibleaiconnects/finalizers
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+#+kubebuilder:scaffold:rules

@@ -1,0 +1,24 @@
+apiVersion: aiconnect.ansible.com/v1alpha1
+kind: AnsibleAIConnect
+metadata:
+  labels:
+    app.kubernetes.io/name: ansibleaiconnect
+    app.kubernetes.io/instance: ansibleaiconnect-sample
+    app.kubernetes.io/part-of: ansible-ai-connect-operator
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/created-by: ansible-ai-connect-operator
+  name: ansibleaiconnect-sample
+spec:
+  no_log: false
+  ingress_type: Ingress
+  auth:
+    git_hub_key: 'my-github-key'
+    git_hub_secret: 'my-github-secret'
+  wca:
+    inference_url: 'http://my-wca-instance/'
+    model_mesh_api_key: 'my-wca-api-key'
+    model_mesh_model_name: 'my-wca-model_name'
+    health_check_api_key: 'my-wca-api-key'
+    health_check_model_name: 'my-wca-model_name'
+  database:
+    postgres_storage_class: standard

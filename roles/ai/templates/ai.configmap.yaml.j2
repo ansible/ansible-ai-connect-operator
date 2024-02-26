@@ -1,0 +1,44 @@
+# AnsibleAIConnect ConfigMap.
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: '{{ ansible_operator_meta.name }}-{{ deployment_type }}-env-properties'
+  namespace: '{{ ansible_operator_meta.namespace }}'
+  labels:
+    {{ lookup("template", "../common/templates/labels/common.yaml.j2") | indent(width=4) | trim }}
+data:
+  # Operator specific settings
+  # {manstis} Are these needed? I assume Segment/LaunchDarkly are disabled for "On Prem"
+  # SEGMENT_WRITE_KEY: ""
+  # SEGMENT_ANALYTICS_WRITE_KEY: ""
+  # LAUNCHDARKLY_SDK_KEY: ""
+
+  # {manstis} Are these needed? I suspect I need different parameters for https://github.com/ansible/ansible-wisdom-service/pull/798
+  # SOCIAL_AUTH_OIDC_OIDC_ENDPOINT: ""
+  # SOCIAL_AUTH_OIDC_KEY: ""
+  # SOCIAL_AUTH_OIDC_SECRET: ""
+  # AUTHZ_BACKEND_TYPE: ""
+  # AUTHZ_SSO_CLIENT_ID: ""
+  # AUTHZ_SSO_CLIENT_SECRET: ""
+  # AUTHZ_SSO_SERVER: ""
+  # AUTHZ_API_SERVER: ""
+
+  # {manstis} Presumably *ALL* "On Prem" will be Commercial users
+  COMMERCIAL_DOCUMENTATION_URL: "https://access.redhat.com/documentation/en-us/red_hat_ansible_lightspeed_with_ibm_watsonx_code_assistant/2.x_latest/html/red_hat_ansible_lightspeed_with_ibm_watsonx_code_assistant_user_guide/index"
+
+  # {manstis} Is support for "variables" enabled for "On Prem"?
+  # Only Commercial users can have it enabled however it still appears to be an option in wisdom-service
+  # ENABLE_ADDITIONAL_CONTEXT: false
+
+  # {manstis} I assume we're using WCA's contentmatch over OpenSearch for "On Prem"?
+  # ANSIBLE_AI_SEARCH_HOST: ""
+  # ANSIBLE_AI_SEARCH_INDEX: ""
+  # ANSIBLE_AI_SEARCH_KEY: ""
+  # ANSIBLE_AI_SEARCH_SECRET: ""
+  # ANSIBLE_AI_SEARCH_REGION": ""
+
+  # Custom user variables
+{% for item in extra_settings | default([]) %}
+  {{ item.setting | upper }}: "{{ item.value }}"
+{% endfor %}

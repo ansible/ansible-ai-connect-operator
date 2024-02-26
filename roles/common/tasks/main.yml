@@ -1,0 +1,13 @@
+---
+# Tasks file for AnsibleAIConnect
+
+- name: Create AnsibleAIConnect ServiceAccount
+  k8s:
+    apply: yes
+    definition: "{{ lookup('template', item + '.yaml.j2') }}"
+  loop:
+    - 'service_account'
+  no_log: "{{ no_log }}"
+
+- name: Patch Labels
+  include_tasks: patch_labels.yml
