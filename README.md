@@ -92,13 +92,16 @@ kind: AnsibleAIConnect
 metadata:
   name: my-aiconnect
 spec:
-  git_hub_key: 'Required value'
-  git_hub_secret: 'Required value'
-  inference_url: 'Required value'
-  model_mesh_api_key: 'Required value'
-  model_mesh_model_name: 'Required value'
-  health_check_api_key: 'Required value'
-  health_check_model_name: 'Required value'
+  auth:
+    aap_api_url: 'TBA'
+    social_auth_aap_key: 'TBA'
+    social_auth_aap_secret: 'TBA'
+  wca:
+    inference_url: 'TBA'
+    model_mesh_api_key: 'TBA'
+    model_mesh_model_name: 'TBA'
+    health_check_api_key: 'TBA'
+    health_check_model_name: 'TBA'
 ```
 
 3. Now apply this yaml
@@ -121,13 +124,16 @@ kind: AnsibleAIConnect
 metadata:
   name: my-aiconnect
 spec:
-  git_hub_key: 'Required value'
-  git_hub_secret: 'Required value'
-  inference_url: 'Required value'
-  model_mesh_api_key: 'Required value'
-  model_mesh_model_name: 'Required value'
-  health_check_api_key: 'Required value'
-  health_check_model_name: 'Required value'
+  auth:
+    aap_api_url: 'TBA'
+    social_auth_aap_key: 'TBA'
+    social_auth_aap_secret: 'TBA'
+  wca:
+    inference_url: 'TBA'
+    model_mesh_api_key: 'TBA'
+    model_mesh_model_name: 'TBA'
+    health_check_api_key: 'TBA'
+    health_check_model_name: 'TBA'
   service_type: ClusterIP
   ingress_type: Route
   image_pull_secrets:

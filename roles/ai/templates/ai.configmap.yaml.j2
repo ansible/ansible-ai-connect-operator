@@ -38,6 +38,8 @@ data:
   # ANSIBLE_AI_SEARCH_SECRET: ""
   # ANSIBLE_AI_SEARCH_REGION": ""
 
+  DEPLOYMENT_MODE: "onprem"
+
   # Custom user variables
 {% for item in extra_settings | default([]) %}
   {{ item.setting | upper }}: "{{ item.value }}"

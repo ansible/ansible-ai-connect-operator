@@ -71,17 +71,24 @@ spec:
               auth:
                 description: Defines desired state of the Authentication resources
                 required:
-                - git_hub_key
-                - git_hub_secret
+                  - aap_api_url
+                  - social_auth_aap_key
+                  - social_auth_aap_secret
                 properties:
                   auth_secret_name:
                     description: "Secret where the authentication configuration can be found. If not specified this secret will be generated."
                     type: string
-                  git_hub_key:
-                    description: GitHub OAuth Client ID for VSCode authentication
+                  aap_api_url:
+                    description: AAP API URL
                     type: string
-                  git_hub_secret:
-                    description: GitHub OAuth Client Secret for VSCode authentication
+                  social_auth_aap_key:
+                    description: AAP authentication key
+                    type: string
+                  social_auth_aap_secret:
+                    description: AAP authentication secret
+                    type: string
+                  ansible_wisdom_domain:
+                    description: A list of strings representing the host/domain names that the AI instance can serve
                     type: string
                 type: object
               database:

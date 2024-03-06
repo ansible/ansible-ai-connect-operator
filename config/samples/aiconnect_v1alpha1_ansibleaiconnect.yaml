@@ -12,8 +12,9 @@ spec:
   no_log: false
   ingress_type: Ingress
   auth:
-    git_hub_key: 'my-github-key'
-    git_hub_secret: 'my-github-secret'
+    aap_api_url: 'my-aap-api-url'
+    social_auth_aap_key: 'my-aap-key'
+    social_auth_aap_secret: 'my-aap-secret'
   wca:
     inference_url: 'http://my-wca-instance/'
     model_mesh_api_key: 'my-wca-api-key'

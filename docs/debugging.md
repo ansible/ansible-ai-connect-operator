@@ -55,8 +55,9 @@ metadata:
 spec:
   no_log: false        # <------------
   auth:
-    git_hub_key: 'TBA'
-    git_hub_secret: 'TBA'
+    aap_api_url: 'TBA'
+    social_auth_aap_key: 'TBA'
+    social_auth_aap_secret: 'TBA'
   wca:
     inference_url: 'TBA'
     model_mesh_api_key: 'TBA'

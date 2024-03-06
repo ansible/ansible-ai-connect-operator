@@ -86,16 +86,26 @@ spec:
         env:
         - name: PYTHONUNBUFFERED
           value: "1"
-        - name: SOCIAL_AUTH_GITHUB_KEY
+        - name: AAP_API_URL
           valueFrom:
             secretKeyRef:
               name: '{{ __auth_secret_name }}'
-              key: git_hub_key
-        - name: SOCIAL_AUTH_GITHUB_SECRET
+              key: aap_api_url
+        - name: SOCIAL_AUTH_AAP_KEY
           valueFrom:
             secretKeyRef:
               name: '{{ __auth_secret_name }}'
-              key: git_hub_secret
+              key: social_auth_aap_key
+        - name: SOCIAL_AUTH_AAP_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: '{{ __auth_secret_name }}'
+              key: social_auth_aap_secret
+        - name: ANSIBLE_WISDOM_DOMAIN
+          valueFrom:
+            secretKeyRef:
+              name: '{{ __auth_secret_name }}'
+              key: ansible_wisdom_domain
         - name: SECRET_KEY
           valueFrom:
             secretKeyRef:
