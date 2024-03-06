@@ -87,6 +87,9 @@ spec:
                   social_auth_aap_secret:
                     description: AAP authentication secret
                     type: string
+                  social_auth_verify_ssl:
+                    description: Enable SSL verification
+                    type: boolean
                   ansible_wisdom_domain:
                     description: A list of strings representing the host/domain names that the AI instance can serve
                     type: string

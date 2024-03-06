@@ -101,6 +101,11 @@ spec:
             secretKeyRef:
               name: '{{ __auth_secret_name }}'
               key: social_auth_aap_secret
+        - name: SOCIAL_AUTH_VERIFY_SSL
+          valueFrom:
+            secretKeyRef:
+              name: '{{ __auth_secret_name }}'
+              key: social_auth_verify_ssl
         - name: ANSIBLE_WISDOM_DOMAIN
           valueFrom:
             secretKeyRef:

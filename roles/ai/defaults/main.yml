@@ -46,12 +46,14 @@ _auth:
   # - aap_api_url
   # - social_auth_aap_key
   # - social_auth_aap_secret
+  # - social_auth_verify_ssl
   # - ansible_wisdom_domain
   auth_secret_name: ''
   # Explicit parameters to populate Secret if one does not already exist
   aap_api_url: ''
   social_auth_aap_key: ''
   social_auth_aap_secret: ''
+  social_auth_verify_ssl: 'true'
   ansible_wisdom_domain: '*'
 
 # ----------------------------------------

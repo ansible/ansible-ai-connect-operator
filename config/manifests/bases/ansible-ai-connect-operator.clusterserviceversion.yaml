@@ -35,9 +35,15 @@ spec:
           path: auth.social_auth_aap_secret
           x-descriptors:
             - urn:alm:descriptor:com.tectonic.ui:text
+        - displayName: Enable SSL verification
+          path: auth.social_auth_verify_ssl
+          x-descriptors:
+            - urn:alm:descriptor:com.tectonic.ui:advanced
+            - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
         - displayName: A list of strings representing the host/domain names that the AI instance can serve
           path: auth.ansible_wisdom_domain
           x-descriptors:
+            - urn:alm:descriptor:com.tectonic.ui:advanced
             - urn:alm:descriptor:com.tectonic.ui:text
         - displayName: IBM watsonX Code Assistant endpoint
           path: wca.inference_url
