@@ -404,7 +404,7 @@ spec:
   links:
   - name: Ansible AI Connect Operator
     url: https://github.com/ansible/ansible-ai-connect-operator
-  - name: Ansible Wisdom Service
+  - name: Ansible AI Connect
     url: https://github.com/ansible/ansible-wisdom-service
   maintainers:
   - email: ai-connect@googlegroups.com
