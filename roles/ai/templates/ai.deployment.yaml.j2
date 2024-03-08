@@ -85,7 +85,7 @@ spec:
               name: '{{ ansible_operator_meta.name }}-{{ deployment_type }}-env-properties'
         env:
         - name: PYTHONUNBUFFERED
-          value: "1"
+          value: '1'
         - name: AAP_API_URL
           valueFrom:
             secretKeyRef:
@@ -141,6 +141,15 @@ spec:
             secretKeyRef:
               name: '{{ __database_secret_name }}'
               key: password
+        - name: ANSIBLE_AI_MODEL_MESH_API_TYPE
+          value: 'wca'
+        - name: WCA_CLIENT_BACKEND_TYPE
+          value: 'wcaclient-onprem'
+        - name: ANSIBLE_WCA_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: '{{ __wca_secret_name }}'
+              key: username
         - name: ANSIBLE_WCA_INFERENCE_URL
           valueFrom:
             secretKeyRef:

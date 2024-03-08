@@ -77,11 +77,13 @@ _ai:
 wca: {}
 _wca:
   # Name of k8s secret containing WCA:
+  # - username
   # - inference_url
   # - model_mesh_api_key
   # - model_mesh_model_name
   wca_secret_name: ''
   # Explicit parameters to populate Secret if one does not already exist
+  username: ''
   inference_url: ''
   model_mesh_api_key: ''
   model_mesh_model_name: ''

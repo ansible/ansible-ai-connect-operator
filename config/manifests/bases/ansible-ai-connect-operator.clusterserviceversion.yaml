@@ -46,6 +46,10 @@ spec:
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:advanced
         - urn:alm:descriptor:com.tectonic.ui:text
+      - displayName: IBM watsonX Code Assistant username
+        path: wca.username
+        x-descriptors:
+          - urn:alm:descriptor:com.tectonic.ui:text
       - displayName: IBM watsonX Code Assistant endpoint
         path: wca.inference_url
         x-descriptors:

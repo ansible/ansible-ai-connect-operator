@@ -228,12 +228,16 @@ spec:
               wca:
                 description: Defines desired state of the WCA resources
                 required:
+                  - username
                   - inference_url
                   - model_mesh_api_key
                   - model_mesh_model_name
                 properties:
                   wca_secret_name:
                     description: "Secret where the IBM watsonX Code Assistant configuration can be found. If not specified this secret will be generated."
+                    type: string
+                  username:
+                    description: IBM watsonX Code Assistant username
                     type: string
                   inference_url:
                     description: IBM watsonX Code Assistant endpoint

@@ -41,6 +41,7 @@ spec:
     social_auth_aap_key: 'TBA'
     social_auth_aap_secret: 'TBA'
   wca:
+    username: 'TBA'
     inference_url: 'TBA'
     model_mesh_api_key: 'TBA'
     model_mesh_model_name: 'TBA'
