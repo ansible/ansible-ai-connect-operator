@@ -44,8 +44,6 @@ spec:
     inference_url: 'TBA'
     model_mesh_api_key: 'TBA'
     model_mesh_model_name: 'TBA'
-    health_check_api_key: 'TBA'
-    health_check_model_name: 'TBA'
 ```
 
 ```bash

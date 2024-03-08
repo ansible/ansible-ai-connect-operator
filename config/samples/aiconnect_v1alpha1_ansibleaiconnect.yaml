@@ -19,7 +19,5 @@ spec:
     inference_url: 'http://my-wca-instance/'
     model_mesh_api_key: 'my-wca-api-key'
     model_mesh_model_name: 'my-wca-model_name'
-    health_check_api_key: 'my-wca-api-key'
-    health_check_model_name: 'my-wca-model_name'
   database:
     postgres_storage_class: standard

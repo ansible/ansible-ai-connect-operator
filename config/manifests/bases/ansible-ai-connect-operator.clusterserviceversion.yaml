@@ -58,14 +58,6 @@ spec:
         path: wca.model_mesh_model_name
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:text
-      - displayName: IBM watsonX Code Assistant API Key used for health checks
-        path: wca.health_check_api_key
-        x-descriptors:
-        - urn:alm:descriptor:com.tectonic.ui:text
-      - displayName: IBM watsonX Code Assistant Model Name used for health checks
-        path: wca.health_check_model_name
-        x-descriptors:
-        - urn:alm:descriptor:com.tectonic.ui:text
       - displayName: Image Pull Policy
         path: image_pull_policy
         x-descriptors:

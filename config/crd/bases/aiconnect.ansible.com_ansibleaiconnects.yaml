@@ -231,8 +231,6 @@ spec:
                   - inference_url
                   - model_mesh_api_key
                   - model_mesh_model_name
-                  - health_check_api_key
-                  - health_check_model_name
                 properties:
                   wca_secret_name:
                     description: "Secret where the IBM watsonX Code Assistant configuration can be found. If not specified this secret will be generated."
@@ -245,12 +243,6 @@ spec:
                     type: string
                   model_mesh_model_name:
                     description: IBM watsonX Code Assistant Model Name
-                    type: string
-                  health_check_api_key:
-                    description: IBM watsonX Code Assistant API Key used for health checks
-                    type: string
-                  health_check_model_name:
-                    description: IBM watsonX Code Assistant Model Name used for health checks
                     type: string
                 type: object
               ai:

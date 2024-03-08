@@ -162,12 +162,12 @@ spec:
           valueFrom:
             secretKeyRef:
               name: '{{ __wca_secret_name }}'
-              key: health_check_api_key
+              key: model_mesh_api_key
         - name: ANSIBLE_WCA_HEALTHCHECK_MODEL_ID
           valueFrom:
             secretKeyRef:
               name: '{{ __wca_secret_name }}'
-              key: health_check_model_name
+              key: model_mesh_model_name
         ports:
         - containerPort: 8000
           protocol: TCP
