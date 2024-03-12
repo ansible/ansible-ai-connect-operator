@@ -16,12 +16,12 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Log into registry ghcr.io
-        uses: docker/login-action@343f7c4344506bcbf9b4de18042ae17996df046d # v3.0.0
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+      # - name: Log into registry ghcr.io
+      #   uses: docker/login-action@343f7c4344506bcbf9b4de18042ae17996df046d # v3.0.0
+      #   with:
+      #     registry: ghcr.io
+      #     username: ${{ github.actor }}
+      #     password: ${{ secrets.GITHUB_TOKEN }}
 
       # - name: Log into registry quay.io
       #   uses: docker/login-action@343f7c4344506bcbf9b4de18042ae17996df046d # v3.0.0
@@ -30,11 +30,11 @@ jobs:
       #     username: ${{ secrets.QUAY_USER }}
       #     password: ${{ secrets.QUAY_TOKEN }}
 
-      - name: Build and Store Image @ghcr
-        run: |
-          IMG=ghcr.io/${{ github.repository_owner }}/ansible-ai-connect-operator:${{ github.sha }} make docker-buildx
-          cat Dockerfile.cross
-          echo $IMG
+      # - name: Build and Store Image @ghcr
+      #   run: |
+      #     IMG=ghcr.io/${{ github.repository_owner }}/ansible-ai-connect-operator:${{ github.sha }} make docker-buildx
+      #     cat Dockerfile.cross
+      #     echo $IMG
 
       # - name: Publish Image to quay.io/ansible/ansible-ai-connect-operator:main
       #   run: |
@@ -46,7 +46,6 @@ jobs:
         run: |
           if [ "${{ github.event_name }}" == "pull_request" ]; then
             echo "IMAGE_TAGS=pr-${{ github.event.pull_request.number }}.$(date +'%Y%m%d%H%M') pr-${{ github.event.pull_request.number }}" >> $GITHUB_OUTPUT
-            echo "LABEL quay.expires-after=3d" >> ./Dockerfile.cross # tag expires in 3 days
           elif [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
             echo "IMAGE_TAGS=${{ github.ref_name }}-$( git rev-parse --short HEAD ).$(date +'%Y%m%d%H%M')" >> $GITHUB_OUTPUT
           else
@@ -60,15 +59,13 @@ jobs:
         uses: redhat-actions/buildah-build@v2
         with:
           image: ansible-ai-connect-operator
-          tags: ${{ github.sha }}
+          tags: ${{ steps.tag_name.outputs.IMAGE_TAGS }}
           containerfiles: |
-            ./Dockerfile.cross
+            ./Dockerfile
           labels: |
             sha-short=${{ steps.tag_name.outputs.sha-short }}
             sha-long=${{ steps.tag_name.outputs.sha-long }}
-          build-args: |
-            IMAGE_TAGS=${{ steps.tag_name.outputs.IMAGE_TAGS }}
-            GIT_COMMIT=${{ steps.tag_name.outputs.sha-long }}
+            quay.expires-after=3d
 
       - name: Push To quay.io
         id: push-to-quay
