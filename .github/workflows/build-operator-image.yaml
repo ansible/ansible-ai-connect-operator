@@ -30,10 +30,23 @@ jobs:
           username: ${{ secrets.QUAY_USER }}
           password: ${{ secrets.QUAY_TOKEN }}
 
+      - name: Tag Name
+        id: tag_name
+        run: |
+          REPO=quay.io/ansible/ansible-ai-connect-operator
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            echo "IMAGE_TAGS=-t ${REPO}:pr-${{ github.event.pull_request.number }}.$(date +'%Y%m%d%H%M') -t ${REPO}:pr-${{ github.event.pull_request.number }}" >> $GITHUB_OUTPUT
+            echo "LABEL quay.expires-after=3d" >> ./Dockerfile # tag expires in 3 days
+          elif [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            echo "IMAGE_TAGS=-t ${REPO}:${{ github.ref_name }}-$( git rev-parse --short HEAD ).$(date +'%Y%m%d%H%M')" >> $GITHUB_OUTPUT
+          else
+            echo "IMAGE_TAGS=-t ${REPO}:latest -t ${REPO}:$(cat ./.version).$(date +'%Y%m%d%H%M')" >> $GITHUB_OUTPUT
+          fi
+  
       - name: Build and Store Image @ghcr
         run: |
           IMG=ghcr.io/${{ github.repository_owner }}/ansible-ai-connect-operator:${{ github.sha }} make docker-buildx
-
+  
       - name: Publish Image to quay.io/ansible/ansible-ai-connect-operator:main
         run: |
-          docker buildx imagetools create ghcr.io/${{ github.repository_owner }}/ansible-ai-connect-operator:${{ github.sha }} --tag quay.io/ansible/ansible-ai-connect-operator:main
+          docker buildx imagetools create ghcr.io/${{ github.repository_owner }}/ansible-ai-connect-operator:${{ github.sha }} ${{ steps.tag_name.outputs.IMAGE_TAGS }}
