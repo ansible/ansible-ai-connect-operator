@@ -1,0 +1,13 @@
+---
+- name: Create an aiconnect.ansible.com/v1alpha1.AnsibleAIConnect instance
+  k8s:
+    state: present
+    namespace: '{{ namespace }}'
+    definition: "{{ lookup('template', 'instance_minikube.yaml.j2') | from_yaml }}"
+    apply: true
+    wait: yes
+    wait_timeout: 900
+    wait_condition:
+      type: Running
+      reason: Successful
+      status: "True"

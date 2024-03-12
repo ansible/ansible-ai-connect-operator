@@ -12,6 +12,13 @@
           'default' scenario
       when: not operator_image
 
+    - name: Ensure Docker Config JSON is set
+      fail:
+        msg: |
+          You must specify the DOCKER_CONFIG_JSON environment variable in order to run the
+          'default' scenario
+      when: not docker_config_json
+
     - name: Set testing image
       command: '{{ kustomize }} edit set image testing={{ operator_image }}'
       args:

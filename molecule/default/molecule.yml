@@ -1,20 +1,28 @@
 ---
 dependency:
   name: galaxy
+  options:
+    role-file: requirements.yml
 driver:
-  name: delegated
-lint: |
-  set -e
-  yamllint -d "{extends: relaxed, rules: {line-length: {max: 120}}}" .
+# 'default' driver is now 'delegated'
+# See https://ansible.readthedocs.io/projects/molecule/configuration/#delegated
+  name: default
+# lint support is removed
+# See https://github.com/ansible/molecule/discussions/3914
+#lint: |
+#  set -e
+#  yamllint -d "{extends: relaxed, rules: {line-length: {max: 120}}}" .
 platforms:
   - name: cluster
     groups:
       - k8s
 provisioner:
   name: ansible
-  lint: |
-    set -e
-    ansible-lint
+# lint support is removed
+# See https://github.com/ansible/molecule/discussions/3914
+#  lint: |
+#    set -e
+#    ansible-lint
   inventory:
     group_vars:
       all:
@@ -27,10 +35,13 @@ provisioner:
         operator_image: ${OPERATOR_IMAGE:-""}
         operator_pull_policy: ${OPERATOR_PULL_POLICY:-"Always"}
         kustomize: ${KUSTOMIZE_PATH:-kustomize}
+        docker_config_json: ${DOCKER_CONFIG_JSON:-""}
   env:
     K8S_AUTH_KUBECONFIG: ${KUBECONFIG:-"~/.kube/config"}
 verifier:
   name: ansible
-  lint: |
-    set -e
-    ansible-lint
+# lint support is removed
+# See https://github.com/ansible/molecule/discussions/3914
+#  lint: |
+#    set -e
+#    ansible-lint

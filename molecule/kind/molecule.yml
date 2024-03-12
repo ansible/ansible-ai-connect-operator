@@ -1,11 +1,17 @@
 ---
 dependency:
   name: galaxy
+  options:
+    role-file: requirements.yml
 driver:
-  name: delegated
-lint: |
-  set -e
-  yamllint -d "{extends: relaxed, rules: {line-length: {max: 120}}}" .
+# 'default' driver is now 'delegated'
+# See https://ansible.readthedocs.io/projects/molecule/configuration/#delegated
+  name: default
+# lint support is removed
+# See https://github.com/ansible/molecule/discussions/3914
+#lint: |
+#  set -e
+#  yamllint -d "{extends: relaxed, rules: {line-length: {max: 120}}}" .
 platforms:
   - name: cluster
     groups:
@@ -15,9 +21,11 @@ provisioner:
   playbooks:
     prepare: ../default/prepare.yml
     verify: ../default/verify.yml
-  lint: |
-    set -e
-    ansible-lint
+# lint support is removed
+# See https://github.com/ansible/molecule/discussions/3914
+#  lint: |
+#    set -e
+#    ansible-lint
   inventory:
     group_vars:
       all:
@@ -37,6 +45,8 @@ provisioner:
     KUBECONFIG: ${MOLECULE_EPHEMERAL_DIRECTORY}/kubeconfig
 verifier:
   name: ansible
-  lint: |
-    set -e
-    ansible-lint
+# lint support is removed
+# See https://github.com/ansible/molecule/discussions/3914
+#  lint: |
+#    set -e
+#    ansible-lint
