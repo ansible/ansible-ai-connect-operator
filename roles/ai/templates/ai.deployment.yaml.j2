@@ -165,8 +165,6 @@ spec:
             secretKeyRef:
               name: '{{ __wca_secret_name }}'
               key: model_mesh_model_name
-        - name: ENABLE_HEALTHCHECK_WCA
-          value: 'true'
         - name: ANSIBLE_WCA_HEALTHCHECK_API_KEY
           valueFrom:
             secretKeyRef:
@@ -180,19 +178,30 @@ spec:
         ports:
         - containerPort: 8000
           protocol: TCP
+        # -----------------------------------------------------------------------------------------------------
+        # The default rate-limit is 10/minute. Therefore ensure startup/readiness/liveness probe total is less.
+        # https://github.com/ansible/ansible-wisdom-service/blob/main/ansible_wisdom/main/settings/base.py
+        # COMPLETION_USER_RATE_THROTTLE = os.environ.get('COMPLETION_USER_RATE_THROTTLE') or '10/minute'
+        # DEFAULT_THROTTLE_RATES: { 'user': COMPLETION_USER_RATE_THROTTLE } i.e. ALL API calls.
+        startupProbe:
+          httpGet:
+            path: /check/status/
+            port: 8000
+          failureThreshold: 10
+          periodSeconds: 30
         readinessProbe:
-          exec:
-            command:
-            - venv/bin/uwsgi-is-ready
-            - --stats-socket
-            - /tmp/uwsgi-stats
-            - --queue-threshold
-            - "0.7"
-          failureThreshold: 2
-          initialDelaySeconds: 5
-          periodSeconds: 5
-          successThreshold: 1
-          timeoutSeconds: 1
+          httpGet:
+            path: /check/status/
+            port: 8000
+          failureThreshold: 1
+          periodSeconds: 30
+        livenessProbe:
+          httpGet:
+            path: /check/
+            port: 8000
+          failureThreshold: 1
+          periodSeconds: 30
+        # -----------------------------------------------------------------------------------------------------
         volumeMounts:
             - name: mnt
               mountPath: /etc/wisdom/uwsgi.ini
