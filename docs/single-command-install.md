@@ -35,6 +35,7 @@ apiVersion: aiconnect.ansible.com/v1alpha1
 kind: AnsibleAIConnect
 metadata:
   name: my-aiconnect
+  namespace: ansibleaiconnect
 spec:
   auth:
     aap_api_url: 'TBA'

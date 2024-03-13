@@ -52,6 +52,7 @@ apiVersion: aiconnect.ansible.com/v1alpha1
 kind: AnsibleAIConnect
 metadata:
   name: my-aiconnect
+  namespace: ansibleaiconnect
 spec:
   no_log: false        # <------------
   auth:

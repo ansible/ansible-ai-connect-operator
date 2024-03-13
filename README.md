@@ -91,6 +91,7 @@ apiVersion: aiconnect.ansible.com/v1alpha1
 kind: AnsibleAIConnect
 metadata:
   name: my-aiconnect
+  namespace: ansibleaiconnect
 spec:
   auth:
     aap_api_url: 'TBA'
@@ -101,6 +102,7 @@ spec:
     inference_url: 'TBA'
     model_mesh_api_key: 'TBA'
     model_mesh_model_name: 'TBA'
+  service_type: NodePort
 ```
 
 3. Now apply this yaml
@@ -112,7 +114,7 @@ $ kubectl apply -f aiconnect.yaml
 Once deployed, the `AnsibleAIConnect` instance will be accessible by running:
 
 ```
-$ minikube service -n ansibleaiconnect my-aiconnect --url
+$ minikube service -n ansibleaiconnect my-aiconnect-api --url
 ```
 
 If you are using Openshift, you can take advantage of automatic Route configuration an `AnsibleAIConnect` custom resource like this:
@@ -122,7 +124,8 @@ apiVersion: aiconnect.ansible.com/v1alpha1
 kind: AnsibleAIConnect
 metadata:
   name: my-aiconnect
-spec:
+  namespace: ansibleaiconnect
+spec:  
   auth:
     aap_api_url: 'TBA'
     social_auth_aap_key: 'TBA'
@@ -134,14 +137,12 @@ spec:
     model_mesh_model_name: 'TBA'
   service_type: ClusterIP
   ingress_type: Route
-  image_pull_secrets:
-    - pull_secret_name
 ```
 
 If using Openshift, `AnsibleAIConnect` instance will be accessible by running:
 
 ```
-$ oc get route -n ansibleaiconnect my-aiconnect
+$ oc get route -n ansibleaiconnect my-aiconnect-api
 ```
 
 By default, the admin user is `admin` and the password is available in the `<resourcename>-admin-password` secret. To retrieve the admin password, run:

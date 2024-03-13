@@ -41,7 +41,7 @@ NAMESPACE=ansibleaiconnect IMG=quay.io/$QUAY_USER/ansible-ai-connect-operator:$T
 
 ### Create an AnsibleAIConnect CR
 
-Create a yaml file defining the EDA custom resource
+Create a yaml file defining the `AnsibleAIConnect` custom resource
 
 ```yaml
 # aiconnect.yaml
@@ -49,6 +49,7 @@ apiVersion: aiconnect.ansible.com/v1alpha1
 kind: AnsibleAIConnect
 metadata:
   name: my-aiconnect
+  namespace: ansibleaiconnect
 spec:
   auth:
     aap_api_url: 'TBA'

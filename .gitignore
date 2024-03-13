@@ -32,3 +32,7 @@ kustomization.yaml
 *.swo
 *~
 .vscode/
+
+# Python Virtual Environments (required for Molecule)
+venv/
+.venv/
