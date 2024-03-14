@@ -13,20 +13,12 @@ data:
   ENABLE_ADDITIONAL_CONTEXT: "true"
   DEPLOYMENT_MODE: "onprem"
 
+  # {manstis} Do we want to expose this for customers?
+  # See https://issues.redhat.com/browse/AAP-21787
+  DEPLOYED_REGION: "onprem"
+
   # Always disabled for "on prem"
   ENABLE_HEALTHCHECK_SECRET_MANAGER: "false"
-
-  # =======================================================================
-  # Used by startupProbe and readinessProbe
-  # -----------------------------------------------------------------------
-  # Disabled for development purposes until we integrate with "on prem" WCA
-  ENABLE_HEALTHCHECK_WCA: "false"
-  ENABLE_HEALTHCHECK_MODEL_MESH: "false"
-  ENABLE_HEALTHCHECK_ATTRIBUTION: "false"
-
-  # Disabled for development purposes until we integrate with AAP authentication
-  ENABLE_HEALTHCHECK_AUTHORIZATION: "false"
-  # =======================================================================
 
   # Custom user variables
 {% for item in extra_settings | default([]) %}

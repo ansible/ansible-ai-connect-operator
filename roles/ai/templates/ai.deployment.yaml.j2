@@ -160,6 +160,14 @@ spec:
             secretKeyRef:
               name: '{{ __wca_secret_name }}'
               key: model_mesh_api_key
+        # Used by wisdom-service Health endpoint
+        # Use the same value as ANSIBLE_AI_MODEL_MESH_MODEL_NAME
+        - name: ANSIBLE_AI_MODEL_NAME
+          valueFrom:
+            secretKeyRef:
+              name: '{{ __wca_secret_name }}'
+              key: model_mesh_model_name
+        # Used by wisdom-service WCAClients
         - name: ANSIBLE_AI_MODEL_MESH_MODEL_NAME
           valueFrom:
             secretKeyRef:
@@ -178,30 +186,44 @@ spec:
         ports:
         - containerPort: 8000
           protocol: TCP
-        # -----------------------------------------------------------------------------------------------------
-        # The default rate-limit is 10/minute. Therefore ensure startup/readiness/liveness probe total is less.
-        # https://github.com/ansible/ansible-wisdom-service/blob/main/ansible_wisdom/main/settings/base.py
-        # COMPLETION_USER_RATE_THROTTLE = os.environ.get('COMPLETION_USER_RATE_THROTTLE') or '10/minute'
-        # DEFAULT_THROTTLE_RATES: { 'user': COMPLETION_USER_RATE_THROTTLE } i.e. ALL API calls.
         startupProbe:
-          httpGet:
-            path: /check/status/
-            port: 8000
+          exec:
+            command:
+            - venv/bin/uwsgi-is-ready
+            - --stats-socket
+            - /tmp/uwsgi-stats
+            - --queue-threshold
+            - '0.7'
           failureThreshold: 10
+          successThreshold: 1
           periodSeconds: 30
+          timeoutSeconds: 1
         readinessProbe:
-          httpGet:
-            path: /check/status/
-            port: 8000
-          failureThreshold: 1
-          periodSeconds: 30
+          exec:
+            command:
+            - venv/bin/uwsgi-is-ready
+            - --stats-socket
+            - /tmp/uwsgi-stats
+            - --queue-threshold
+            - '0.7'
+          initialDelaySeconds: 5
+          failureThreshold: 2
+          successThreshold: 1
+          periodSeconds: 5
+          timeoutSeconds: 1
         livenessProbe:
-          httpGet:
-            path: /check/
-            port: 8000
-          failureThreshold: 1
-          periodSeconds: 30
-        # -----------------------------------------------------------------------------------------------------
+          exec:
+            command:
+            - venv/bin/uwsgi-is-ready
+            - --stats-socket
+            - /tmp/uwsgi-stats
+            - --queue-threshold
+            - '0.7'
+          initialDelaySeconds: 5
+          failureThreshold: 2
+          successThreshold: 1
+          periodSeconds: 5
+          timeoutSeconds: 1
         volumeMounts:
             - name: mnt
               mountPath: /etc/wisdom/uwsgi.ini
