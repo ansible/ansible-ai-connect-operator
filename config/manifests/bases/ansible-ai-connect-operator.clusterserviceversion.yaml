@@ -50,6 +50,7 @@ spec:
         path: wca.username
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:text
+        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:wca.model_mesh_type:wca-onprem
       - displayName: IBM watsonX Code Assistant endpoint
         path: wca.inference_url
         x-descriptors:
@@ -62,6 +63,12 @@ spec:
         path: wca.model_mesh_model_name
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:text
+      - displayName: Type of IBM watsonX Code Assistant provider
+        path: wca.model_mesh_type
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:advanced
+        - urn:alm:descriptor:com.tectonic.ui:select:wca
+        - urn:alm:descriptor:com.tectonic.ui:select:wca-onprem
       - displayName: Image Pull Policy
         path: image_pull_policy
         x-descriptors:

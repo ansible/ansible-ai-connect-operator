@@ -81,12 +81,14 @@ _wca:
   # - inference_url
   # - model_mesh_api_key
   # - model_mesh_model_name
+  # - model_mesh_type
   wca_secret_name: ''
   # Explicit parameters to populate Secret if one does not already exist
   username: ''
   inference_url: ''
   model_mesh_api_key: ''
   model_mesh_model_name: ''
+  model_mesh_type: 'wca-onprem'
 # ========================================
 
 

@@ -232,12 +232,14 @@ spec:
                   - inference_url
                   - model_mesh_api_key
                   - model_mesh_model_name
+                  - model_mesh_type
                 properties:
                   wca_secret_name:
                     description: "Secret where the IBM watsonX Code Assistant configuration can be found. If not specified this secret will be generated."
                     type: string
                   username:
                     description: IBM watsonX Code Assistant username
+                    default: "username"
                     type: string
                   inference_url:
                     description: IBM watsonX Code Assistant endpoint
@@ -248,6 +250,13 @@ spec:
                   model_mesh_model_name:
                     description: IBM watsonX Code Assistant Model Name
                     type: string
+                  model_mesh_type:
+                    description: Type of IBM watsonX Code Assistant provider
+                    default: "wca-onprem"
+                    type: string
+                    enum:
+                      - "wca"
+                      - "wca-onprem"
                 type: object
               ai:
                 description: Defines desired state of the resources
