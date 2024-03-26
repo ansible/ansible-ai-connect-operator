@@ -25,3 +25,13 @@ spec:
     model_mesh_model_name: 'my-ai-model_name'
   database:
     postgres_storage_class: standard
+  api:
+    resource_requirements:
+      requests:
+        cpu: 100m
+        memory: 200Mi
+  database:
+    resource_requirements:
+      requests:
+        cpu: 50m
+        memory: 100Mi
