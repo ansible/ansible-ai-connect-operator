@@ -3,17 +3,17 @@
 - name: Combine default variables for components
   set_fact:
     combined_auth: "{{ _auth | combine(auth, recursive=True) }}"
+    combined_api: "{{ _api | combine(api, recursive=True) }}"
     combined_ai: "{{ _ai | combine(ai, recursive=True) }}"
-    combined_wca: "{{ _wca | combine(wca, recursive=True) }}"
 
 - name: Display Auth variables
   debug:
     var: combined_auth
 
+- name: Display API variables
+  debug:
+    var: combined_api
+
 - name: Display AI variables
   debug:
     var: combined_ai
-
-- name: Display WCA variables
-  debug:
-    var: combined_wca

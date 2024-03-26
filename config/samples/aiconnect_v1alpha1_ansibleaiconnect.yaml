@@ -15,10 +15,10 @@ spec:
     aap_api_url: 'my-aap-api-url'
     social_auth_aap_key: 'my-aap-key'
     social_auth_aap_secret: 'my-aap-secret'
-  wca:
+  ai:
     username: 'username'
-    inference_url: 'http://my-wca-instance/'
-    model_mesh_api_key: 'my-wca-api-key'
-    model_mesh_model_name: 'my-wca-model_name'
+    inference_url: 'http://my-ai-instance/'
+    model_mesh_api_key: 'my-ai-api-key'
+    model_mesh_model_name: 'my-ai-model_name'
   database:
     postgres_storage_class: standard

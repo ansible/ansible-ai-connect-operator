@@ -10,7 +10,7 @@
       adminPasswordSecret: "{{ __admin_password_secret_name }}"
       authConfigurationSecret: "{{ __auth_secret_name }}"
       databaseConfigurationSecret: "{{ __database_secret_name }}"
-      wcaConfigurationSecret: "{{ __wca_secret_name }}"
+      aiConfigurationSecret: "{{ __ai_secret_name }}"
       dbFieldsEncryptionSecret: "{{ __db_fields_encryption_secret_name }}"
       image: "{{ _image }}"
 

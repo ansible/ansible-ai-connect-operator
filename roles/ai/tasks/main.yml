@@ -29,8 +29,8 @@
 - name: Create Authentication secret
   include_tasks: set_auth_configuration_secret.yml
 
-- name: Create WCA secret
-  include_tasks: set_wca_configuration_secret.yml
+- name: Create AI secret
+  include_tasks: set_ai_configuration_secret.yml
 
 - name: Load Route TLS certificate
   include_tasks: load_route_tls_secret.yml

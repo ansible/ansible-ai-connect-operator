@@ -19,8 +19,8 @@ spec:
         path: auth.auth_secret_name
         x-descriptors:
         - urn:alm:descriptor:io.kubernetes:Secret
-      - displayName: External IBM watsonX Code Assistant configuration secret
-        path: wca.wca_secret_name
+      - displayName: External AI configuration secret
+        path: ai.ai_secret_name
         x-descriptors:
         - urn:alm:descriptor:io.kubernetes:Secret
       - displayName: AAP API URL
@@ -46,25 +46,25 @@ spec:
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:advanced
         - urn:alm:descriptor:com.tectonic.ui:text
-      - displayName: IBM watsonX Code Assistant username
-        path: wca.username
+      - displayName: AI provider username
+        path: ai.username
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:text
-        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:wca.model_mesh_type:wca-onprem
-      - displayName: IBM watsonX Code Assistant endpoint
-        path: wca.inference_url
+        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:ai.model_mesh_type:wca-onprem
+      - displayName: AI provider endpoint
+        path: ai.inference_url
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:text
-      - displayName: IBM watsonX Code Assistant API Key
-        path: wca.model_mesh_api_key
+      - displayName: AI provider API Key
+        path: ai.model_mesh_api_key
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:text
-      - displayName: IBM watsonX Code Assistant Model Name
-        path: wca.model_mesh_model_name
+      - displayName: AI provider Model Name
+        path: ai.model_mesh_model_name
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:text
-      - displayName: Type of IBM watsonX Code Assistant provider
-        path: wca.model_mesh_type
+      - displayName: Type of AI provider
+        path: ai.model_mesh_type
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:advanced
         - urn:alm:descriptor:com.tectonic.ui:select:wca
@@ -101,38 +101,38 @@ spec:
         - urn:alm:descriptor:com.tectonic.ui:advanced
         - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
       - description: Defines desired state of AI deployment resources
-        displayName: AI deployment configuration
-        path: ai
+        displayName: API deployment configuration
+        path: api
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:advanced
-      - description: The number of AI replicas.
+      - description: The number of API replicas.
         displayName: Replicas
-        path: ai.replicas
+        path: api.replicas
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:podCount
-      - displayName: AI server resource requirements
-        path: ai.resource_requirements
+      - displayName: API server resource requirements
+        path: api.resource_requirements
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:resourceRequirements
       - displayName: Node Selector
-        path: ai.node_selector
+        path: api.node_selector
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:advanced
       - description: The deployment strategy to use to replace existing pods with
           new ones.
         displayName: Strategy
-        path: ai.strategy
+        path: api.strategy
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:updateStrategy
         - urn:alm:descriptor:com.tectonic.ui:advanced
       - description: Node tolerations for the pods.
         displayName: Tolerations
-        path: ai.tolerations
+        path: api.tolerations
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:advanced
       - description: Topology rule(s) for the pods.
         displayName: Topology Spread Constraints
-        path: ai.topology_spread_constraints
+        path: api.topology_spread_constraints
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:advanced
       - displayName: PostgreSQL Database configuration
@@ -351,9 +351,9 @@ spec:
         path: databaseConfigurationSecret
         x-descriptors:
         - urn:alm:descriptor:io.kubernetes:Secret
-      - description: WCA Configuration secret name of the deployed instance
-        displayName: WCA Configuration
-        path: wcaConfigurationSecret
+      - description: AI Configuration secret name of the deployed instance
+        displayName: AI Configuration
+        path: aiConfigurationSecret
         x-descriptors:
         - urn:alm:descriptor:io.kubernetes:Secret
       - description: Database Fields Encryption secret name of the deployed instance

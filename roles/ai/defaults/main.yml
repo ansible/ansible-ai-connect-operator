@@ -59,8 +59,8 @@ _auth:
 # ----------------------------------------
 # Configuration for underlying service
 # ----------------------------------------
-ai: {}
-_ai:
+api: {}
+_api:
   replicas: 1
   resource_requirements:
     limits:
@@ -72,17 +72,17 @@ _ai:
   # Explicit parameters
 
 # ----------------------------------------
-# Configuration for IBM WCA (model server)
+# Configuration for AI model provider
 # ----------------------------------------
-wca: {}
-_wca:
+ai: {}
+_ai:
   # Name of k8s secret containing WCA:
   # - username
   # - inference_url
   # - model_mesh_api_key
   # - model_mesh_model_name
   # - model_mesh_type
-  wca_secret_name: ''
+  ai_secret_name: ''
   # Explicit parameters to populate Secret if one does not already exist
   username: ''
   inference_url: ''

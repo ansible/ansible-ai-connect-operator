@@ -97,7 +97,7 @@ spec:
     aap_api_url: 'TBA'
     social_auth_aap_key: 'TBA'
     social_auth_aap_secret: 'TBA'
-  wca:
+  ai:
     username: 'TBA'
     inference_url: 'TBA'
     model_mesh_api_key: 'TBA'
@@ -130,7 +130,7 @@ spec:
     aap_api_url: 'TBA'
     social_auth_aap_key: 'TBA'
     social_auth_aap_secret: 'TBA'
-  wca:
+  ai:
     username: 'TBA'
     inference_url: 'TBA'
     model_mesh_api_key: 'TBA'

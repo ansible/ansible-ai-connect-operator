@@ -9,16 +9,16 @@ metadata:
   name: '{{ ansible_operator_meta.name }}-api'
   namespace: '{{ ansible_operator_meta.namespace }}'
 spec:
-  replicas: {{ combined_ai.replicas }}
-{% if combined_ai.strategy is defined %}
+  replicas: {{ combined_api.replicas }}
+{% if combined_api.strategy is defined %}
   strategy:
-    type: {{ combined_ai.strategy.type }}
-{% if combined_ai.strategy.type == "Recreate" %}
+    type: {{ combined_api.strategy.type }}
+{% if combined_api.strategy.type == "Recreate" %}
     rollingUpdate: null
-{% elif combined_ai.strategy.type == "RollingUpdate" %}
+{% elif combined_api.strategy.type == "RollingUpdate" %}
     rollingUpdate:
-      maxSurge:  {{ combined_ai.strategy.rollingUpdate.maxSurge | default("25%")}}
-      maxUnavailable: {{ combined_ai.strategy.rollingUpdate.maxUnavailable | default("25%")}}
+      maxSurge:  {{ combined_api.strategy.rollingUpdate.maxSurge | default("25%")}}
+      maxUnavailable: {{ combined_api.strategy.rollingUpdate.maxUnavailable | default("25%")}}
 {% endif %}
 {% endif %}
   selector:
@@ -42,17 +42,17 @@ spec:
         - name: {{ secret }}
 {% endfor %}
 {% endif %}
-{% if combined_ai.node_selector is defined %}
+{% if combined_api.node_selector is defined %}
       nodeSelector:
-        {{ combined_ai.node_selector | indent(width=8) }}
+        {{ combined_api.node_selector | indent(width=8) }}
 {% endif %}
-{% if combined_ai.tolerations is defined %}
+{% if combined_api.tolerations is defined %}
       tolerations:
-        {{ combined_ai.tolerations | indent(width=8) }}
+        {{ combined_api.tolerations | indent(width=8) }}
 {% endif %}
-{% if combined_ai.topology_spread_constraints is defined %}
+{% if combined_api.topology_spread_constraints is defined %}
       topologySpreadConstraints:
-        {{ combined_ai.topology_spread_constraints | indent(width=8) }}
+        {{ combined_api.topology_spread_constraints | indent(width=8) }}
 {% endif %}
       initContainers:
 {% if bundle_ca_crt  %}
@@ -65,8 +65,8 @@ spec:
           - |
             mkdir -p /etc/pki/ca-trust/extracted/{java,pem,openssl,edk2}
             update-ca-trust
-{% if combined_ai.resource_requirements is defined %}
-        resources: {{ combined_ai.resource_requirements }}
+{% if combined_api.resource_requirements is defined %}
+        resources: {{ combined_api.resource_requirements }}
 {% endif %}
         volumeMounts:
           - name: "ca-trust-extracted"
@@ -144,45 +144,45 @@ spec:
         - name: ANSIBLE_WCA_USERNAME
           valueFrom:
             secretKeyRef:
-              name: '{{ __wca_secret_name }}'
+              name: '{{ __ai_secret_name }}'
               key: username
         - name: ANSIBLE_WCA_INFERENCE_URL
           valueFrom:
             secretKeyRef:
-              name: '{{ __wca_secret_name }}'
+              name: '{{ __ai_secret_name }}'
               key: inference_url
         - name: ANSIBLE_AI_MODEL_MESH_API_KEY
           valueFrom:
             secretKeyRef:
-              name: '{{ __wca_secret_name }}'
+              name: '{{ __ai_secret_name }}'
               key: model_mesh_api_key
         # Used by wisdom-service Health endpoint
         # Use the same value as ANSIBLE_AI_MODEL_MESH_MODEL_NAME
         - name: ANSIBLE_AI_MODEL_NAME
           valueFrom:
             secretKeyRef:
-              name: '{{ __wca_secret_name }}'
+              name: '{{ __ai_secret_name }}'
               key: model_mesh_model_name
         # Used by wisdom-service WCAClients
         - name: ANSIBLE_AI_MODEL_MESH_MODEL_NAME
           valueFrom:
             secretKeyRef:
-              name: '{{ __wca_secret_name }}'
+              name: '{{ __ai_secret_name }}'
               key: model_mesh_model_name
         - name: ANSIBLE_AI_MODEL_MESH_API_TYPE
           valueFrom:
             secretKeyRef:
-              name: '{{ __wca_secret_name }}'
+              name: '{{ __ai_secret_name }}'
               key: model_mesh_type
         - name: ANSIBLE_WCA_HEALTHCHECK_API_KEY
           valueFrom:
             secretKeyRef:
-              name: '{{ __wca_secret_name }}'
+              name: '{{ __ai_secret_name }}'
               key: model_mesh_api_key
         - name: ANSIBLE_WCA_HEALTHCHECK_MODEL_ID
           valueFrom:
             secretKeyRef:
-              name: '{{ __wca_secret_name }}'
+              name: '{{ __ai_secret_name }}'
               key: model_mesh_model_name
         ports:
         - containerPort: 8000
@@ -237,8 +237,8 @@ spec:
               - "ALL"
           seccompProfile:
             type: RuntimeDefault
-{% if combined_ai.resource_requirements is defined %}
-        resources: {{ combined_ai.resource_requirements }}
+{% if combined_api.resource_requirements is defined %}
+        resources: {{ combined_api.resource_requirements }}
 {% endif %}
 {% if bundle_ca_crt %}
         volumeMounts:
