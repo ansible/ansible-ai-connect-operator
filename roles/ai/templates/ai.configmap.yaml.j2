@@ -13,9 +13,9 @@ data:
   ENABLE_ADDITIONAL_CONTEXT: "true"
   DEPLOYMENT_MODE: "onprem"
 
-  # {manstis} Do we want to expose this for customers?
+  # Remove 'deployed_region' from the /status/check endpoint
   # See https://issues.redhat.com/browse/AAP-21787
-  DEPLOYED_REGION: "onprem"
+  DEPLOYED_REGION: ""
 
   # Always disabled for "on prem"
   ENABLE_HEALTHCHECK_ATTRIBUTION: "false"
