@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       DOCKER_CONFIG_JSON: ${{ secrets.TESTING_DOCKER_CONFIG_JSON }}
-      OPERATOR_IMAGE: manstis/aiconnect:0.0.5
+      OPERATOR_IMAGE: quay.io/manstis/aiconnect:0.0.5
       DOCKER_API_VERSION: "1.41"
 
     steps:
