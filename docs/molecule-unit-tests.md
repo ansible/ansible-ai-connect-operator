@@ -23,7 +23,7 @@ The `DOCKER_CONFIG_JSON` value should be obtained from your local `.docker/confi
 
 
 ```
-export OPERATOR_IMAGE=manstis/aiconnect:0.0.3
+export OPERATOR_IMAGE=quay.io/ansible/ansible-ai-connect-operator:latest
 export DOCKER_CONFIG_JSON=`base64 --wrap=0 ~/.docker/config.json`
 ```
 

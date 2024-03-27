@@ -29,7 +29,7 @@ BUNDLE_METADATA_OPTS ?= $(BUNDLE_CHANNELS) $(BUNDLE_DEFAULT_CHANNEL)
 #
 # For example, running 'make bundle-build bundle-push catalog-build catalog-push' will build and push both
 # ansible.com/ansible-ai-connect-operator-bundle:$VERSION and ansible.com/ansible-ai-connect-operator-catalog:$VERSION.
-IMAGE_TAG_BASE ?= manstis/aiconnect
+IMAGE_TAG_BASE ?= quay.io/ansible/ansible-ai-connect
 
 # BUNDLE_IMG defines the image:tag used for the bundle.
 # You can use it as an arg. (E.g make bundle-build BUNDLE_IMG=<some-registry>/<project-name-bundle>:<tag>)
@@ -51,7 +51,7 @@ endif
 OPERATOR_SDK_VERSION ?= v1.32.0
 
 # Image URL to use all building/pushing image targets
-IMG ?= $(IMAGE_TAG_BASE):$(VERSION)
+IMG ?= $(IMAGE_TAG_BASE)-operator:$(VERSION)
 
 .PHONY: all
 all: docker-build
