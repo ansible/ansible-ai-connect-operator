@@ -20,5 +20,4 @@ resources:
 - ../manager
 images:
 - name: testing
-  newName: quay.io/ansible/ansible-ai-connect-operator
-  newTag: latest
+  newName: testing-operator

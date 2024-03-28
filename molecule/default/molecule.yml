@@ -7,7 +7,6 @@ driver:
 # 'default' driver is now 'delegated'
 # See https://ansible.readthedocs.io/projects/molecule/configuration/#delegated
   name: default
-  safe_files: ['*']
 # lint support is removed
 # See https://github.com/ansible/molecule/discussions/3914
 #lint: |
