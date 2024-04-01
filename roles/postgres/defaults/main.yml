@@ -30,7 +30,7 @@ _postgres_image_version: latest
 # Assign a preexisting priority class to the postgres pod
 database: {}
 _database:
-  # Name of k8s secret containing:
+  # Name of kubernetes secret containing:
   # - postgres host
   # - username
   # - password

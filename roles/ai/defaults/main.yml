@@ -42,7 +42,7 @@ no_log: false
 # ----------------------------------------
 auth: {}
 _auth:
-  # Name of k8s secret containing Authentication:
+  # Name of kubernetes secret containing Authentication:
   # - aap_api_url
   # - social_auth_aap_key
   # - social_auth_aap_secret
@@ -76,7 +76,7 @@ _api:
 # ----------------------------------------
 ai: {}
 _ai:
-  # Name of k8s secret containing WCA:
+  # Name of kubernetes secret containing WCA:
   # - username
   # - inference_url
   # - model_mesh_api_key
