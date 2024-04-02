@@ -79,16 +79,14 @@ spec:
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:advanced
         - urn:alm:descriptor:io.kubernetes:Secret
-      - displayName: AI Image
+      - displayName: API container image
         path: image
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:advanced
-        - urn:alm:descriptor:com.tectonic.ui:hidden
-      - displayName: AI Image Version
+      - displayName: API container image Version
         path: image_version
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:advanced
-        - urn:alm:descriptor:com.tectonic.ui:hidden
       - displayName: Additional labels defined on the resource, which should be propagated
           to child resources
         path: additional_labels

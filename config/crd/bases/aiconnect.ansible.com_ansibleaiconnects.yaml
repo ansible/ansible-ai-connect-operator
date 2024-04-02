@@ -49,15 +49,15 @@ spec:
                   - IfNotPresent
                   - ifnotpresent
               image_pull_secrets:
-                description: Image pull secrets for app and database containers
+                description: Image pull secrets for the API and database containers
                 type: array
                 items:
                   type: string
               image:
-                description: Registry path to AI container image to use
+                description: Registry path to API container image to use
                 type: string
               image_version:
-                description: AI container image tag or version to use
+                description: API container image tag or version to use
                 type: string
               additional_labels:
                 description: Additional labels defined on the resource, which should be propagated to child resources
