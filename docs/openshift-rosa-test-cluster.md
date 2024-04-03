@@ -64,7 +64,7 @@ type: kubernetes.io/dockerconfigjson
 ```
 See [here](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/#registry-secret-existing-credentials) regarding how to retrieve the `.dockerconfigjson` value. 
 
-Once the `CatalogSource` has been successfully install the Operator can be installed into the `namespace` using the Operator Hub within the OpenShift console.
+Once the `CatalogSource` has been successfully deployed the Operator can be installed into the `namespace` using the Operator Hub within the OpenShift console.
 
 ### Installing from the CLI
 
