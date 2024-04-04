@@ -23,6 +23,7 @@ jobs:
       uses: medyagh/setup-minikube@latest
       with:
         addons: storage-provisioner,default-storageclass
+        memory: 7800m
 
     - name: Sleep for 3 minutes
       run: sleep 180
