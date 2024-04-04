@@ -19,4 +19,6 @@
     definition: '{{ item }}'
     state: '{{ state }}'
     wait: yes
+    wait_sleep: 15
+    wait_timeout: 300
   loop: '{{ resources.stdout | from_yaml_all | list }}'
