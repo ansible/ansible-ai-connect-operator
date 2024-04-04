@@ -21,6 +21,8 @@ jobs:
 
     - name: Start minikube
       uses: medyagh/setup-minikube@latest
+      with:
+        addons: storage-provisioner,default-storageclass
 
     - name: Sleep for 3 minutes
       run: sleep 180
