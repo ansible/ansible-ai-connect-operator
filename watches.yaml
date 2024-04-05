@@ -3,5 +3,5 @@
 - version: v1alpha1
   group: aiconnect.ansible.com
   kind: AnsibleAIConnect
-  playbook: playbooks/ansibleaiconnect.yaml
+  playbook: playbooks/ansibleaiconnect.yml
 #+kubebuilder:scaffold:watch
