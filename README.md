@@ -20,6 +20,8 @@ Table of Contents
   - [Install the Ansible AI Connect Operator](#install-the-ansible-ai-connect-operator)
   - [Deploy AnsibleAIConnect](#deploy-ansibleaiconnect)
   - [Advanced Configuration](#advanced-configuration)
+    - [Use external database](#use-external-database)
+    - [Deploying Ansible AI Connect Operator using OLM](#deploying-ansible-ai-connect-operator-using-olm)
     - [Admin user account configuration](#admin-user-account-configuration)
     - [Database Fields Encryption Configuration](#database-fields-encryption-configuration)
     - [Additional Advanced Configuration](#additional-advanced-configuration)
@@ -152,6 +154,16 @@ $ kubectl get secret my-aiconnect-admin-password -o jsonpath="{.data.password}" 
 ```
 
 ## Advanced Configuration
+
+### Use external database
+
+Ansible AI Connect can be configured to use an existing database. Here is an [example](/docs/openshift-rosa-test-cluster-external-postgres.md)
+
+
+### Deploying Ansible AI Connect Operator using OLM
+
+You can take advantage of the Operator Lifecycle Manager to deploy the operator.  Here is an [example](/docs/openshift-rosa-test-cluster.md)
+
 
 ### Admin user account configuration
 
