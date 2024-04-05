@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       DOCKER_CONFIG_JSON: ${{ secrets.TESTING_DOCKER_CONFIG_JSON }}
-      OPERATOR_IMAGE: quay.io/ansible/ansible-ai-connect-operator:{{ secrets.TESTING_OPERATOR_VERSION }}
+      OPERATOR_IMAGE: quay.io/ansible/ansible-ai-connect-operator:${{ secrets.TESTING_OPERATOR_VERSION }}
       DOCKER_API_VERSION: "1.41"
 
     steps:
