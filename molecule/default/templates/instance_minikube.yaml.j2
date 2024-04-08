@@ -14,6 +14,12 @@ spec:
   service_type: NodePort
   image_pull_secrets:
     - redhat-operators-pull-secret
+{% if wisdom_service_image %}
+  image: {{ wisdom_service_image }}
+{% endif %}
+{% if wisdom_service_version %}
+  image_version: {{ wisdom_service_version }}
+{% endif %}
   auth:
     aap_api_url: 'my-aap-api-url'
     social_auth_aap_key: 'my-aap-key'
