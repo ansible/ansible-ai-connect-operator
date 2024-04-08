@@ -1,11 +1,11 @@
-name: Molecule Tests :: Kind
+name: Molecule Tests (Kind)
 
 on:
   workflow_dispatch:
 
 jobs:
   build:
-    name: Molecule Tests :: Kind
+    name: Run Molecule Tests (Kind)
     timeout-minutes: 60
     runs-on: ubuntu-latest
     env:
@@ -46,7 +46,7 @@ jobs:
         with:
           payload: |
             {
-              "text": "Lightspeed Operator Molecule Tests :: Kind : ${{ job.status }}\nLink: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+              "text": "Lightspeed Operator Molecule Tests (Kind): ${{ job.status }}\nLink: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
             }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

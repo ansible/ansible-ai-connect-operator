@@ -1,10 +1,10 @@
-name: Molecule Tests :: Minikube
+name: Molecule Tests (Minikube)
 on:
   workflow_dispatch:
 
 jobs:
   build:
-    name: Molecule Tests :: Minikube
+    name: Run Molecule Tests (Minikube)
     timeout-minutes: 60
     runs-on: ubuntu-latest
     env:
@@ -54,7 +54,7 @@ jobs:
       with:
         payload: |
           {
-            "text": "Lightspeed Operator Molecule Tests :: Minikube : ${{ job.status }}\nLink: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            "text": "Lightspeed Operator Molecule Tests (Minikube): ${{ job.status }}\nLink: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
           }
       env:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
