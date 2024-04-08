@@ -1,0 +1,54 @@
+name: Molecule Tests :: Kind
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Molecule Tests :: Kind
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    env:
+      DOCKER_CONFIG_JSON: ${{ secrets.TESTING_DOCKER_CONFIG_JSON }}
+      OPERATOR_IMAGE: quay.io/ansible/ansible-ai-connect-operator:${{ secrets.TESTING_OPERATOR_VERSION }}
+      DOCKER_API_VERSION: "1.41"
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install Dependencies
+        run: |
+          pip install --upgrade pip
+          pip install ansible==9.3.0
+          pip install -r molecule/requirements.txt
+
+      - name: Install Collections
+        run: |
+          ansible-galaxy collection install -r molecule/requirements.yml
+
+      - name: Run Molecule
+        env:
+          MOLECULE_VERBOSITY: 3
+          PY_COLORS: '1'
+          ANSIBLE_FORCE_COLOR: '1'
+        run: |
+          sudo rm -f $(which kustomize)
+          make kustomize
+          KUSTOMIZE_PATH=$(readlink -f bin/kustomize) molecule test -s kind
+
+      - name: Report to slack
+        id: slack
+        uses: slackapi/slack-github-action@v1.23.0
+        with:
+          payload: |
+            {
+              "text": "Lightspeed Operator Molecule Tests :: Kind : ${{ job.status }}\nLink: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+        if: ${{ always() }}
