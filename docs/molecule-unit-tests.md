@@ -20,7 +20,7 @@ The `DOCKER_CONFIG_JSON` value should be obtained from your local `.docker/confi
 export DOCKER_CONFIG_JSON=`base64 --wrap=0 ~/.docker/config.json`
 ```
 
-For setting `DOCKER_CONFIG_JSON` on Mac, the `base64` usage is a bit different:
+**NOTE:** Mac Users should use the following to set `DOCKER_CONFIG_JSON` as the `base64` implementation is different:
 
 ```
 export DOCKER_CONFIG_JSON=`base64 -i ~/.docker/config.json`
@@ -52,4 +52,9 @@ GitHub Actions `runner-image` for `ubuntu-latest` already [includes](https://git
 Instruct `molecule` to run the `kind` scenario.
 ```
 molecule test -s kind
+```
+
+**NOTE:** `kind` uses `docker` by default. If you are using `podman` the following should be used to run the `kind` scenario:
+```
+KIND_EXPERIMENTAL_PROVIDER=podman molecule test -s kind
 ```
