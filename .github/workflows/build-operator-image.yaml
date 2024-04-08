@@ -14,7 +14,10 @@ jobs:
     runs-on: ubuntu-latest
     name: Push main image
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
 
       - name: Log into registry ghcr.io
         uses: docker/login-action@343f7c4344506bcbf9b4de18042ae17996df046d # v3.0.0
@@ -30,19 +33,52 @@ jobs:
           username: ${{ secrets.QUAY_USER }}
           password: ${{ secrets.QUAY_TOKEN }}
 
+      # Read the latest tag
+      - name: Get latest tag
+        id: latest_tag
+        uses: WyriHaximus/github-action-get-previous-tag@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Increment the patch version for snapshot builds
+      - name: Read semver version
+        id: next_tag
+        uses: WyriHaximus/github-action-next-semvers@v1
+        with:
+          version: ${{ steps.latest_tag.outputs.tag }}
+
+      - name: Semver tags
+        id: version_semver
+        run: |
+          REPO=quay.io/ansible/ansible-ai-connect-operator
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            echo "IMAGE_SEMVER_VERSION=${{ steps.next_tag.outputs.patch }}-pr-${{ github.event.pull_request.number }}.$(date +'%Y%m%d%H%M')" >> $GITHUB_ENV
+
+          elif [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            echo "IMAGE_SEMVER_VERSION=${{ steps.next_tag.outputs.patch }}-${{ github.ref_name }}-$( git rev-parse --short HEAD ).$(date +'%Y%m%d%H%M')" >> $GITHUB_ENV
+
+          else
+            echo "IMAGE_SEMVER_VERSION=${{ steps.next_tag.outputs.patch }}.$(date +'%Y%m%d%H%M')" >> $GITHUB_ENV
+          fi
+
       - name: Tag Name
         id: tag_name
         run: |
           REPO=quay.io/ansible/ansible-ai-connect-operator
           if [ "${{ github.event_name }}" == "pull_request" ]; then
-            echo "IMAGE_TAGS=-t ${REPO}:pr-${{ github.event.pull_request.number }}.$(date +'%Y%m%d%H%M') -t ${REPO}:pr-${{ github.event.pull_request.number }}" >> $GITHUB_OUTPUT
+            echo "IMAGE_TAGS=-t ${REPO}:pr-${{ github.event.pull_request.number }}.$(date +'%Y%m%d%H%M') -t ${REPO}:pr-${{ github.event.pull_request.number }} -t ${REPO}:${IMAGE_SEMVER_VERSION}" >> $GITHUB_OUTPUT
             echo "LABEL quay.expires-after=3d" >> ./Dockerfile # tag expires in 3 days
+
           elif [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
-            echo "IMAGE_TAGS=-t ${REPO}:${{ github.ref_name }}-$( git rev-parse --short HEAD ).$(date +'%Y%m%d%H%M')" >> $GITHUB_OUTPUT
+            echo "IMAGE_TAGS=-t ${REPO}:${{ github.ref_name }}-$( git rev-parse --short HEAD ).$(date +'%Y%m%d%H%M') -t ${REPO}:${IMAGE_SEMVER_VERSION}" >> $GITHUB_OUTPUT
+
           else
-            echo "IMAGE_TAGS=-t ${REPO}:latest -t ${REPO}:$(cat ./.version).$(date +'%Y%m%d%H%M')" >> $GITHUB_OUTPUT
+            echo "IMAGE_TAGS=-t ${REPO}:latest -t ${REPO}:${IMAGE_SEMVER_VERSION}" >> $GITHUB_OUTPUT
           fi
-  
+
+      # ===================
+      # Operator
+      # -------------------
       - name: Build and Store Image @ghcr
         run: |
           IMG=ghcr.io/${{ github.repository_owner }}/ansible-ai-connect-operator:${{ github.sha }} make docker-buildx
@@ -50,3 +86,38 @@ jobs:
       - name: Publish Image to quay.io/ansible/ansible-ai-connect-operator:main
         run: |
           docker buildx imagetools create ghcr.io/${{ github.repository_owner }}/ansible-ai-connect-operator:${{ github.sha }} ${{ steps.tag_name.outputs.IMAGE_TAGS }}
+      # ===================
+
+      # ===================
+      # Operator bundle
+      # -------------------
+      - name: Build Bundle Image
+        run: |
+          make bundle bundle-build VERSION=${IMAGE_SEMVER_VERSION} IMG=ansible-ai-connect-operator:${IMAGE_SEMVER_VERSION} BUNDLE_IMG=ansible-ai-connect-bundle:${IMAGE_SEMVER_VERSION}
+
+      - name: Push Bundle Image
+        uses: redhat-actions/push-to-registry@v2.7.1
+        with:
+          image: ansible-ai-connect-bundle
+          tags: ${{ env.IMAGE_SEMVER_VERSION }}
+          registry: quay.io/ansible/
+          username: ${{ secrets.QUAY_USER }}
+          password: ${{ secrets.QUAY_TOKEN }}
+      # ===================
+
+      # ===================
+      # Operator catalog
+      # -------------------
+      - name: Build Catalog Image
+        run: |
+          make catalog-build CATALOG_IMG=ansible-ai-connect-catalog:${IMAGE_SEMVER_VERSION} BUNDLE_IMG=quay.io/ansible/ansible-ai-connect-bundle:${IMAGE_SEMVER_VERSION}
+
+      - name: Push Catalog Image
+        uses: redhat-actions/push-to-registry@v2.7.1
+        with:
+          image: ansible-ai-connect-catalog
+          tags: ${{ env.IMAGE_SEMVER_VERSION }}
+          registry: quay.io/ansible/
+          username: ${{ secrets.QUAY_USER }}
+          password: ${{ secrets.QUAY_TOKEN }}
+      # ===================
