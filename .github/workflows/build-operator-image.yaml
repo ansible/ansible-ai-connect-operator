@@ -65,4 +65,4 @@ jobs:
 
       - name: Publish Image to quay.io/ansible/ansible-ai-connect-bundle:main
         run: |
-          docker buildx imagetools create ghcr.io/${{ github.repository_owner }}/ansible-ai-connect-operator:${{ github.sha }} ${{ steps.tag_name.outputs.IMAGE_TAGS }}
+          docker buildx imagetools create ghcr.io/${{ github.repository_owner }}/ansible-ai-connect-operator:${{ github.sha }} ${{ steps.bundle.outputs.IMAGE_TAGS }}
