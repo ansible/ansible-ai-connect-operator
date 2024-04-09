@@ -24,7 +24,6 @@ jobs:
       - name: Install Dependencies
         run: |
           pip install --upgrade pip
-          pip install ansible==9.3.0
           pip install -r molecule/requirements.txt
 
       - name: Install Collections

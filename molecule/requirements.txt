@@ -1,7 +1,8 @@
-ansible-core
-molecule==6.0.3
+ansible==9.4.0
+ansible-core==2.16.5
+molecule==24.2.0
 kubernetes==29.0.0
 
 # See https://github.com/docker/docker-py/issues/3113
+# See https://github.com/docker/docker-py/pull/3116
 requests<2.29.0
-urllib3<2.0
