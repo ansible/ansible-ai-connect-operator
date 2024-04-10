@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       tag_name:
-        description: 'Name for the tag of the release.'
+        description: 'semver tag of the release (do not include a "v" prefix).'
         required: true
       quay_registry:
         description: 'Quay registry to push to.'
@@ -44,7 +44,7 @@ jobs:
       - name: Log into registry quay.io
         uses: docker/login-action@343f7c4344506bcbf9b4de18042ae17996df046d    # v3.0.0
         with:
-          registry: quay.io/ansible/
+          registry: quay.io
           username: ${{ secrets.QUAY_USER }}
           password: ${{ secrets.QUAY_TOKEN }}
 
@@ -52,8 +52,7 @@ jobs:
         run: |
           docker buildx imagetools create \
             ghcr.io/${{ github.repository }}:${TAG_NAME} \
-            --tag ${QUAY_REGISTRY}/ansible-ai-connect-operator:${TAG_NAME} \
-            --tag ${QUAY_REGISTRY}/ansible-ai-connect-operator:latest
+            --tag ${QUAY_REGISTRY}/ansible-ai-connect-operator:${TAG_NAME}
         working-directory: ansible-ai-connect-operator
 
       - name: Pull Stored Image and Publish ansible-ai-connect-operator:latest
@@ -65,14 +64,14 @@ jobs:
 
       - name: Build Bundle Image
         run: |
-          make bundle bundle-build IMG=ansible-ai-connect-operator:${TAG_NAME} VERSION=${TAG_NAME} BUNDLE_IMG=ansible-ai-connect-operator-bundle:${TAG_NAME}
-          docker tag ansible-ai-connect-operator-bundle:${TAG_NAME} ansible-ai-connect-operator-bundle:latest
+          make bundle bundle-build IMG=ansible-ai-connect-operator:${TAG_NAME} VERSION=${TAG_NAME} BUNDLE_IMG=ansible-ai-connect-bundle:${TAG_NAME}
+          docker tag ansible-ai-connect-bundle:${TAG_NAME} ansible-ai-connect-bundle:latest
         working-directory: ansible-ai-connect-operator
 
       - name: Push Bundle Image
         uses: redhat-actions/push-to-registry@v2.7.1
         with:
-          image: ansible-ai-connect-operator-bundle
+          image: ansible-ai-connect-bundle
           tags: ${{ env.TAG_NAME }} latest
           registry: quay.io/ansible/
           username: ${{ secrets.QUAY_USER }}
@@ -80,14 +79,14 @@ jobs:
 
       - name: Build Catalog Image
         run: |
-          make catalog-build CATALOG_IMG=ansible-ai-connect-operator-catalog:${TAG_NAME} BUNDLE_IMG=quay.io/ansible/ansible-ai-connect-operator-bundle:${TAG_NAME}
-          docker tag ansible-ai-connect-operator-catalog:${TAG_NAME} ansible-ai-connect-operator-catalog:latest
+          make catalog-build CATALOG_IMG=ansible-ai-connect-catalog:${TAG_NAME} BUNDLE_IMG=quay.io/ansible/ansible-ai-connect-bundle:${TAG_NAME}
+          docker tag ansible-ai-connect-catalog:${TAG_NAME} ansible-ai-connect-catalog:latest
         working-directory: ansible-ai-connect-operator
 
       - name: Push Catalog Image
         uses: redhat-actions/push-to-registry@v2.7.1
         with:
-          image: ansible-ai-connect-operator-catalog
+          image: ansible-ai-connect-catalog
           tags: ${{ env.TAG_NAME }} latest
           registry: quay.io/ansible/
           username: ${{ secrets.QUAY_USER }}
