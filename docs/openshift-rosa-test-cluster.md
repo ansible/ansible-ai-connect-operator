@@ -4,6 +4,10 @@ This document assumes you have an OpenShift `ROSA` cluster running.
 
 See https://docs.openshift.com/rosa/welcome/index.html
 
+## Permissions
+
+Users will require the OpenShift Dedicated Admins [role](https://docs.openshift.com/dedicated/authentication/osd-admin-roles.html#the-dedicated-admin-role) for the namespace in which they wish to install the Operator. This is called `dedicated-admins-project` on `stage2-west` but may differ on other clusters.
+
 ## Create a namespace
 
 Login to the cluster:

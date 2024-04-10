@@ -6,6 +6,10 @@ See https://docs.openshift.com/rosa/welcome/index.html
 
 It also assumes you have deployed the Operator. See [here](openshift-rosa-test-cluster.md#install-the-operator).
 
+## Permissions
+
+Users will require the OpenShift Dedicated Admins [role](https://docs.openshift.com/dedicated/authentication/osd-admin-roles.html#the-dedicated-admin-role) for the namespace in which they wish to install the Operator. This is called `dedicated-admins-project` on `stage2-west` but may differ on other clusters.
+
 ## Create the database `Secret`
 
 If `database.database_secret` is not set in the `AnsibleAIConnect` definition the Operator will create a _managed_ instance of Postgres.
