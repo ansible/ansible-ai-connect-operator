@@ -52,13 +52,13 @@ jobs:
         run: |
           REPO=quay.io/ansible/ansible-ai-connect-operator
           if [ "${{ github.event_name }}" == "pull_request" ]; then
-            echo "IMAGE_SEMVER_VERSION=${{ steps.next_tag.outputs.patch }}-pr-${{ github.event.pull_request.number }}.$(date +'%Y%m%d%H%M')" >> $GITHUB_ENV
+            echo "IMAGE_SEMVER_VERSION=${{ steps.next_tag.outputs.patch }}-pr-${{ github.event.pull_request.number }}-$(date +'%Y%m%d%H%M')" >> $GITHUB_ENV
 
           elif [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
-            echo "IMAGE_SEMVER_VERSION=${{ steps.next_tag.outputs.patch }}-${{ github.ref_name }}-$( git rev-parse --short HEAD ).$(date +'%Y%m%d%H%M')" >> $GITHUB_ENV
+            echo "IMAGE_SEMVER_VERSION=${{ steps.next_tag.outputs.patch }}-${{ github.ref_name }}-$( git rev-parse --short HEAD )-$(date +'%Y%m%d%H%M')" >> $GITHUB_ENV
 
           else
-            echo "IMAGE_SEMVER_VERSION=${{ steps.next_tag.outputs.patch }}.$(date +'%Y%m%d%H%M')" >> $GITHUB_ENV
+            echo "IMAGE_SEMVER_VERSION=${{ steps.next_tag.outputs.patch }}-$(date +'%Y%m%d%H%M')" >> $GITHUB_ENV
           fi
 
       - name: Tag Name
@@ -66,14 +66,14 @@ jobs:
         run: |
           REPO=quay.io/ansible/ansible-ai-connect-operator
           if [ "${{ github.event_name }}" == "pull_request" ]; then
-            echo "IMAGE_TAGS=-t ${REPO}:pr-${{ github.event.pull_request.number }}.$(date +'%Y%m%d%H%M') -t ${REPO}:pr-${{ github.event.pull_request.number }} -t ${REPO}:${IMAGE_SEMVER_VERSION}" >> $GITHUB_OUTPUT
+            echo "IMAGE_TAGS=-t ${REPO}:${IMAGE_SEMVER_VERSION}" >> $GITHUB_OUTPUT
             echo "LABEL quay.expires-after=3d" >> ./Dockerfile # tag expires in 3 days
 
           elif [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
-            echo "IMAGE_TAGS=-t ${REPO}:${{ github.ref_name }}-$( git rev-parse --short HEAD ).$(date +'%Y%m%d%H%M') -t ${REPO}:${IMAGE_SEMVER_VERSION}" >> $GITHUB_OUTPUT
+            echo "IMAGE_TAGS=-t ${REPO}:${IMAGE_SEMVER_VERSION}" >> $GITHUB_OUTPUT
 
           else
-            echo "IMAGE_TAGS=-t ${REPO}:latest -t ${REPO}:${IMAGE_SEMVER_VERSION}" >> $GITHUB_OUTPUT
+            echo "IMAGE_TAGS=-t ${REPO}:${IMAGE_SEMVER_VERSION} -t ${REPO}:latest" >> $GITHUB_OUTPUT
           fi
 
       # ===================
