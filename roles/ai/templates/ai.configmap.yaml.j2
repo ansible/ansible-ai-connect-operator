@@ -8,10 +8,18 @@ metadata:
   labels:
     {{ lookup("template", "../common/templates/labels/common.yaml.j2") | indent(width=4) | trim }}
 data:
-  # Operator specific settings
+  # 'onprem' specific settings
   COMMERCIAL_DOCUMENTATION_URL: "https://access.redhat.com/documentation/en-us/red_hat_ansible_lightspeed_with_ibm_watsonx_code_assistant/2.x_latest/html/red_hat_ansible_lightspeed_with_ibm_watsonx_code_assistant_user_guide/index"
   ENABLE_ADDITIONAL_CONTEXT: "true"
+  ENABLE_ANSIBLE_LINT_POSTPROCESS: "true"
+  ANSIBLE_AI_ENABLE_TECH_PREVIEW: "false"
   DEPLOYMENT_MODE: "onprem"
+
+  # AI specific settings
+  ANSIBLE_AI_MODEL_MESH_API_TIMEOUT: "15"
+  HUGGINGFACE_HUB_CACHE: /var/www/model-cache
+  SENTENCE_TRANSFORMERS_HOME: /var/www/model-cache
+  XDG_CACHE_HOME: /tmp
 
   # Remove 'deployed_region' from the /status/check endpoint
   # See https://issues.redhat.com/browse/AAP-21787
@@ -21,6 +29,8 @@ data:
   ENABLE_HEALTHCHECK_ATTRIBUTION: "false"
   ENABLE_HEALTHCHECK_AUTHORIZATION: "false"
   ENABLE_HEALTHCHECK_SECRET_MANAGER: "false"
+
+  PYTHONUNBUFFERED: "1"
 
   # Custom user variables
 {% for item in extra_settings | default([]) %}

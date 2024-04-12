@@ -84,8 +84,6 @@ spec:
           - configMapRef:
               name: '{{ ansible_operator_meta.name }}-{{ deployment_type }}-env-properties'
         env:
-        - name: PYTHONUNBUFFERED
-          value: '1'
         - name: AAP_API_URL
           valueFrom:
             secretKeyRef:
