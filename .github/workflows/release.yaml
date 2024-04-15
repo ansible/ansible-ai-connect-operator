@@ -64,7 +64,7 @@ jobs:
 
       - name: Build Bundle Image
         run: |
-          make bundle bundle-build IMG=ansible-ai-connect-operator:${TAG_NAME} VERSION=${TAG_NAME} BUNDLE_IMG=ansible-ai-connect-bundle:${TAG_NAME}
+          make bundle bundle-build IMG=${QUAY_REGISTRY}/ansible-ai-connect-operator:${TAG_NAME} VERSION=${TAG_NAME} BUNDLE_IMG=${QUAY_REGISTRY}/ansible-ai-connect-bundle:${TAG_NAME}
           docker tag ansible-ai-connect-bundle:${TAG_NAME} ansible-ai-connect-bundle:latest
         working-directory: ansible-ai-connect-operator
 
@@ -79,7 +79,7 @@ jobs:
 
       - name: Build Catalog Image
         run: |
-          make catalog-build CATALOG_IMG=ansible-ai-connect-catalog:${TAG_NAME} BUNDLE_IMG=quay.io/ansible/ansible-ai-connect-bundle:${TAG_NAME}
+          make catalog-build CATALOG_IMG=${QUAY_REGISTRY}/ansible-ai-connect-catalog:${TAG_NAME} BUNDLE_IMG=${QUAY_REGISTRY}/ansible-ai-connect-bundle:${TAG_NAME}
           docker tag ansible-ai-connect-catalog:${TAG_NAME} ansible-ai-connect-catalog:latest
         working-directory: ansible-ai-connect-operator
 
