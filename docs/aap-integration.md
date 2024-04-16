@@ -9,7 +9,7 @@ Lightspeed service depends on a deployed instance of Ansible Automation Platform
 * Login to your AAP
 * In the left hand side navigation menu, click `Administration/Application`
 
-  ![Administration/Application](images/aap-applications.png =100x))
+  ![Administration/Application](images/aap-applications.png =100x)
   
 * Click `Add` to create a new application
 * Fill in the application details. This is an example
