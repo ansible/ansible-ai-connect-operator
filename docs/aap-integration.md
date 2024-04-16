@@ -21,18 +21,18 @@ Lightspeed service depends on a deployed instance of Ansible Automation Platform
 * Now you will have collected the following
   * The application `Client ID` 
   * The application `Client secret` 
-  * The AAP API URL which is normally `<your_app_web_url>/api/`
+  * The AAP API URL which is normally `<aap_web_url>/api/`
 
 
 ## When instantiating Ansible Lightspeed CR
 
-The 3 fields you will need to fill come from the above step:
+When you instantiate an Ansible Lightspeed Custom Resource in the OpenShift cluster, the 3 pieces of information collected from the above will help you fill
 1. AAP authentication key: The application `Client ID`
 2. AAP authentication secret: The application `Client secret`
-3. AAP API URL: AAP API URL which is normally `<your_aap_web_url>/api/`
+3. AAP API URL: The AAP API URL `<aap_web_url>/api/`
 
-## After Lightspeed CR is created
+## After Ansible Lightspeed CR is created
 
 * A route to the Lightspeed API service will be provisioned in the namespace
 * Revisit the application object you have created in the [Create An Application in AAP](create-an-application-in-aap) section
-* Update the `Redirect URIs` field with `<lightspeed_route>/completion/aap/` where `<lightspeed_route>` is what you just obtained in first step.
+* Update the `Redirect URIs` field with `<lightspeed_route>/completion/aap/` where `<lightspeed_route>` is the route you just obtained.
