@@ -23,6 +23,12 @@ spec:
                   values:
                     - linux
       containers:
+      - name: ansibleaiconnect-manager
+        args:
+        - "--health-probe-bind-address=:6789"
+        - "--metrics-bind-address=127.0.0.1:8080"
+        - "--leader-elect"
+        - "--leader-election-id=ansible-ai-connect-operator"
       - name: kube-rbac-proxy
         securityContext:
           allowPrivilegeEscalation: false
@@ -46,9 +52,3 @@ spec:
           requests:
             cpu: 5m
             memory: 64Mi
-      - name: ansibleaiconnect-manager
-        args:
-        - "--health-probe-bind-address=:6789"
-        - "--metrics-bind-address=127.0.0.1:8080"
-        - "--leader-elect"
-        - "--leader-election-id=ansible-ai-connect-operator"
