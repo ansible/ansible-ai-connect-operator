@@ -216,7 +216,7 @@ The secret should be formatted as follows:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: custom-eda-db-encryption-secret
+  name: custom-aiconnect-db-encryption-secret
   namespace: <target namespace>
 stringData:
   secret_key: supersecuresecretkey
@@ -228,7 +228,7 @@ Then specify the name of the k8s secret on the `AnsibleAIConnect` spec:
 ---
 spec:
   ...
-  db_fields_encryption_secret: custom-eda-db-encryption-secret
+  db_fields_encryption_secret: custom-aiconnect-db-encryption-secret
 ```
 
 ### Additional Advanced Configuration

@@ -1,6 +1,6 @@
 ## Deploying a specific version of `AnsibleAIConnect`
 
-There are a few variables that are customizable for eda the image management.
+There are a few variables that are customizable for `AnsibleAIConnect` image management.
 
 | Name                     | Description               | Default                                          |
 |--------------------------|---------------------------|--------------------------------------------------|
@@ -17,7 +17,7 @@ Example of customization could be:
 ---
 spec:
   ...
-  image: myorg/my-custom-eda
+  image: myorg/my-custom-aiconnect
   image_version: main
   image_pull_policy: Always
   image_pull_secrets:

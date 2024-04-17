@@ -5,7 +5,7 @@ deployment_type: 'ansible-ai-connect'
 database_name: 'wisdom'
 database_username: 'wisdom_service_user'
 
-_postgres_image: quay.io/sclorg/postgresql-13-c9s
+_postgres_image: quay.io/sclorg/postgresql-15-c9s
 _postgres_image_version: latest
 
 # Add a nodeSelector for the Postgres pods.
@@ -23,7 +23,7 @@ _postgres_image_version: latest
 #   postgres_tolerations: |
 #     - key: "dedicated"
 #       operator: "Equal"
-#       value: "EDA"
+#       value: "AnsibleAIConnect"
 #       effect: "NoSchedule"
 
 
