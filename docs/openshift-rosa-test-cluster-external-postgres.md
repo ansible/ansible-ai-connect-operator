@@ -49,7 +49,7 @@ oc new-app \
   -e POSTGRESQL_USER=<username> \
   -e POSTGRESQL_PASSWORD=<password> \
   -e POSTGRESQL_DATABASE=<database name> \
-  registry.redhat.io/rhscl/postgresql-13-rhel7
+  registry.redhat.io/rhel8/postgresql-15
 ```
 ### Create the database `Secret`
 ```yaml
@@ -62,8 +62,8 @@ data:
   database: <base64 encoded database name>
   username: <base64 encoded username>
   password: <base64 encoded password>
-  # base64 encode "postgresql-13-rhel7.<target-namespace>.svc.cluster.local"
-  # 'postgresql-13-rhel7' is the name of the Postgres image/deployment
+  # base64 encode "postgresql-15.<target-namespace>.svc.cluster.local"
+  # 'postgresql-15' is the name of the Postgres image/deployment
   host: <base64 encoded host>
   port: <base64 encoded port>
 type: Opaque
