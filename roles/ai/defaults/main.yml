@@ -95,9 +95,9 @@ _ai:
 # ========================================
 # Service type and related configuration
 # ----------------------------------------
-service_type: ClusterIP
-loadbalancer_protocol: 'http'
-loadbalancer_port: '80'
+service_type: 'ClusterIP'
+loadbalancer_protocol: ''
+loadbalancer_port: ''
 # Port to be used for NodePort configuration, default is to auto-assign a port between 30000-32768
 # nodeport_port: '30080'
 # ========================================
@@ -106,8 +106,8 @@ loadbalancer_port: '80'
 # ========================================
 # Ingress/Route
 # ----------------------------------------
-ingress_type: 'Ingress'
-ingress_class_name: 'nginx'
+ingress_type: 'Route'
+ingress_class_name: ''
 ingress_path: '/'
 ingress_path_type: 'Prefix'
 ingress_api_version: 'networking.k8s.io/v1'

@@ -602,17 +602,16 @@ spec:
                   - clusterip
                   - NodePort
                   - nodeport
+                default: ClusterIP
               loadbalancer_protocol:
                 description: Protocol to use for the loadbalancer
                 type: string
-                default: http
                 enum:
                   - http
                   - https
               loadbalancer_port:
                 description: Port to use for the loadbalancer
                 type: integer
-                default: 80
               nodeport_port:
                 description: Port to use for the nodeport
                 type: integer
@@ -625,6 +624,7 @@ spec:
                   - ingress
                   - Route
                   - route
+                default: Route
               ingress_class_name:
                 description: The name of ingress class to use instead of the cluster default.
                 type: string
@@ -649,7 +649,6 @@ spec:
               route_tls_termination_mechanism:
                 description: The secure TLS termination mechanism to use
                 type: string
-                default: Edge
                 enum:
                   - Edge
                   - edge

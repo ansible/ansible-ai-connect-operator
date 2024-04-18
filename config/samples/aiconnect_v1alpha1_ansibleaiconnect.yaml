@@ -10,7 +10,8 @@ metadata:
   name: ansibleaiconnect-sample
 spec:
   no_log: false
-  ingress_type: Ingress
+  service_type: ClusterIP
+  ingress_type: Route
   auth:
     aap_api_url: 'my-aap-api-url'
     social_auth_aap_key: 'my-aap-key'
