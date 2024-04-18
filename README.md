@@ -19,6 +19,7 @@ Table of Contents
     - [Prerequisites](#prerequisites)
   - [Install the Ansible AI Connect Operator](#install-the-ansible-ai-connect-operator)
   - [Deploy AnsibleAIConnect](#deploy-ansibleaiconnect)
+- [Integrating with Ansible Automation Platform and IBM watsonx Code Assistant](#integrating-with-ansible-automation-platform-and-ibm-watsonx-code-assistant)
   - [Advanced Configuration](#advanced-configuration)
     - [Use external database](#use-external-database)
     - [Deploying Ansible AI Connect Operator using OLM](#deploying-ansible-ai-connect-operator-using-olm)
@@ -152,6 +153,10 @@ By default, the admin user is `admin` and the password is available in the `<res
 ```bash
 $ kubectl get secret my-aiconnect-admin-password -o jsonpath="{.data.password}" | base64 --decode ; echo
 ```
+
+# Integrating with Ansible Automation Platform and IBM watsonx Code Assistant
+
+Go [here](docs/aap-wca-integrations.md)
 
 ## Advanced Configuration
 
