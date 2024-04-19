@@ -8,12 +8,14 @@ metadata:
   labels:
     {{ lookup("template", "../common/templates/labels/common.yaml.j2") | indent(width=4) | trim }}
 data:
-  # 'onprem' specific settings
+  # 'onprem' specific environment variables settings
   COMMERCIAL_DOCUMENTATION_URL: "https://access.redhat.com/documentation/en-us/red_hat_ansible_lightspeed_with_ibm_watsonx_code_assistant/2.x_latest/html/red_hat_ansible_lightspeed_with_ibm_watsonx_code_assistant_user_guide/index"
   ENABLE_ADDITIONAL_CONTEXT: "true"
   ENABLE_ANSIBLE_LINT_POSTPROCESS: "true"
   ANSIBLE_AI_ENABLE_TECH_PREVIEW: "false"
   DEPLOYMENT_MODE: "onprem"
+  ENABLE_HEALTHCHECK_WCA_ONPREM: {% combined_ai.model_mesh_type == 'wca-onprem' %}
+  ENABLE_HEALTHCHECK_WCA: {% combined_ai.model_mesh_type == 'wca' %}
 
   # AI specific settings
   ANSIBLE_AI_MODEL_MESH_API_TIMEOUT: "15"
