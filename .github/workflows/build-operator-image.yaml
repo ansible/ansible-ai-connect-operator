@@ -93,7 +93,7 @@ jobs:
       # -------------------
       - name: Build Bundle Image
         run: |
-          make bundle bundle-build VERSION=${IMAGE_SEMVER_VERSION} IMG=ansible-ai-connect-operator:${IMAGE_SEMVER_VERSION} BUNDLE_IMG=ansible-ai-connect-bundle:${IMAGE_SEMVER_VERSION}
+          make bundle bundle-build VERSION=${IMAGE_SEMVER_VERSION} IMG=quay.io/ansible/ansible-ai-connect-operator:${IMAGE_SEMVER_VERSION} BUNDLE_IMG=ansible-ai-connect-bundle:${IMAGE_SEMVER_VERSION}
 
       - name: Push Bundle Image
         uses: redhat-actions/push-to-registry@v2.7.1
