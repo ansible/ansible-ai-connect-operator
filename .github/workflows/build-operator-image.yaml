@@ -88,7 +88,7 @@ jobs:
       # -------------------
       - name: Build and Store Image @ghcr
         run: |
-          BUILD_ARGS="--build-arg DEFAULT_AI_CONNECT_VERSION=${LATEST_AI_CONNECT_VERSION}" \
+          BUILD_ARGS="--build-arg DEFAULT_AI_CONNECT_VERSION=${LATEST_AI_CONNECT_VERSION} --build-arg OPERATOR_VERSION=${IMAGE_SEMVER_VERSION}" \
           IMG=ghcr.io/${{ github.repository_owner }}/ansible-ai-connect-operator:${{ github.sha }} \
           make docker-buildx
 
