@@ -1,0 +1,43 @@
+---
+- name: Update aiconnect.ansible.com/v1alpha1.AnsibleAIConnect instance model_name
+  k8s:
+    state: present
+    namespace: '{{ namespace }}'
+    definition: "{{ lookup('template', 'update_instance_model_name.yaml.j2') | from_yaml }}"
+    apply: true
+    wait: yes
+    wait_timeout: 60
+    wait_condition:
+      type: Running
+      reason: Successful
+      status: "True"
+
+- name: Wait for provisioning of the updated API Pod to start
+  k8s_info:
+    kind: Pod
+    api_version: v1
+    label_selectors:
+      - "app.kubernetes.io/component=ansible-ai-connect-api"
+  register: ai_pods
+  until:
+    - "ai_pods['resources'] | length"
+    - "ai_pods['resources'] | length == 2"
+  retries: 20
+  delay: 5
+
+- name: Wait for the updated API Pod to be the only one available
+  k8s_info:
+    kind: Pod
+    api_version: v1
+    label_selectors:
+      - "app.kubernetes.io/component=ansible-ai-connect-api"
+    field_selectors:
+      - status.phase=Running
+  register: ai_pod
+  until:
+    - "ai_pod['resources'] | length"
+    - "ai_pod['resources'] | length == 1"
+    - "ai_pod['resources'][0]['status']['phase'] == 'Running'"
+    - "ai_pod['resources'][0]['status']['containerStatuses'][0]['ready'] == true"
+  retries: 30
+  delay: 5

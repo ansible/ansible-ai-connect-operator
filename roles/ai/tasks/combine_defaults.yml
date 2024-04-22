@@ -9,11 +9,14 @@
 - name: Display Auth variables
   debug:
     var: combined_auth
+  no_log: "{{ no_log }}"
 
 - name: Display API variables
   debug:
     var: combined_api
+  no_log: "{{ no_log }}"
 
 - name: Display AI variables
   debug:
     var: combined_ai
+  no_log: "{{ no_log }}"

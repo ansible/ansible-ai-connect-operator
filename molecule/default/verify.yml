@@ -11,10 +11,11 @@
 
   tasks:
     - block:
-        - name: Import all test files from tasks/
+        - name: Import all test files from tasks
           include_tasks: '{{ item }}'
           with_fileglob:
-            - tasks/health_check_test.yml
+            - tasks/1_0_health_check_test.yml
+            - tasks/2_0_ai_config_test.yml
           tags:
             - always
       rescue:

@@ -1,5 +1,5 @@
 ---
-- include_tasks: create_instance.yml
+- include_tasks: 1_1_create_instance.yml
 
 - block:
     - name: Get API Pod details
@@ -18,7 +18,7 @@
           - app.kubernetes.io/name = ansibleaiconnect-sample
       register: aiconnect_api_service
 
-    - name: Basic Health Check
+    - name: Get Health Check
       uri:
         url: 'http://{{ service_host_ip }}:{{ service_host_port }}/check/'
         return_content: true
@@ -32,4 +32,4 @@
         that:
         - service_host_response.status == 200
         - service_host_response.json.status == 'ok'
-        fail_msg: Service did not return expected response
+        fail_msg: /check endpoint did not return expected response. Expected HTTP200, OK.
