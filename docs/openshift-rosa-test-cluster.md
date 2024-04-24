@@ -4,6 +4,8 @@ This document assumes you have an OpenShift `ROSA` cluster running.
 
 See https://docs.openshift.com/rosa/welcome/index.html
 
+Whilst this document was written specifically for OpenShift `ROSA` the principles, guidance and examples given can be amended for other Kubernetes environments. Much of the work within this repository has been applied to local `minikube` environments too.
+
 ## Permissions
 
 Users will require the OpenShift Dedicated Admins [role](https://docs.openshift.com/dedicated/authentication/osd-admin-roles.html#the-dedicated-admin-role) for the namespace in which they wish to install the Operator. At the time of writing this is called `dedicated-admins-project`.

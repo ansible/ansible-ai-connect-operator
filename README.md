@@ -164,6 +164,9 @@ Go [here](docs/aap-wca-integrations.md)
 
 Ansible AI Connect can be configured to use an existing database. Here is an [example](/docs/openshift-rosa-test-cluster-external-postgres.md)
 
+### Use existing `Secret`'s
+
+Ansible AI Connect can be configured to use existing `Secret`'s for both the `auth` and `ai` configuration. Here is an [example](/docs/openshift-rosa-test-cluster-external-secrets.md)
 
 ### Deploying Ansible AI Connect Operator using OLM
 
