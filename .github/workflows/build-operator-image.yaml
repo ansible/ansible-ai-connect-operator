@@ -60,10 +60,6 @@ jobs:
           REPO=quay.io/ansible/ansible-ai-connect-operator
           if [ "${{ github.event_name }}" == "pull_request" ]; then
             echo "IMAGE_SEMVER_VERSION=${{ steps.next_tag.outputs.patch }}-pr-${{ github.event.pull_request.number }}-$(date +'%Y%m%d%H%M')" >> $GITHUB_ENV
-
-          elif [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
-            echo "IMAGE_SEMVER_VERSION=${{ steps.next_tag.outputs.patch }}-${{ github.ref_name }}-$( git rev-parse --short HEAD )-$(date +'%Y%m%d%H%M')" >> $GITHUB_ENV
-
           else
             echo "IMAGE_SEMVER_VERSION=${{ steps.next_tag.outputs.patch }}-$(date +'%Y%m%d%H%M')" >> $GITHUB_ENV
           fi
@@ -75,10 +71,6 @@ jobs:
           if [ "${{ github.event_name }}" == "pull_request" ]; then
             echo "IMAGE_TAGS=-t ${REPO}:${IMAGE_SEMVER_VERSION}" >> $GITHUB_OUTPUT
             echo "LABEL quay.expires-after=3d" >> ./Dockerfile # tag expires in 3 days
-
-          elif [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
-            echo "IMAGE_TAGS=-t ${REPO}:${IMAGE_SEMVER_VERSION}" >> $GITHUB_OUTPUT
-
           else
             echo "IMAGE_TAGS=-t ${REPO}:${IMAGE_SEMVER_VERSION} -t ${REPO}:latest" >> $GITHUB_OUTPUT
           fi
@@ -86,15 +78,41 @@ jobs:
       # ===================
       # Operator
       # -------------------
-      - name: Build and Store Image @ghcr
-        run: |
-          BUILD_ARGS="--build-arg DEFAULT_AI_CONNECT_VERSION=${LATEST_AI_CONNECT_VERSION} --build-arg OPERATOR_VERSION=${IMAGE_SEMVER_VERSION}" \
-          IMG=ghcr.io/${{ github.repository_owner }}/ansible-ai-connect-operator:${{ github.sha }} \
-          make docker-buildx
+      # - name: Build and Store Image @ghcr
+      #   run: |
+      #     BUILD_ARGS="--build-arg DEFAULT_AI_CONNECT_VERSION=${LATEST_AI_CONNECT_VERSION} --build-arg OPERATOR_VERSION=${IMAGE_SEMVER_VERSION}" \
+      #     IMG=ansible-ai-connect-operator:${{ env.IMAGE_SEMVER_VERSION }} \
+      #     make docker-buildx
 
-      - name: Publish Image to quay.io/ansible/ansible-ai-connect-operator:main
-        run: |
-          docker buildx imagetools create ghcr.io/${{ github.repository_owner }}/ansible-ai-connect-operator:${{ github.sha }} ${{ steps.tag_name.outputs.IMAGE_TAGS }}
+      # - name: Publish Image to quay.io/ansible/ansible-ai-connect-operator:main
+      #   run: |
+      #     docker buildx imagetools create ${{ env.GHCR_IMG_OPERATOR }} ${{ steps.tag_name.outputs.IMAGE_TAGS }}
+
+
+      - name: Build Image
+        id: build-image
+        uses: redhat-actions/buildah-build@v2
+        with:
+          image: ansible-ai-connect-operator
+          # platforms: linux/amd64, linux/arm64
+          archs: amd64
+          tags: ${{ env.IMAGE_SEMVER_VERSION }}
+          containerfiles: |
+            ./Dockerfile
+          labels: |
+            quay.expires-after=3d
+          build-args: |
+            DEFAULT_AI_CONNECT_VERSION=${{ env.LATEST_AI_CONNECT_VERSION }}
+            OPERATOR_VERSION=${{ env.IMAGE_SEMVER_VERSION }}
+
+      - name: Push Bundle Image
+        uses: redhat-actions/push-to-registry@v2.7.1
+        with:
+          image: ansible-ai-connect-operator
+          tags: ${{ env.IMAGE_SEMVER_VERSION }}
+          registry: quay.io/ansible/
+          username: ${{ secrets.QUAY_USER }}
+          password: ${{ secrets.QUAY_TOKEN }}
       # ===================
 
       # ===================
