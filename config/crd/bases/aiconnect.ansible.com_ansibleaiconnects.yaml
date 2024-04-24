@@ -70,11 +70,11 @@ spec:
                 default: true
               auth:
                 description: Defines desired state of the Authentication resources
-                required:
-                  - aap_api_url
-                  - social_auth_aap_key
-                  - social_auth_aap_secret
                 properties:
+                  use_existing_secret:
+                    description: "Use an existing Secret for configuration."
+                    default: false
+                    type: boolean
                   auth_secret_name:
                     description: "Secret where the authentication configuration can be found. If not specified this secret will be generated."
                     type: string
@@ -227,13 +227,11 @@ spec:
                 type: object
               ai:
                 description: Defines desired state of the WCA resources
-                required:
-                  - username
-                  - inference_url
-                  - model_mesh_api_key
-                  - model_mesh_model_name
-                  - model_mesh_type
                 properties:
+                  use_existing_secret:
+                    description: "Use an existing Secret for configuration."
+                    default: false
+                    type: boolean
                   ai_secret_name:
                     description: "Secret where the AI configuration can be found. If not specified this secret will be generated."
                     type: string

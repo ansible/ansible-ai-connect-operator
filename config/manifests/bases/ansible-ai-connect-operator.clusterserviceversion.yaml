@@ -15,60 +15,82 @@ spec:
       kind: AnsibleAIConnect
       name: ansibleaiconnects.aiconnect.ansible.com
       specDescriptors:
+      - displayName: Use an existing authentication configuration secret
+        path: auth.use_existing_secret
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:advanced
+        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
       - displayName: External authentication configuration secret
         path: auth.auth_secret_name
         x-descriptors:
         - urn:alm:descriptor:io.kubernetes:Secret
+        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:auth.use_existing_secret:true
+      - displayName: Use an existing AI configuration secret
+        path: ai.use_existing_secret
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:advanced
+        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
       - displayName: External AI configuration secret
         path: ai.ai_secret_name
         x-descriptors:
         - urn:alm:descriptor:io.kubernetes:Secret
+        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:ai.use_existing_secret:true
       - displayName: AAP API URL
         path: auth.aap_api_url
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:text
+        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:auth.use_existing_secret:false
       - displayName: AAP authentication key
         path: auth.social_auth_aap_key
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:password
+        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:auth.use_existing_secret:false
       - displayName: AAP authentication secret
         path: auth.social_auth_aap_secret
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:password
+        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:auth.use_existing_secret:false
       - displayName: Enable SSL verification
         path: auth.social_auth_verify_ssl
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:advanced
         - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:auth.use_existing_secret:false
       - displayName: A list of strings representing the host/domain names that the
           AI instance can serve
         path: auth.ansible_wisdom_domain
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:advanced
         - urn:alm:descriptor:com.tectonic.ui:text
+        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:auth.use_existing_secret:false
       - displayName: AI provider username
         path: ai.username
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:text
+        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:ai.use_existing_secret:false
         - urn:alm:descriptor:com.tectonic.ui:fieldDependency:ai.model_mesh_type:wca-onprem
       - displayName: AI provider endpoint
         path: ai.inference_url
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:text
+        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:ai.use_existing_secret:false
       - displayName: AI provider API Key
         path: ai.model_mesh_api_key
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:password
+        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:ai.use_existing_secret:false
       - displayName: AI provider Model Name
         path: ai.model_mesh_model_name
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:password
+        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:ai.use_existing_secret:false
       - displayName: Type of AI provider
         path: ai.model_mesh_type
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:advanced
         - urn:alm:descriptor:com.tectonic.ui:select:wca
         - urn:alm:descriptor:com.tectonic.ui:select:wca-onprem
+        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:ai.use_existing_secret:false
       - displayName: Image Pull Policy
         path: image_pull_policy
         x-descriptors:

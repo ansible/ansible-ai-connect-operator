@@ -56,8 +56,8 @@ oc new-app \
 apiVersion: v1
 kind: Secret
 metadata:
-  name: <secret-name>-postgres-configuration
-  namespace: <target-namespace>
+  name: my-secret-postgres-configuration
+  namespace: mynamespace
 data:
   database: <base64 encoded database name>
   username: <base64 encoded username>
@@ -74,13 +74,11 @@ type: Opaque
 apiVersion: aiconnect.ansible.com/v1alpha1
 kind: AnsibleAIConnect
 metadata:
-  name: <instance-name>
-  namespace: <target-namespace>
+  name: my-aiconnect-instance
+  namespace: mynamespace
 spec:
   ingress_type: Route
   service_type: ClusterIP
-  image_pull_secrets:
-    - redhat-operators-pull-secret
   auth:
     aap_api_url: 'TBA'
     social_auth_aap_key: 'TBA'
@@ -91,5 +89,5 @@ spec:
     model_mesh_api_key: 'TBA'
     model_mesh_model_name: 'TBA'
   database:
-    database_secret: '<secret-name>-postgres-configuration'
+    database_secret: 'my-secret-postgres-configuration'
 ```
