@@ -5,30 +5,27 @@
 
 A Kubernetes operator for Kubernetes built with [Operator SDK](https://github.com/operator-framework/operator-sdk) and Ansible for deploying and maintaining the lifecycle of your [Ansible AI Connect](https://github.com/ansible/ansible-wisdom-service) application.
 
-## Overview
-
-This operator is meant to provide a more Kubernetes-native installation method for Ansible AI Connect via an `AnsibleAIConnect` Custom Resource Definition (CRD). In the future, this operator will grow to be able to maintain the full life-cycle of an Ansible AI Connect deployment. Currently, it can handle fresh installs and upgrades.
-
-Table of Contents
-=================
-
 - [Ansible AI Connect Operator](#ansible-ai-connect-operator)
   - [Overview](#overview)
-- [Table of Contents](#table-of-contents)
   - [Contributing](#contributing)
     - [Prerequisites](#prerequisites)
   - [Install the Ansible AI Connect Operator](#install-the-ansible-ai-connect-operator)
-  - [Deploy AnsibleAIConnect](#deploy-an-ansibleaiconnect-instance)
-- [Integrating with Ansible Automation Platform and IBM watsonx Code Assistant](#integrating-with-ansible-automation-platform-and-ibm-watsonx-code-assistant)
+  - [Deploy an `AnsibleAIConnect` instance](#deploy-an-ansibleaiconnect-instance)
+    - [Deploying on OpenShift `ROSA`](#deploying-on-openshift-rosa)
+    - [Deploying on `minikube`](#deploying-on-minikube)
+  - [Integrating with Ansible Automation Platform and IBM watsonx Code Assistant](#integrating-with-ansible-automation-platform-and-ibm-watsonx-code-assistant)
   - [Advanced Configuration](#advanced-configuration)
     - [Use external database](#use-external-database)
+    - [Use existing `Secret`'s](#use-existing-secrets)
     - [Deploying Ansible AI Connect Operator using OLM](#deploying-ansible-ai-connect-operator-using-olm)
     - [Admin user account configuration](#admin-user-account-configuration)
     - [Database Fields Encryption Configuration](#database-fields-encryption-configuration)
     - [Additional Advanced Configuration](#additional-advanced-configuration)
   - [Maintainers Docs](#maintainers-docs)
 
-<!-- Created by https://github.com/ekalinin/github-markdown-toc -->
+## Overview
+
+This operator is meant to provide a more Kubernetes-native installation method for Ansible AI Connect via an `AnsibleAIConnect` Custom Resource Definition (CRD). In the future, this operator will grow to be able to maintain the full life-cycle of an Ansible AI Connect deployment. Currently, it can handle fresh installs and upgrades.
 
 ## Contributing
 
@@ -92,7 +89,7 @@ Full instructions for using an OpenShift `ROSA` cluster are [here](./docs/runnin
 
 Full instructions for using a `minikube` cluster are [here](./docs/running-on-minikube-cluster.md).
 
-# Integrating with Ansible Automation Platform and IBM watsonx Code Assistant
+## Integrating with Ansible Automation Platform and IBM watsonx Code Assistant
 
 Go [here](docs/aap-wca-integrations.md)
 
