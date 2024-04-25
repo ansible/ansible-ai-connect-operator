@@ -1,22 +1,18 @@
-# Running on an OpenShift `ROSA` cluster for testing with an external Postgres instance
+# Using an external Postgres instance
 
-This document assumes you have an OpenShift `ROSA` cluster running.
+## Overview
 
-See https://docs.openshift.com/rosa/welcome/index.html
+The Operator will create a _managed_ instance of Postgres by default. The Operator also creates a `Secret` containing the various parameters required for the service to connect to the database.
 
-It also assumes you have deployed the Operator. See [here](openshift-rosa-test-cluster.md#install-the-operator).
+If you have an existing Postgres instance that you wish to use you can create the `Secret` manually with the necessary parameters and the Operator will use this instead. You will need to set `database.database_secret` to the name of the `Secret` you create.
 
-Whilst this document was written specifically for OpenShift `ROSA` the principles, guidance and examples given can be amended for other Kubernetes environments. Much of the work within this repository has been applied to local `minikube` environments too.
+_Managed_ instances of Postgres follow the lifecycle of the `AnsibleAIConnect` instance and the Operator will destroy the applicable resources if the `AnsibleAIConnect` instance is deleted.
 
-## Permissions
-
-Users will require the OpenShift Dedicated Admins [role](https://docs.openshift.com/dedicated/authentication/osd-admin-roles.html#the-dedicated-admin-role) for the namespace in which they wish to install the Operator. At the time of writing this is called `dedicated-admins-project`.
+You will need to manage the Postgres resources yourself for _unmanaged_ instances where you've specified an existing `database.database_secret`.
 
 ## Create the database `Secret`
 
-If `database.database_secret` is not set in the `AnsibleAIConnect` definition the Operator will create a _managed_ instance of Postgres.
-
-If `database.database_secret` is set to the name of an existing `Secret` the Operator will use the values set therein to connect to an existing Postgres instance. The `Secret` must contain the following values:
+The `Secret` must contain the following values:
 ```yaml
 apiVersion: v1
 kind: Secret
@@ -46,6 +42,8 @@ spec:
 ## Example
 
 ### Create an _external_ Postgres instance
+
+The follow demonstrates how you can create a freestanding Postgress instance on OpenShift `ROSA`.
 ```
 oc new-app \
   -e POSTGRESQL_USER=<username> \

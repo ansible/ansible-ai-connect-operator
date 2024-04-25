@@ -33,7 +33,7 @@ When you instantiate an Ansible Lightspeed Custom Resource in the OpenShift clus
 2. `AAP authentication secret`: The application `Client secret`
 3. `AAP API URL`: The AAP API URL `<aap_web_url>/api/`
 
-You can also use an existing `Secret` to store these _sensitive_ values. See [here](openshift-rosa-test-cluster-external-secrets.md#authentication-secret) for instructions.
+You can also use an existing `Secret` to store these _sensitive_ values. See [here](using-external-configuration-secrets.md#authentication-secret) for instructions.
 
 ### After Ansible Lightspeed CR is created
 
@@ -57,7 +57,7 @@ You will need to fill in these information:
 3. `AI provider Model Name`: An e.g.: `8e7de79b-8bc2-43cc-9d20-c4207cd92fec<|sepofid|>granite-3b`
 4. `AI provider username`: The username that has access to the model/space
 
-You can also use an existing `Secret` to store these _sensitive_ values. See [here](openshift-rosa-test-cluster-external-secrets.md#model-service-secret) for instructions.
+You can also use an existing `Secret` to store these _sensitive_ values. See [here](using-external-configuration-secrets.md#model-service-secret) for instructions.
 
 ### IBM watsonx Code Assistant - IBM Cloud
 
@@ -67,4 +67,4 @@ You will need to fill in these information:
 2. `AI provider API Key`: API key obtained from your IBM Cloud account
 3. `AI provider Model Name`: An e.g.: `8e7de79b-8bc2-43cc-9d20-c4207cd92fec<|sepofid|>granite-3b`
 
-You can also use an existing `Secret` to store these _sensitive_ values. See [here](openshift-rosa-test-cluster-external-secrets.md#model-service-secret) for instructions.
+You can also use an existing `Secret` to store these _sensitive_ values. See [here](using-external-configuration-secrets.md#model-service-secret) for instructions.

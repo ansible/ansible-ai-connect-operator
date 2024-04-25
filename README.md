@@ -18,7 +18,7 @@ Table of Contents
   - [Contributing](#contributing)
     - [Prerequisites](#prerequisites)
   - [Install the Ansible AI Connect Operator](#install-the-ansible-ai-connect-operator)
-  - [Deploy AnsibleAIConnect](#deploy-ansibleaiconnect)
+  - [Deploy AnsibleAIConnect](#deploy-an-ansibleaiconnect-instance)
 - [Integrating with Ansible Automation Platform and IBM watsonx Code Assistant](#integrating-with-ansible-automation-platform-and-ibm-watsonx-code-assistant)
   - [Advanced Configuration](#advanced-configuration)
     - [Use external database](#use-external-database)
@@ -70,8 +70,6 @@ namespace: ansibleaiconnect
 
 You can use kustomize directly to dynamically modify things like the operator deployment at deploy time.  For more info, see the [kustomize install docs](./docs/kustomize-install.md).
 
-
-
 Install the manifests by running this:
 
 ```bash
@@ -84,75 +82,15 @@ Check that your operator pod is running, this may take about a minute.
 $ kubectl get pods
 ```
 
-## Deploy AnsibleAIConnect
+## Deploy an `AnsibleAIConnect` instance
 
-1. Create a resource definition.
-2. 
-```yaml
-# aiconnect.yaml
-apiVersion: aiconnect.ansible.com/v1alpha1
-kind: AnsibleAIConnect
-metadata:
-  name: my-aiconnect
-  namespace: ansibleaiconnect
-spec:
-  auth:
-    aap_api_url: 'TBA'
-    social_auth_aap_key: 'TBA'
-    social_auth_aap_secret: 'TBA'
-  ai:
-    username: 'TBA'
-    inference_url: 'TBA'
-    model_mesh_api_key: 'TBA'
-    model_mesh_model_name: 'TBA'
-  service_type: NodePort
-```
+### Deploying on OpenShift `ROSA`
 
-3. Now apply this yaml
+Full instructions for using an OpenShift `ROSA` cluster are [here](./docs/running-on-openshift-rosa-cluster.md).
 
-```bash
-$ kubectl apply -f aiconnect.yaml
-```
+### Deploying on `minikube`
 
-Once deployed, the `AnsibleAIConnect` instance will be accessible by running:
-
-```
-$ minikube service -n ansibleaiconnect my-aiconnect-api --url
-```
-
-If you are using Openshift, you can take advantage of automatic Route configuration an `AnsibleAIConnect` custom resource like this:
-
-```yaml
-apiVersion: aiconnect.ansible.com/v1alpha1
-kind: AnsibleAIConnect
-metadata:
-  name: my-aiconnect
-  namespace: ansibleaiconnect
-spec:  
-  auth:
-    aap_api_url: 'TBA'
-    social_auth_aap_key: 'TBA'
-    social_auth_aap_secret: 'TBA'
-  ai:
-    username: 'TBA'
-    inference_url: 'TBA'
-    model_mesh_api_key: 'TBA'
-    model_mesh_model_name: 'TBA'
-  service_type: ClusterIP
-  ingress_type: Route
-```
-
-If using Openshift, `AnsibleAIConnect` instance will be accessible by running:
-
-```
-$ oc get route -n ansibleaiconnect my-aiconnect-api
-```
-
-By default, the admin user is `admin` and the password is available in the `<resourcename>-admin-password` secret. To retrieve the admin password, run:
-
-```bash
-$ kubectl get secret my-aiconnect-admin-password -o jsonpath="{.data.password}" | base64 --decode ; echo
-```
+Full instructions for using a `minikube` cluster are [here](./docs/running-on-minikube-cluster.md).
 
 # Integrating with Ansible Automation Platform and IBM watsonx Code Assistant
 
@@ -162,15 +100,15 @@ Go [here](docs/aap-wca-integrations.md)
 
 ### Use external database
 
-Ansible AI Connect can be configured to use an existing database. Here is an [example](/docs/openshift-rosa-test-cluster-external-postgres.md)
+Ansible AI Connect can be configured to use an existing database. Here is an [example](/docs/using-external-postgres-instance.md)
 
 ### Use existing `Secret`'s
 
-Ansible AI Connect can be configured to use existing `Secret`'s for both the `auth` and `ai` configuration. Here is an [example](/docs/openshift-rosa-test-cluster-external-secrets.md)
+`AnsibleAIConnect` can be configured to use existing `Secret`'s for both the `auth` and `ai` configuration. Here is an [example](/docs/using-external-configuration-secrets.md)
 
 ### Deploying Ansible AI Connect Operator using OLM
 
-You can take advantage of the Operator Lifecycle Manager to deploy the operator.  Here is an [example](/docs/openshift-rosa-test-cluster.md)
+You can take advantage of the Operator Lifecycle Manager to deploy the operator.  Here is an [example](/docs/running-on-openshift-rosa-cluster.md)
 
 
 ### Admin user account configuration
@@ -186,7 +124,7 @@ There are three variables that are customizable for the admin user account creat
 
 > :warning: **`admin_password_secret` must be a Kubernetes secret and not your text clear password**.
 
-If `admin_password_secret` is not provided, the operator will look for a secret named `<resourcename>-admin-password` for the admin password. If it is not present, the operator will generate a password and create a Secret from it named `<resourcename>-admin-password`.
+If `admin_password_secret` is not provided, the operator will look for a secret named `<resourcename>-admin-password` for the admin password. If it is not present, the operator will generate a password and create a `Secret` from it named `<resourcename>-admin-password`.
 
 To retrieve the admin password, run `kubectl get secret <resourcename>-admin-password -o jsonpath="{.data.password}" | base64 --decode ; echo`
 

@@ -1,10 +1,12 @@
-# Running on an OpenShift `ROSA` cluster for testing
+# Running on an OpenShift `ROSA` cluster
 
-This document assumes you have an OpenShift `ROSA` cluster running.
+## Overview
+
+This document covers running an instance of `AnsibleAIConnect` on OpenShift `ROSA`. 
+
+It assumes you have an OpenShift `ROSA` cluster running.
 
 See https://docs.openshift.com/rosa/welcome/index.html
-
-Whilst this document was written specifically for OpenShift `ROSA` the principles, guidance and examples given can be amended for other Kubernetes environments. Much of the work within this repository has been applied to local `minikube` environments too.
 
 ## Permissions
 
@@ -88,7 +90,7 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: redhat-operators-pull-secret
-  namespace: ansible-ai-connect-operator-system
+  namespace: <target-namespace>
 data:
   .dockerconfigjson: <redacted>
 type: kubernetes.io/dockerconfigjson
@@ -110,7 +112,10 @@ The [`CSV`](https://olm.operatorframework.io/docs/concepts/crds/clusterserviceve
 
 ### Using the CLI
 
-If the Operator Lifecycle Manager is not being used, or if creation of an `AnsibleAIConnect` instance from the CLI is desirable, the following can performed:
+If the Operator Lifecycle Manager is not being used, or if creation of an `AnsibleAIConnect` instance from the CLI is desirable, the following can performed.
+
+1. Create a file `aiconnect.yaml` with the following content.
+
 ```yaml
 apiVersion: aiconnect.ansible.com/v1alpha1
 kind: AnsibleAIConnect
@@ -118,8 +123,6 @@ metadata:
   name: my-aiconnect
   namespace: <target-namespace>
 spec:
-  ingress_type: Route
-  service_type: ClusterIP
   image_pull_secrets:
     - redhat-operators-pull-secret
   auth:
@@ -135,11 +138,21 @@ spec:
     # This has to be the name of a StorageClass in the cluster
     postgres_storage_class: gp3
 ```
+2. Now apply the yaml.
+
+```bash
+kubectl apply -f aiconnect.yaml
+```
+
+3. Once deployed, the `AnsibleAIConnect` instance will be accessible by running:
+```bash
+$ oc get route -n <target-namespace> my-aiconnect-api
+```
 
 ### A note on `PersistentVolume`'s
 The Operator supports the provisioning of a _managed_ Postgres instance.
 
-The instance requires persistent storage which should be configured to use one of the `StorageClass`'es provisioned by OpenShift ROSA.
+The instance requires persistent storage which should be configured to use one of the `StorageClass`'es provisioned by OpenShift `ROSA`.
 
 OpenShift `ROSA` includes a `ClusterOperator` for `Storage`.
 
