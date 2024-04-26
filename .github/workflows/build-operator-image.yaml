@@ -108,7 +108,7 @@ jobs:
         uses: redhat-actions/push-to-registry@v2.7.1
         with:
           image: ansible-ai-connect-bundle
-          tags: ${{ env.IMAGE_SEMVER_VERSION }}
+          tags: latest ${{ env.IMAGE_SEMVER_VERSION }}
           registry: quay.io/ansible/
           username: ${{ secrets.QUAY_USER }}
           password: ${{ secrets.QUAY_TOKEN }}
@@ -125,7 +125,7 @@ jobs:
         uses: redhat-actions/push-to-registry@v2.7.1
         with:
           image: ansible-ai-connect-catalog
-          tags: ${{ env.IMAGE_SEMVER_VERSION }}
+          tags: latest ${{ env.IMAGE_SEMVER_VERSION }}
           registry: quay.io/ansible/
           username: ${{ secrets.QUAY_USER }}
           password: ${{ secrets.QUAY_TOKEN }}
