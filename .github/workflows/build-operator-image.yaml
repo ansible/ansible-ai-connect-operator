@@ -102,8 +102,8 @@ jobs:
       # -------------------
       - name: Build Bundle Image
         run: |
-          make bundle bundle-build VERSION=latest IMG=quay.io/ansible/ansible-ai-connect-operator:${IMAGE_SEMVER_VERSION} BUNDLE_IMG=ansible-ai-connect-bundle:${IMAGE_SEMVER_VERSION}
-          docker tag ansible-ai-connect-bundle:latest ansible-ai-connect-bundle:${IMAGE_SEMVER_VERSION}
+          make bundle bundle-build VERSION=${IMAGE_SEMVER_VERSION} IMG=quay.io/ansible/ansible-ai-connect-operator:${IMAGE_SEMVER_VERSION} BUNDLE_IMG=ansible-ai-connect-bundle:${IMAGE_SEMVER_VERSION}
+          docker tag ansible-ai-connect-bundle:${IMAGE_SEMVER_VERSION} ansible-ai-connect-bundle:latest
 
       - name: Push Bundle Image
         uses: redhat-actions/push-to-registry@v2.7.1
@@ -120,8 +120,8 @@ jobs:
       # -------------------
       - name: Build Catalog Image
         run: |
-          make catalog-build CATALOG_IMG=ansible-ai-connect-catalog:latest BUNDLE_IMG=quay.io/ansible/ansible-ai-connect-bundle:${IMAGE_SEMVER_VERSION}
-          docker tag ansible-ai-connect-catalog:latest ansible-ai-connect-catalog:${IMAGE_SEMVER_VERSION}
+          make catalog-build CATALOG_IMG=ansible-ai-connect-catalog:${IMAGE_SEMVER_VERSION} BUNDLE_IMG=quay.io/ansible/ansible-ai-connect-bundle:${IMAGE_SEMVER_VERSION}
+          docker tag ansible-ai-connect-catalog:${IMAGE_SEMVER_VERSION} ansible-ai-connect-catalog:latest
 
       - name: Push Catalog Image
         uses: redhat-actions/push-to-registry@v2.7.1
