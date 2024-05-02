@@ -1,0 +1,107 @@
+name: Test Build Operator Bundle and Catalog index
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to build'
+        required: true
+      repository:
+        description: 'Target quay.io repository'
+        default: 'quay.io/manstis'
+        required: true
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Verify inputs
+        run: |
+          set -e
+
+          if [[ ${{ github.event.inputs.version }} == "" ]]; then
+            >&2 echo "Set version to continue."
+            exit 1
+          fi
+          if [[ ${{ github.event.inputs.repository }} == "" ]]; then
+            >&2 echo "Set quay.io repository to continue."
+            exit 1
+          fi
+          
+          exit 0
+
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Log into registry quay.io
+        uses: docker/login-action@343f7c4344506bcbf9b4de18042ae17996df046d # v3.0.0
+        with:
+          registry: quay.io/ansible/
+          username: ${{ secrets.QUAY_USER }}
+          password: ${{ secrets.QUAY_TOKEN }}
+
+      - name: Get existing versions
+        id: existing_versions
+        run: |
+            echo "EXISTING_VERSIONS=0.0.1,0.0.2 >> $GITHUB_ENV
+
+      # ===================
+      # Operator
+      # -------------------
+      - name: Build and store Operator image
+        run: |
+          BUILD_ARGS="--build-arg --build-arg OPERATOR_VERSION=${{ github.event.inputs.version }}" \
+          IMG=${{ github.event.inputs.repository }}/ansible-ai-connect-operator:${{ github.event.inputs.version }} \
+          make docker-buildx
+
+      - name: Push Operator image
+        uses: redhat-actions/push-to-registry@v2.7.1
+        with:
+          image: ansible-ai-connect-operator
+          tags: ${{ github.event.inputs.version }}
+          registry: ${{ github.event.inputs.repository }}
+          username: ${{ secrets.QUAY_USER }}
+          password: ${{ secrets.QUAY_TOKEN }}
+      # ===================
+
+      # ===================
+      # Operator bundle
+      # -------------------
+      - name: Build Bundle Image
+        run: |
+          VERSION=${{ github.event.inputs.version }} \ 
+          IMG=${{ github.event.inputs.repository }}/ansible-ai-connect-operator:${{ github.event.inputs.version }} \ 
+          BUNDLE_IMG=${{ github.event.inputs.repository }}/ansible-ai-connect-bundle:${{ github.event.inputs.version }} \ 
+          make bundle bundle-build
+
+      - name: Push Bundle image
+        uses: redhat-actions/push-to-registry@v2.7.1
+        with:
+          image: ansible-ai-connect-bundle
+          tags: ${{ github.event.inputs.version }}
+          registry: ${{ github.event.inputs.repository }}
+          username: ${{ secrets.QUAY_USER }}
+          password: ${{ secrets.QUAY_TOKEN }}
+      # ===================
+
+      # ===================
+      # Operator catalog
+      # -------------------
+      - name: Build Catalog Image
+        run: |
+          CATALOG_IMG=${{ github.event.inputs.repository }}/ansible-ai-connect-catalog:${{ github.event.inputs.version }} \ 
+          BUNDLE_IMGS=${{ github.event.inputs.repository }}/ansible-ai-connect-bundle:${{ github.event.inputs.version }} \ 
+          make catalog-build
+
+      - name: Push Catalog image
+        uses: redhat-actions/push-to-registry@v2.7.1
+        with:
+          image: ansible-ai-connect-catalog
+          tags: ${{ github.event.inputs.version }}
+          registry: ${{ github.event.inputs.repository }}
+          username: ${{ secrets.QUAY_USER }}
+          password: ${{ secrets.QUAY_TOKEN }}
+      # ===================
