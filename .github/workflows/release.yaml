@@ -64,6 +64,7 @@ jobs:
 
       - name: Build Bundle Image
         run: |
+          echo "ROGER TEST - RELEASE1"
           make bundle bundle-build IMG=${QUAY_REGISTRY}/ansible-ai-connect-operator:${TAG_NAME} VERSION=${TAG_NAME} BUNDLE_IMG=ansible-ai-connect-bundle:${TAG_NAME}
           docker tag ansible-ai-connect-bundle:${TAG_NAME} ansible-ai-connect-bundle:latest
         working-directory: ansible-ai-connect-operator
@@ -79,6 +80,7 @@ jobs:
 
       - name: Build Catalog Image
         run: |
+          echo "ROGER TEST - RELEASE2"
           make catalog-build CATALOG_IMG=ansible-ai-connect-catalog:${TAG_NAME} BUNDLE_IMG=${QUAY_REGISTRY}/ansible-ai-connect-bundle:${TAG_NAME}
           docker tag ansible-ai-connect-catalog:${TAG_NAME} ansible-ai-connect-catalog:latest
         working-directory: ansible-ai-connect-operator
