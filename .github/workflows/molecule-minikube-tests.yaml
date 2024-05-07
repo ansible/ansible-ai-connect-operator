@@ -14,6 +14,11 @@ jobs:
       DOCKER_API_VERSION: "1.41"
 
     steps:
+    - name: compose docker_config_json
+      run: |
+        uid=${{ secrets.QUAY_USER }}
+        token=${{ secrets.QUAY_TOKEN }}
+
     - uses: actions/checkout@v3
 
     - uses: actions/setup-python@v4

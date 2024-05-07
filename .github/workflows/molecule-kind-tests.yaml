@@ -17,10 +17,15 @@ jobs:
     env:
       OPERATOR_IMAGE: ${{ vars.TESTING_OPERATOR_IMAGE }}
       OPERATOR_PULL_POLICY: ${{ vars.TESTING_OPERATOR_PULL_POLICY }}
-      DOCKER_CONFIG_JSON: ${{ secrets.TESTING_DOCKER_CONFIG_JSON }}
       DOCKER_API_VERSION: "1.41"
 
     steps:
+
+      - name: compose docker_config_json
+        run: |
+          uid=${{ secrets.QUAY_USER }}
+          token=${{ secrets.QUAY_TOKEN }}
+
       - uses: actions/checkout@v3
 
       - uses: actions/setup-python@v4
