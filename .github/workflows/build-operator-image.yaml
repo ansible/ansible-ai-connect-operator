@@ -72,14 +72,18 @@ jobs:
         id: tag_name
         run: |
           REPO=quay.io/ansible/ansible-ai-connect-operator
+          # ${{ github.event_name == 'pull_request' }}
           if [ "${{ github.event_name }}" == "pull_request" ]; then
+            echo "ROGER TEST - TAG1"
             echo "IMAGE_TAGS=-t ${REPO}:${IMAGE_SEMVER_VERSION}" >> $GITHUB_OUTPUT
             echo "LABEL quay.expires-after=3d" >> ./Dockerfile # tag expires in 3 days
 
           elif [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            echo "ROGER TEST - TAG2"
             echo "IMAGE_TAGS=-t ${REPO}:${IMAGE_SEMVER_VERSION}" >> $GITHUB_OUTPUT
 
           else
+            echo "ROGER TEST - TAG3"
             echo "IMAGE_TAGS=-t ${REPO}:${IMAGE_SEMVER_VERSION} -t ${REPO}:latest" >> $GITHUB_OUTPUT
           fi
 
