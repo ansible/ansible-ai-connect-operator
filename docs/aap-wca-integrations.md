@@ -1,18 +1,19 @@
-- [Overview](#overview)
-- [Integrating with Ansible Automation Platform](#integrating-with-ansible-automation-platform)
-  - [Create An Application in AAP](#create-an-application-in-aap)
-  - [When instantiating Ansible Lightspeed CR](#when-instantiating-ansible-lightspeed-cr)
-  - [After Ansible Lightspeed CR is created](#after-ansible-lightspeed-cr-is-created)
-- [Integrating with IBM watsonx Code Assistant](#integrating-with-ibm-watsonx-code-assistant)
-  - [IBM watsonx Code Assistant - Cloud Pack for Data (CPD)](#ibm-watsonx-code-assistant---cloud-pack-for-data-cpd)
-  - [IBM watsonx Code Assistant - IBM Cloud](#ibm-watsonx-code-assistant---ibm-cloud)
-- [Advanced Configuration: Using secrets for configs](#advanced-configuration-using-secrets-for-configs)
+# Integrating with Ansible Automation Platform and IBM WCA
 
-## Overview
+When deploying Ansible AI Connect service through operator, you will need to configure the integrations with Ansible Automation Platform and IBM watsonx Code Assistant. You can do this through the UI.  You can also try the more advanced way.
 
- This document covers running an instance of `AnsibleAIConnect` on OpenShift `ROSA`. It assumes you have an OpenShift `ROSA` cluster running.
+## Table of Contents
+- [Integrating with Ansible Automation Platform and IBM WCA](#integrating-with-ansible-automation-platform-and-ibm-wca)
+  - [Table of Contents](#table-of-contents)
+  - [Integrating with Ansible Automation Platform](#integrating-with-ansible-automation-platform)
+    - [Create An Application in AAP](#create-an-application-in-aap)
+    - [When instantiating Ansible Lightspeed CR](#when-instantiating-ansible-lightspeed-cr)
+    - [After Ansible Lightspeed CR is created](#after-ansible-lightspeed-cr-is-created)
+  - [Integrating with IBM watsonx Code Assistant](#integrating-with-ibm-watsonx-code-assistant)
+    - [IBM watsonx Code Assistant - Cloud Pack for Data (CPD)](#ibm-watsonx-code-assistant---cloud-pack-for-data-cpd)
+    - [IBM watsonx Code Assistant - IBM Cloud](#ibm-watsonx-code-assistant---ibm-cloud)
+  - [Advanced Configuration: Using secrets for configs](#advanced-configuration-using-secrets-for-configs)
 
-When deploying Ansible AI Connect service through operator, you will need to configure the integrations with Ansible Automation Platform and IBM watsonx Code Assistant. You can do this through the UI.  You can also try the more adandced way.
 
 ## Integrating with Ansible Automation Platform
 
@@ -68,8 +69,6 @@ You will need to fill in these information:
 2. `AI provider API Key`: [Cloud Pack for Data API key](https://www.ibm.com/docs/en/cloud-paks/cp-data/4.8.x?topic=steps-generating-api-keys) 
 3. `AI provider Model Name`: An e.g.: `8e7de79b-8bc2-43cc-9d20-c4207cd92fec<|sepofid|>granite-3b`
 4. `AI provider username`: The username that has access to the model/space
-
-You can also use an existing `Secret` to store these _sensitive_ values. See [here](using-external-configuration-secrets.md#model-service-secret) for instructions.
 
 ### IBM watsonx Code Assistant - IBM Cloud
 
