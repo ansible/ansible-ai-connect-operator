@@ -1,4 +1,8 @@
-FROM quay.io/operator-framework/ansible-operator:v1.32.0
+FROM quay.io/operator-framework/ansible-operator:v1.34.1
+
+USER root
+RUN dnf update --security --bugfix -y
+USER 1001
 
 ARG DEFAULT_AI_CONNECT_VERSION
 ARG OPERATOR_VERSION
