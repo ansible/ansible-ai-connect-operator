@@ -1,0 +1,181 @@
+name: Build and publish Operator, Bundle and Catalog artifacts
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to build'
+        required: true
+      repository:
+        description: 'Target quay.io repository'
+        default: 'quay.io/ansible'
+        required: true
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      # ===============================
+      # Verify parameters
+      # -------------------------------
+      - name: Verify inputs
+        run: |
+          set -e
+
+          if [[ ${{ github.event.inputs.version }} == "" ]]; then
+            >&2 echo "Set version to continue."
+            exit 1
+          fi
+          if [[ ${{ github.event.inputs.repository }} == "" ]]; then
+            >&2 echo "Set quay.io repository to continue."
+            exit 1
+          fi
+          
+          exit 0
+      # ===============================
+
+      # ===============================
+      # Login to repositories
+      # -------------------------------
+      - name: Log into registry ghcr.io
+        uses: docker/login-action@343f7c4344506bcbf9b4de18042ae17996df046d # v3.0.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Log into target registry
+        uses: docker/login-action@343f7c4344506bcbf9b4de18042ae17996df046d # v3.0.0
+        with:
+          registry: ${{ github.event.inputs.repository }}
+          username: ${{ secrets.QUAY_USER }}
+          password: ${{ secrets.QUAY_TOKEN }}
+      # ===============================
+
+      # ===============================
+      # Get existing tags
+      # -------------------------------
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - uses: octokit/request-action@v2.x
+        id: existing_tags
+        with:
+          route: GET /repos/${{ github.repository }}/git/matching-refs/tags
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # ===============================
+
+      # ===============================
+      # Read the latest tag
+      # -------------------------------
+      - name: Get latest tag
+        id: latest_tag
+        uses: WyriHaximus/github-action-get-previous-tag@v1
+        with:
+          fallback: 0.0.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # ===============================
+
+      # ===============================
+      # Construct list of bundle images
+      # -------------------------------
+      - name: Build bundle image list
+        id: build_bundle_image_list
+        run: |
+          set -e
+          
+          # Convert JSON to bash array
+          tags=$(cat <<-END
+            ${{ steps.existing_tags.outputs.data }}
+          END
+          )
+          tags_array=($(jq -r .[].ref <<< $tags))
+
+          # Filter array by tags that end with a semver 
+          filtered_tags=()
+          regex="refs\/tags\/([0-9]+\.[0-9]+\.[0-9]+)"
+          for i in "${tags_array[@]}" ; do
+            if [[ $i =~ $regex ]]; then
+              filtered_tags+=("${{ github.event.inputs.repository }}/ansible-ai-connect-bundle:${BASH_REMATCH[1]}") ;
+            fi
+          done
+          
+          # Include the version being built
+          filtered_tags+=("${{ github.event.inputs.repository }}/ansible-ai-connect-bundle:${{ github.event.inputs.version }}")
+          
+          # Convert array back to comma separated list
+          output_tags=${filtered_tags[@]}
+          output=${output_tags// /,}
+
+          echo "BUNDLE_IMGS=${output}" >> $GITHUB_ENV
+          
+          exit 0
+      # ===============================
+
+      # ===============================
+      # Operator
+      # -------------------------------
+      - name: Build and Store Image @ghcr
+        run: |
+          BUILD_ARGS="--build-arg OPERATOR_VERSION=${{ github.event.inputs.version }}" \
+          IMG=ghcr.io/${{ github.repository_owner }}/ansible-ai-connect-operator:${{ github.sha }} \
+          make docker-buildx
+
+      - name: Publish Image to registry
+        run: |
+          docker buildx imagetools create ghcr.io/${{ github.repository_owner }}/ansible-ai-connect-operator:${{ github.sha }} -t ${{ github.event.inputs.repository }}/ansible-ai-connect-operator:${{ github.event.inputs.version }}
+      # ===============================
+
+      # ===============================
+      # Operator bundle
+      # -------------------------------
+      - name: Build Bundle image
+        run: |
+          make bundle bundle-build VERSION=${{ github.event.inputs.version }} IMG=${{ github.event.inputs.repository }}/ansible-ai-connect-operator:${{ github.event.inputs.version }} BUNDLE_IMG=ansible-ai-connect-bundle:${{ github.event.inputs.version }}
+
+      - name: Update ClusterServiceVersion
+        run: |
+          # No need to set 'replaces' if there is no previous version
+          if [[ "${{ steps.latest_tag.outputs.tag }}" == "0.0.0" ]]; then
+            >&2 echo "No previous version found."
+            exit 0
+          fi
+          
+          # Set 'replaces' to previous version
+          VERSION="${{ github.event.inputs.version }}"
+          PREV_VERSION="${{ steps.latest_tag.outputs.tag }}"
+          if ! grep -qF 'replaces: ansible-ai-connect-operator.v${PREV_VERSION}' bundle/manifests/ansible-ai-connect-operator.clusterserviceversion.yaml; then
+            sed -i "/version: ${VERSION}/a \\  replaces: ansible-ai-connect-operator.v${PREV_VERSION}" ./bundle/manifests/ansible-ai-connect-operator.clusterserviceversion.yaml
+          fi
+
+      - name: Push Bundle image
+        uses: redhat-actions/push-to-registry@v2.7.1
+        with:
+          image: ansible-ai-connect-bundle
+          tags: ${{ github.event.inputs.version }}
+          registry: ${{ github.event.inputs.repository }}
+          username: ${{ secrets.QUAY_USER }}
+          password: ${{ secrets.QUAY_TOKEN }}
+      # ===============================
+
+      # ===============================
+      # Operator catalog
+      # -------------------------------
+      - name: Build Catalog image
+        run: |
+          make catalog-build CATALOG_IMG=ansible-ai-connect-catalog:${{ github.event.inputs.version }} BUNDLE_IMGS=${BUNDLE_IMGS}
+
+      - name: Push Catalog image
+        uses: redhat-actions/push-to-registry@v2.7.1
+        with:
+          image: ansible-ai-connect-catalog
+          tags: ${{ github.event.inputs.version }}
+          registry: ${{ github.event.inputs.repository }}
+          username: ${{ secrets.QUAY_USER }}
+          password: ${{ secrets.QUAY_TOKEN }}
+      # ===============================
