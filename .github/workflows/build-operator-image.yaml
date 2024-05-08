@@ -75,19 +75,18 @@ jobs:
           if [ "${{ github.event_name }}" == "pull_request" ]; then
             echo "Tagging for pull_request"
             echo "IMAGE_TAGS=-t ${REPO}:${IMAGE_SEMVER_VERSION}" >> $GITHUB_OUTPUT
-            echo "TAG_VERSIONS=${IMAGE_SEMVER_VERSION}" >> $GITHUB_OUTPUT
+            echo "TAG_VERSIONS=${IMAGE_SEMVER_VERSION}" >> $GITHUB_ENV
             echo "LABEL quay.expires-after=3d" >> ./Dockerfile # tag expires in 3 days
 
           elif [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
             echo "Tagging for workflow_dispatch"
             echo "IMAGE_TAGS=-t ${REPO}:${IMAGE_SEMVER_VERSION}" >> $GITHUB_OUTPUT
-            echo "TAG_VERSIONS=${IMAGE_SEMVER_VERSION}" >> $GITHUB_OUTPUT
+            echo "TAG_VERSIONS=${IMAGE_SEMVER_VERSION}" >> $GITHUB_ENV
 
           else
-            echo "ROGER TEST - BUILD3"
             echo "Tagging for everything else (latest)"
             echo "IMAGE_TAGS=-t ${REPO}:${IMAGE_SEMVER_VERSION} -t ${REPO}:latest" >> $GITHUB_OUTPUT
-            echo "TAG_VERSIONS=${IMAGE_SEMVER_VERSION} latest" >> $GITHUB_OUTPUT
+            echo "TAG_VERSIONS=${IMAGE_SEMVER_VERSION} latest" >> $GITHUB_ENV
           fi
 
       # ===================
