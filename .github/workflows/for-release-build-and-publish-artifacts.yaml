@@ -72,7 +72,7 @@ jobs:
       - name: Get latest ai-connect version
         id: latest_ai_connect_version
         run: |
-          echo "LATEST_AI_CONNECT_VERSION=$(curl -s https://wisdom-service.apps.stage2-west.v2dz.p1.openshiftapps.com/check/ | jq .version[7:])" >> $GITHUB_ENV
+          echo "LATEST_AI_CONNECT_VERSION=$(jq .ansible_ai_connect_service.imageTag version_info.json)" >> $GITHUB_ENV
       # ===============================
 
       # ===============================

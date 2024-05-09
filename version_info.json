@@ -1,0 +1,5 @@
+{
+  "ansible_ai_connect_service": {
+    "imageTag": "1.0.202405091445"
+  }
+}
