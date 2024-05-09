@@ -5,10 +5,17 @@ on:
   push:
     branches:
       - main
+    paths-ignore:
+      - README.md
+      - CONTRIBUTING.md
+      - 'docs/**'
   pull_request:
     branches:
       - main
-
+    paths-ignore:
+      - README.md
+      - CONTRIBUTING.md
+      - 'docs/**'
 jobs:
   build:
     name: Run Molecule Tests (Kind)
