@@ -5,14 +5,19 @@ on:
     branches: [main]
 
 jobs:
-  release_build:
+  initialise:
+    uses: ./.github/workflows/common-build-jobs.yaml
+    secrets: inherit
+
+  build:
     runs-on: ubuntu-latest
+    needs: initialise
     env:
       REGISTRY: "quay.io/ansible"
 
     steps:
       # ===============================
-      # Checkout code to get tags
+      # Checkout code
       # -------------------------------
       - uses: actions/checkout@v4
         with:
@@ -24,14 +29,14 @@ jobs:
       # Login to repositories
       # -------------------------------
       - name: Log into registry ghcr.io
-        uses: docker/login-action@343f7c4344506bcbf9b4de18042ae17996df046d # v3.0.0
+        uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Log into target registry
-        uses: docker/login-action@343f7c4344506bcbf9b4de18042ae17996df046d # v3.0.0
+        uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ secrets.QUAY_USER }}
@@ -41,38 +46,11 @@ jobs:
       # ===============================
       # Construct next version
       # -------------------------------
-      # Read the latest semver tag
-      - name: Get latest tag
-        id: latest_tag
-        uses: WyriHaximus/github-action-get-previous-tag@v1
-        with:
-          fallback: 0.0.0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      # Increment the latest semver tag for release builds
-      - name: Read semver version
-        id: next_tag
-        uses: WyriHaximus/github-action-next-semvers@v1
-        with:
-          version: ${{ steps.latest_tag.outputs.tag }}
-
       # Build complete release version
       - name: Semver tags
         id: version_semver
         run: |
-          echo "IMAGE_SEMVER_VERSION=${{ steps.next_tag.outputs.minor }}" >> $GITHUB_ENV
-      # ===============================
-
-      # ===============================
-      # Read the latest ai-connect version
-      # -------------------------------
-      # TODO {manstis} This will be read from the file Roger writes to from 'wisdom-service-ops'
-      # JSON is formatted "version": "latest 1.0.202404171921" so skip 'latest '
-      - name: Get latest ai-connect version
-        id: latest_ai_connect_version
-        run: |
-          echo "LATEST_AI_CONNECT_VERSION=$(jq .ansible_ai_connect_service.imageTag version_info.json)" >> $GITHUB_ENV
+          echo "IMAGE_SEMVER_VERSION=${{ needs.initialise.outputs.next_tag }}" >> $GITHUB_ENV
       # ===============================
 
       # ===============================
@@ -110,20 +88,20 @@ jobs:
       - name: Update ClusterServiceVersion
         run: |
           # No need to set 'replaces' if there is no previous version
-          if [[ "${{ steps.latest_tag.outputs.tag }}" == "0.0.0" ]]; then
+          if [[ "${{ needs.initialise.outputs.latest_tag }}" == "0.0.0" ]]; then
             >&2 echo "No previous version found."
             exit 0
           fi
           
           # Set 'replaces' to previous version
           VERSION="${IMAGE_SEMVER_VERSION}"
-          PREV_VERSION="${{ steps.latest_tag.outputs.tag }}"
+          PREV_VERSION="${{ needs.initialise.outputs.latest_tag }}"
           if ! grep -qF 'replaces: ansible-ai-connect-operator.v${PREV_VERSION}' bundle/manifests/ansible-ai-connect-operator.clusterserviceversion.yaml; then
             sed -i "/version: ${VERSION}/a \\  replaces: ansible-ai-connect-operator.v${PREV_VERSION}" ./bundle/manifests/ansible-ai-connect-operator.clusterserviceversion.yaml
           fi
 
       - name: Push Bundle images to registry
-        uses: redhat-actions/push-to-registry@v2.7.1
+        uses: redhat-actions/push-to-registry@v2.8
         with:
           image: ansible-ai-connect-bundle
           tags: ${{ env.REGISTRY_TAGS }}
@@ -182,7 +160,7 @@ jobs:
           docker tag ansible-ai-connect-catalog:${IMAGE_SEMVER_VERSION} ansible-ai-connect-catalog:latest
 
       - name: Push Catalog images to registry
-        uses: redhat-actions/push-to-registry@v2.7.1
+        uses: redhat-actions/push-to-registry@v2.8
         with:
           image: ansible-ai-connect-catalog
           tags: ${{ env.REGISTRY_TAGS }}
