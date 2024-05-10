@@ -1,0 +1,52 @@
+name: "[Common] Get Operator versions"
+
+on:
+  workflow_call:
+    outputs:
+      operator_version_latest:
+        description: "The _latest_ Operator version"
+        value: ${{ jobs.get_operator_versions.outputs.operator_version_latest }}
+      operator_version_next:
+        description: "The _next_ Operator version"
+        value: ${{ jobs.get_operator_versions.outputs.operator_version_next }}
+
+jobs:
+  get_operator_versions:
+    runs-on: ubuntu-latest
+
+    outputs:
+      operator_version_latest: ${{ steps.latest_tag.outputs.latest_tag }}
+      operator_version_next: ${{ steps.set_output_parameters.outputs.next_tag }}
+
+    steps:
+      # ===============================
+      # Checkout code to get tags
+      # -------------------------------
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+      # ===============================
+
+      # ===============================
+      # Construct next version
+      # -------------------------------
+      # Read the latest semver tag
+      - name: Get latest tag
+        id: latest_tag
+        run: |
+          echo "latest_tag=$(git tag -l --sort=v:refname | tail -n1)" >> $GITHUB_OUTPUT
+
+      # Increment the latest semver tag for release builds
+      - name: Read semver version
+        id: next_tag
+        uses: WyriHaximus/github-action-next-semvers@v1.2.1
+        with:
+          version: ${{ steps.latest_tag.outputs.latest_tag }}
+
+      # Export parameters
+      - name: Set output parameters
+        id: set_output_parameters
+        run: |
+          echo "next_tag=${{ steps.next_tag.outputs.patch }}" >> $GITHUB_OUTPUT
+      # ===============================

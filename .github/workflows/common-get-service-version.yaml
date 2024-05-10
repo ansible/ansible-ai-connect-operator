@@ -1,0 +1,33 @@
+name: "[Common] Get service version"
+
+on:
+  workflow_call:
+    outputs:
+      service_version:
+        description: "The latest published version of the underlying service"
+        value: ${{ jobs.get_service_version.outputs.service_version }}
+
+jobs:
+  get_service_version:
+    runs-on: ubuntu-latest
+
+    outputs:
+      service_version: ${{ steps.read_service_version.outputs.service_version }}
+
+    steps:
+      # ===============================
+      # Checkout code
+      # -------------------------------
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      # ===============================
+
+      # ===============================
+      # Read the latest service version
+      # -------------------------------
+      - name: Get latest service version
+        id: read_service_version
+        run: |
+          echo "service_version=$(jq .ansible_ai_connect_service.imageTag version_info.json)" >> $GITHUB_OUTPUT
+      # ===============================

@@ -1,0 +1,56 @@
+name: "[Release] Build and publish Operator, Bundle and Catalog artifacts"
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "The semver formatted version to release and tag"
+        required: true
+      confirm:
+        description: "Are you sure? Set this to yes."
+        required: true
+        default: "no"
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+
+    steps:
+       - name: Verify inputs
+         run: |
+           set -e
+
+           if [[ ${{ github.event.inputs.version }} == "" ]]; then
+             >&2 echo "Set version to continue."
+             exit 1
+           fi
+           
+           regex="^[0-9]+\.[0-9]+\.[0-9]+$"
+           if ! [[ ${{ github.event.inputs.version }} =~ $regex ]]; then
+             >&2 echo "Version is not correctly formatted. It should follow semver, x.y.z."
+             exit 1
+           fi
+
+           if [[ ${{ github.event.inputs.confirm }} != "yes" ]]; then
+             >&2 echo "Confirm must be 'yes'"
+             exit 1
+           fi
+           
+           exit 0
+
+  get_operator_versions:
+    uses: ./.github/workflows/common-get-operator-versions.yaml
+    secrets: inherit
+
+  get_service_version:
+    uses: ./.github/workflows/common-get-service-version.yaml
+    secrets: inherit
+
+  build:
+    uses: ./.github/workflows/common-build-and-publish-artifacts.yaml
+    needs: [verify, get_operator_versions, get_service_version]
+    with:
+      operator_version_latest: ${{ needs.get_operator_versions.outputs.operator_version_latest }}
+      operator_version_next: ${{ github.event.inputs.version }}
+      service_version: ${{ needs.get_service_version.outputs.service_version }}
+    secrets: inherit
