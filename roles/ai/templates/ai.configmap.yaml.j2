@@ -29,8 +29,19 @@ data:
   ENABLE_HEALTHCHECK_ATTRIBUTION: "false"
   ENABLE_HEALTHCHECK_AUTHORIZATION: "false"
   ENABLE_HEALTHCHECK_SECRET_MANAGER: "false"
+  ENABLE_HEALTHCHECK_MODEL_MESH: "false"
 
   PYTHONUNBUFFERED: "1"
+
+  {% if combined_ai.model_mesh_type is defined %}
+  {% if combined_ai.model_mesh_type == "wca" %}
+  ENABLE_HEALTHCHECK_WCA: "true"
+  ENABLE_HEALTHCHECK_WCA_ONPREM: "false"
+  {% elif combined_ai.model_mesh_type == "wca-onprem" %}
+  ENABLE_HEALTHCHECK_WCA: "false"
+  ENABLE_HEALTHCHECK_WCA_ONPREM: "true"
+  {% endif %}
+  {% endif %}
 
   # Custom user variables
 {% for item in extra_settings | default([]) %}
