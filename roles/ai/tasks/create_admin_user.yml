@@ -33,9 +33,8 @@
     container: "ai-api"
     command: >-
       bash -c "echo 'from django.contrib.auth import get_user_model;
-      User = get_user_model();
       SuperUser = get_user_model().objects.get(username=\"{{ admin_user }}\");
-      SuperUser.set_password({{ admin_password }});
+      SuperUser.set_password(\"{{ admin_password }}\");
       SuperUser.save();
       exit(0)'
       | wisdom-manage shell"
