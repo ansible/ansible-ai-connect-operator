@@ -25,3 +25,19 @@
   failed_when: "'That username is already taken' not in result.stderr and 'Superuser created successfully' not in result.stdout"
   no_log: "{{ no_log }}"
   when: users_result.return_code > 0
+
+- name: Update super user password via Django if a super user already exist.
+  kubernetes.core.k8s_exec:
+    namespace: "{{ ansible_operator_meta.namespace }}"
+    pod: "{{ ai_pod_name }}"
+    container: "ai-api"
+    command: >-
+      bash -c "echo 'from django.contrib.auth import get_user_model;
+      SuperUser = get_user_model().objects.get(username=\"{{ admin_user }}\");
+      SuperUser.set_password(\"{{ admin_password }}\");
+      SuperUser.save();
+      exit(0)'
+      | wisdom-manage shell"
+  ignore_errors: false
+  no_log: "{{ no_log }}"
+  when: users_result.return_code == 0
