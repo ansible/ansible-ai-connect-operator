@@ -12,7 +12,7 @@
       | wisdom-manage shell"
   ignore_errors: true
   register: users_result
-  changed_when: users_result.return_code > 0
+  changed_when: users_result > 0
 
 - name: Create super user via Django if it doesn't exist.
   kubernetes.core.k8s_exec:
@@ -24,4 +24,4 @@
   changed_when: "'That username is already taken' not in result.stderr"
   failed_when: "'That username is already taken' not in result.stderr and 'Superuser created successfully' not in result.stdout"
   no_log: "{{ no_log }}"
-  when: users_result.return_code > 0
+  when: users_result > 0
