@@ -1,4 +1,4 @@
-# Build and deploy the Ansible AI Connect Service & Operator from sources
+# Build and deploy the Ansible AI Connect Service & Operator
 
 This document describes the high level procedure, and instructions to follow, in order to:
 - Build and deploy the [ansible-wisdom-ai-connect-service](https://github.com/ansible/ansible-ai-connect-service) to a container registry
@@ -9,6 +9,8 @@ _NOTE_: This document assumes the use of [podman](https://podman.io/) as for the
 and [Openshift](https://www.redhat.com/en/technologies/cloud-computing/openshift) for the management of cloud deployments and services.
 
 ## Ansible AI Connect Service
+
+In case the service code has been changed, a new service image has to be created and uploaded to some registry. 
 
 ### Build the service
 
@@ -33,25 +35,36 @@ podman push quay.io/<project>/<destination>
 
 ## Ansible AI Connect Operator
 
-### Build and deploy the operator
+In case the operator code changed, or the service image tag updated, please build and deploy the operator.
+
+### Build and push the operator images
+
+In case operator, bundle or catalog images must be generated, please follow:
 
 - Checkout a branch or tag from [ansible-wisdom-ai-connect-operator](https://github.com/ansible/ansible-ai-connect-operator)
-- TODO: Login to minikube or Openshift first? So kubectl points to the right destination cluster.
-- [Install the operator's images](https://github.com/ansible/ansible-ai-connect-operator?tab=readme-ov-file#install-the-ansible-ai-connect-operator)
-  - TODO: Need for cluster-admin role 
-  - TODO: Global CSV & CRD ? implications on other ns? 
-- TODO:  Advanced configurations (secrets (private quay.io, AAP, WCA), etc), first??
-- [Deploy the operator in Openshift](https://github.com/ansible/ansible-ai-connect-operator/blob/main/docs/running-on-openshift-rosa-cluster.md)
-- [Create an AnsibleAIConnect instance](https://github.com/ansible/ansible-ai-connect-operator/blob/main/docs/running-on-openshift-rosa-cluster.md#create-an-ansibleaiconnect-instance)
+- Login into the registry where to push the images, for instance, f.i. [login into quay.io](https://quay.io/tutorial/) 
+- Replace variables as appropriate, and run:
+  ```
+  export IMAGE_TAG_BASE=quay.io/manstis/ansible-ai-connect
+  export VERSION=0.x.y
+  
+  make docker-build docker-push
+  make bundle
+  make bundle-build bundle-push
+  make catalog-build catalog-push
+  ```
 
-### AAP  Integration
+### Install and deploy the operator (Openshift)
 
-TODO
+- Checkout a branch or tag from [ansible-wisdom-ai-connect-operator](https://github.com/ansible/ansible-ai-connect-operator)
+- [Install the operator](../README.md#install-the-ansible-ai-connect-operator)
+- [Deploy the operator](running-on-openshift-rosa-cluster.md)
+- [Create an AnsibleAIConnect instance](running-on-openshift-rosa-cluster.md#create-an-ansibleaiconnect-instance)
 
-### WCA Integration
-- 
-- Follow instructions on how to [integrate with WCA](https://github.com/ansible/ansible-ai-connect-operator?tab=readme-ov-file#integrating-with-ansible-automation-platform-and-ibm-watsonx-code-assistant)
+### AAP and WCA Integration
+
+Follow instructions on how to [integrate with AAP and WCA](aap-wca-integrations.md)
 
 ### Advanced configurations
 
-Please refer to these [instructions](https://github.com/ansible/ansible-ai-connect-operator?tab=readme-ov-file#advanced-configuration) for configurations such as use of an external database, secrets, accounts and encryption.
+For configurations such as database, secrets, accounts, logging or use of certificates, please refer to these [instructions](../README.md#advanced-configuration)
