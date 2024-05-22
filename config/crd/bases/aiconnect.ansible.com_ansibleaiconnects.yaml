@@ -34,8 +34,8 @@ spec:
             type: object
             x-kubernetes-preserve-unknown-fields: true
             required:
-              - auth
-              - ai
+              - auth_config_secret_name
+              - model_config_secret_name
             properties:
               image_pull_policy:
                 description: The image pull policy
@@ -68,32 +68,12 @@ spec:
                 description: Configure no_log for no log tasks
                 type: boolean
                 default: true
-              auth:
-                description: Defines desired state of the Authentication resources
-                properties:
-                  use_existing_secret:
-                    description: "Use an existing Secret for configuration."
-                    default: false
-                    type: boolean
-                  auth_secret_name:
-                    description: "Secret where the authentication configuration can be found. If not specified this secret will be generated."
-                    type: string
-                  aap_api_url:
-                    description: AAP API URL
-                    type: string
-                  social_auth_aap_key:
-                    description: AAP authentication key
-                    type: string
-                  social_auth_aap_secret:
-                    description: AAP authentication secret
-                    type: string
-                  social_auth_verify_ssl:
-                    description: Enable SSL verification
-                    type: boolean
-                  ansible_wisdom_domain:
-                    description: A list of strings representing the host/domain names that the AI instance can serve
-                    type: string
-                type: object
+              auth_config_secret_name:
+                description: "Secret where the authentication configuration can be found"
+                type: string
+              model_config_secret_name:
+                description: "Secret where the model configuration can be found"
+                type: string
               database:
                 description: The PostgreSQL database StatefulSet
                 properties:
@@ -224,37 +204,6 @@ spec:
                   postgres_storage_class:
                     description: Storage class to use for the PostgreSQL PVC
                     type: string
-                type: object
-              ai:
-                description: Defines desired state of the WCA resources
-                properties:
-                  use_existing_secret:
-                    description: "Use an existing Secret for configuration."
-                    default: false
-                    type: boolean
-                  ai_secret_name:
-                    description: "Secret where the AI configuration can be found. If not specified this secret will be generated."
-                    type: string
-                  username:
-                    description: AI provider username
-                    default: "username"
-                    type: string
-                  inference_url:
-                    description: AI provider endpoint
-                    type: string
-                  model_mesh_api_key:
-                    description: AI provider API Key
-                    type: string
-                  model_mesh_model_name:
-                    description: AI provider Model Name
-                    type: string
-                  model_mesh_type:
-                    description: Type of AI provider
-                    default: "wca-onprem"
-                    type: string
-                    enum:
-                      - "wca"
-                      - "wca-onprem"
                 type: object
               api:
                 description: Defines desired state of the resources
@@ -713,8 +662,8 @@ spec:
               databaseConfigurationSecret:
                 description: Database Configuration secret name of the deployed instance
                 type: string
-              aiConfigurationSecret:
-                description: AI Configuration secret name of the deployed instance
+              modelConfigurationSecret:
+                description: Model Configuration secret name of the deployed instance
                 type: string
               dbFieldsEncryptionSecret:
                 description: Database Fields Encryption secret name of the deployed instance

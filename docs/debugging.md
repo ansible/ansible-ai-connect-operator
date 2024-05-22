@@ -56,14 +56,14 @@ metadata:
 spec:
   no_log: false        # <------------
   auth:
-    aap_api_url: 'TBA'
-    social_auth_aap_key: 'TBA'
-    social_auth_aap_secret: 'TBA'
+    auth_api_url: 'TBA'
+    auth_api_key: 'TBA'
+    auth_api_secret: 'TBA'
   ai:
     username: 'TBA'
-    inference_url: 'TBA'
-    model_mesh_api_key: 'TBA'
-    model_mesh_model_name: 'TBA'
+    model_url: 'TBA'
+    model_api_key: 'TBA'
+    model_name: 'TBA'
 ```
 
 ## Iterating on the installer without deploying the operator

@@ -1,6 +1,6 @@
 ---
 # API Image
-- name: Set default AnsibleAIConnect api container image
+- name: Set default AnsibleAIConnect API container image
   set_fact:
     _default_image: "{{ _image }}:{{ _image_version }}"
 

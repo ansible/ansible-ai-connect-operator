@@ -12,11 +12,12 @@ data:
   COMMERCIAL_DOCUMENTATION_URL: "https://access.redhat.com/documentation/en-us/red_hat_ansible_lightspeed_with_ibm_watsonx_code_assistant/2.x_latest/html/red_hat_ansible_lightspeed_with_ibm_watsonx_code_assistant_user_guide/index"
   ENABLE_ADDITIONAL_CONTEXT: "true"
   ENABLE_ANSIBLE_LINT_POSTPROCESS: "true"
+  ENABLE_HEALTHCHECK_MODEL_MESH: "true"
   ANSIBLE_AI_ENABLE_TECH_PREVIEW: "false"
   ALLOW_METRICS_FOR_ANONYMOUS_USERS: "false"
   DEPLOYMENT_MODE: "onprem"
 
-  # AI specific settings
+  # Model specific settings
   ANSIBLE_AI_MODEL_MESH_API_TIMEOUT: "15"
   HUGGINGFACE_HUB_CACHE: /var/www/model-cache
   SENTENCE_TRANSFORMERS_HOME: /var/www/model-cache
@@ -30,7 +31,6 @@ data:
   ENABLE_HEALTHCHECK_ATTRIBUTION: "false"
   ENABLE_HEALTHCHECK_AUTHORIZATION: "false"
   ENABLE_HEALTHCHECK_SECRET_MANAGER: "false"
-  ENABLE_HEALTHCHECK_MODEL_MESH: "false"
 
   PYTHONUNBUFFERED: "1"
 

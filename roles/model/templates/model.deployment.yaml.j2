@@ -33,17 +33,17 @@ spec:
         {{ lookup("template", "../common/templates/labels/version.yaml.j2") | indent(width=8) | trim }}
         app.kubernetes.io/component: '{{ deployment_type }}-api'
       annotations:
-        kubectl.kubernetes.io/default-container: 'ai-api'
+        kubectl.kubernetes.io/default-container: 'model-api'
 {% for template in [
-    "ai.configmap",
-    "ai.configmap.wisdom-service",
-    "secrets/ai.secret",
-    "secrets/auth.secret",
+    "model.configmap",
+    "model.configmap.wisdom-service",
   ] %}
         checksum-{{ template | replace('/', '-') }}: "{{ lookup('template', template + '.yaml.j2') | sha1 }}"
 {% endfor %}
 {% for secret in [
-    "secrets/db_fields_encryption",
+    "auth_config",
+    "model_config",
+    "db_fields_encryption",
   ] %}
         checksum-secret-{{ secret }}: "{{ lookup('ansible.builtin.vars', secret, default='')["resources"][0]["data"] | default('') | sha1 }}"
 {% endfor %}
@@ -90,7 +90,7 @@ spec:
             readOnly: true
 {% endif %}
       containers:
-      - name: ai-api
+      - name: model-api
         image: {{ _image }}
         imagePullPolicy: '{{ image_pull_policy }}'
         envFrom:
@@ -100,28 +100,28 @@ spec:
         - name: AAP_API_URL
           valueFrom:
             secretKeyRef:
-              name: '{{ __auth_secret_name }}'
-              key: aap_api_url
+              name: '{{ auth_config_secret_name }}'
+              key: auth_api_url
         - name: SOCIAL_AUTH_AAP_KEY
           valueFrom:
             secretKeyRef:
-              name: '{{ __auth_secret_name }}'
-              key: social_auth_aap_key
+              name: '{{ auth_config_secret_name }}'
+              key: auth_api_key
         - name: SOCIAL_AUTH_AAP_SECRET
           valueFrom:
             secretKeyRef:
-              name: '{{ __auth_secret_name }}'
-              key: social_auth_aap_secret
+              name: '{{ auth_config_secret_name }}'
+              key: auth_api_secret
         - name: SOCIAL_AUTH_VERIFY_SSL
           valueFrom:
             secretKeyRef:
-              name: '{{ __auth_secret_name }}'
-              key: social_auth_verify_ssl
+              name: '{{ auth_config_secret_name }}'
+              key: auth_verify_ssl
         - name: ANSIBLE_WISDOM_DOMAIN
           valueFrom:
             secretKeyRef:
-              name: '{{ __auth_secret_name }}'
-              key: ansible_wisdom_domain
+              name: '{{ auth_config_secret_name }}'
+              key: auth_allowed_hosts
         - name: SECRET_KEY
           valueFrom:
             secretKeyRef:
@@ -155,56 +155,56 @@ spec:
         - name: ANSIBLE_WCA_USERNAME
           valueFrom:
             secretKeyRef:
-              name: '{{ __ai_secret_name }}'
+              name: '{{ model_config_secret_name }}'
               key: username
         - name: ANSIBLE_WCA_INFERENCE_URL
           valueFrom:
             secretKeyRef:
-              name: '{{ __ai_secret_name }}'
-              key: inference_url
+              name: '{{ model_config_secret_name }}'
+              key: model_url
         - name: ANSIBLE_AI_MODEL_MESH_API_KEY
           valueFrom:
             secretKeyRef:
-              name: '{{ __ai_secret_name }}'
-              key: model_mesh_api_key
+              name: '{{ model_config_secret_name }}'
+              key: model_api_key
         # Used by wisdom-service Health endpoint
         # Use the same value as ANSIBLE_AI_MODEL_MESH_MODEL_NAME
         - name: ANSIBLE_AI_MODEL_NAME
           valueFrom:
             secretKeyRef:
-              name: '{{ __ai_secret_name }}'
-              key: model_mesh_model_name
+              name: '{{ model_config_secret_name }}'
+              key: model_name
         # Used by wisdom-service WCAClients
         - name: ANSIBLE_AI_MODEL_MESH_MODEL_NAME
           valueFrom:
             secretKeyRef:
-              name: '{{ __ai_secret_name }}'
-              key: model_mesh_model_name
+              name: '{{ model_config_secret_name }}'
+              key: model_name
         - name: ANSIBLE_AI_MODEL_MESH_API_TYPE
           valueFrom:
             secretKeyRef:
-              name: '{{ __ai_secret_name }}'
-              key: model_mesh_type
+              name: '{{ model_config_secret_name }}'
+              key: model_type
         - name: ANSIBLE_WCA_HEALTHCHECK_API_KEY
           valueFrom:
             secretKeyRef:
-              name: '{{ __ai_secret_name }}'
-              key: model_mesh_api_key
+              name: '{{ model_config_secret_name }}'
+              key: model_api_key
         - name: ANSIBLE_WCA_HEALTHCHECK_MODEL_ID
           valueFrom:
             secretKeyRef:
-              name: '{{ __ai_secret_name }}'
-              key: model_mesh_model_name
+              name: '{{ model_config_secret_name }}'
+              key: model_name
         - name: ANSIBLE_WCA_ONPREM_HEALTHCHECK_API_KEY
           valueFrom:
             secretKeyRef:
-              name: '{{ __ai_secret_name }}'
-              key: model_mesh_api_key
+              name: '{{ model_config_secret_name }}'
+              key: model_api_key
         - name: ANSIBLE_WCA_ONPREM_HEALTHCHECK_MODEL_ID
           valueFrom:
             secretKeyRef:
-              name: '{{ __ai_secret_name }}'
-              key: model_mesh_model_name
+              name: '{{ model_config_secret_name }}'
+              key: model_name
         ports:
         - containerPort: 8000
           protocol: TCP
