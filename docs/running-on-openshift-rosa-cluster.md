@@ -146,7 +146,7 @@ kubectl apply -f aiconnect.yaml
 
 3. Once deployed, the `AnsibleAIConnect` instance will be accessible by running:
 ```bash
-$ oc get route -n <target-namespace> my-aiconnect-api
+$ oc get route -n <target-namespace> my-aiconnect
 ```
 
 ### A note on `PersistentVolume`'s
