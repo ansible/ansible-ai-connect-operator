@@ -56,7 +56,7 @@ kind: Kustomization
 resources:
   - config/default
 
-# Set the image tags to match the git version from above
+# Set the new operator tag to be installed.
 images:
   - name: quay.io/ansible/ansible-ai-connect-operator
     newTag: 0.0.1
