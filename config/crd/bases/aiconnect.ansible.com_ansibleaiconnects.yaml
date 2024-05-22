@@ -73,7 +73,7 @@ spec:
                 properties:
                   use_existing_secret:
                     description: "Use an existing Secret for configuration."
-                    default: false
+                    default: true
                     type: boolean
                   auth_secret_name:
                     description: "Secret where the authentication configuration can be found. If not specified this secret will be generated."
@@ -230,7 +230,7 @@ spec:
                 properties:
                   use_existing_secret:
                     description: "Use an existing Secret for configuration."
-                    default: false
+                    default: true
                     type: boolean
                   ai_secret_name:
                     description: "Secret where the AI configuration can be found. If not specified this secret will be generated."
