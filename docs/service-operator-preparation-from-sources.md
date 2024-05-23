@@ -45,7 +45,7 @@ In case operator, bundle or catalog images must be generated, please follow:
 - Login into the registry where to push the images, for instance, f.i. [login into quay.io](https://quay.io/tutorial/) 
 - Replace variables as appropriate, and run:
   ```
-  export IMAGE_TAG_BASE=quay.io/manstis/ansible-ai-connect
+  export IMAGE_TAG_BASE=quay.io/<project>>/ansible-ai-connect
   export VERSION=0.x.y
   
   make docker-build docker-push
