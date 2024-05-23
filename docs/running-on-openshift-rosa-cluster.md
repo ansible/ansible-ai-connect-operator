@@ -82,7 +82,7 @@ docker login quay.io
 ```
 Set the Operator image name used by the `makefile`:
 ```
-# In case not relying on the image from the ansible organization in Quay.io, use your own image instead.
+# In case you're not relying on the image from the ansible organization in Quay.io, use your own image instead.
 export IMG=quay.io/ansible/ansible-ai-connect-operator:latest
 ```
 **NOTE:** If the repository is private a `Secret` will also need to be provided:
