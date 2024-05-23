@@ -34,8 +34,8 @@ spec:
             type: object
             x-kubernetes-preserve-unknown-fields: true
             required:
-              - auth
-              - ai
+              - auth_config
+              - model_config
             properties:
               image_pull_policy:
                 description: The image pull policy
@@ -68,24 +68,24 @@ spec:
                 description: Configure no_log for no log tasks
                 type: boolean
                 default: true
-              auth:
-                description: Defines desired state of the Authentication resources
+              auth_config:
+                description: Defines desired state of the authentication resources
                 properties:
                   use_existing_secret:
                     description: "Use an existing Secret for configuration."
                     default: false
                     type: boolean
                   auth_secret_name:
-                    description: "Secret where the authentication configuration can be found. If not specified this secret will be generated."
+                    description: "Secret where the authentication configuration can be found. If not specified this secret will be generated"
                     type: string
                   aap_api_url:
-                    description: AAP API URL
+                    description: Ansible Automation Platform API URL
                     type: string
                   social_auth_aap_key:
-                    description: AAP authentication key
+                    description: Ansible Automation Platform authentication key
                     type: string
                   social_auth_aap_secret:
-                    description: AAP authentication secret
+                    description: Ansible Automation Platform authentication secret
                     type: string
                   social_auth_verify_ssl:
                     description: Enable SSL verification
@@ -225,15 +225,15 @@ spec:
                     description: Storage class to use for the PostgreSQL PVC
                     type: string
                 type: object
-              ai:
-                description: Defines desired state of the WCA resources
+              model_config:
+                description: Defines desired state of the model resources
                 properties:
                   use_existing_secret:
                     description: "Use an existing Secret for configuration."
                     default: false
                     type: boolean
-                  ai_secret_name:
-                    description: "Secret where the AI configuration can be found. If not specified this secret will be generated."
+                  model_secret_name:
+                    description: "Secret where the model configuration can be found. If not specified this secret will be generated"
                     type: string
                   username:
                     description: AI provider username

@@ -79,11 +79,11 @@ metadata:
 spec:
   ingress_type: Route
   service_type: ClusterIP
-  auth:
+  auth_config:
     aap_api_url: 'TBA'
     social_auth_aap_key: 'TBA'
     social_auth_aap_secret: 'TBA'
-  ai:
+  model_config:
     username: 'TBA'
     inference_url: 'TBA'
     model_mesh_api_key: 'TBA'

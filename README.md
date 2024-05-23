@@ -101,7 +101,7 @@ Ansible AI Connect can be configured to use an existing database. Here is an [ex
 
 ### Use existing `Secret`'s
 
-`AnsibleAIConnect` can be configured to use existing `Secret`'s for both the `auth` and `ai` configuration. Here is an [example](/docs/using-external-configuration-secrets.md)
+`AnsibleAIConnect` can be configured to use existing `Secret`'s for both the `auth_config` and `model_config` configuration. Here is an [example](/docs/using-external-configuration-secrets.md)
 
 ### Deploying Ansible AI Connect Operator using OLM
 

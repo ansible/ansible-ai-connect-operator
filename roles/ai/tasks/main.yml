@@ -29,7 +29,7 @@
 - name: Create Authentication secret
   include_tasks: set_auth_configuration_secret.yml
 
-- name: Create AI secret
+- name: Create Model secret
   include_tasks: set_ai_configuration_secret.yml
 
 - name: Load Route TLS certificate

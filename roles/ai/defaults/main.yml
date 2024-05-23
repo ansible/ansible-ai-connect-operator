@@ -40,8 +40,8 @@ no_log: false
 # ----------------------------------------
 # Configuration for Authentication
 # ----------------------------------------
-auth: {}
-_auth:
+auth_config: {}
+_auth_config:
   # Name of kubernetes secret containing Authentication:
   # - aap_api_url
   # - social_auth_aap_key
@@ -74,15 +74,15 @@ _api:
 # ----------------------------------------
 # Configuration for AI model provider
 # ----------------------------------------
-ai: {}
-_ai:
+model_config: {}
+_model_config:
   # Name of kubernetes secret containing WCA:
   # - username
   # - inference_url
   # - model_mesh_api_key
   # - model_mesh_model_name
   # - model_mesh_type
-  ai_secret_name: ''
+  model_secret_name: ''
   # Explicit parameters to populate Secret if one does not already exist
   username: ''
   inference_url: ''

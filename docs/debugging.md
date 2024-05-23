@@ -11,7 +11,7 @@ kubectl logs deployments/ansible-ai-connect-operator-controller-manager -c ansib
 ### Inspect k8s Resources
 
 Past that, it is often useful to inspect various resources the `AnsibleAIConnect` Operator manages like:
-* `ai`
+* `model_config`
 * `pod`
 * `deployment`
 * `statefulset`
@@ -55,11 +55,11 @@ metadata:
   namespace: ansibleaiconnect
 spec:
   no_log: false        # <------------
-  auth:
+  auth_config:
     aap_api_url: 'TBA'
     social_auth_aap_key: 'TBA'
     social_auth_aap_secret: 'TBA'
-  ai:
+  model_config:
     username: 'TBA'
     inference_url: 'TBA'
     model_mesh_api_key: 'TBA'

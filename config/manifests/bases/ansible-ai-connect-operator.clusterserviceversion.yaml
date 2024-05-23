@@ -16,81 +16,81 @@ spec:
       name: ansibleaiconnects.aiconnect.ansible.com
       specDescriptors:
       - displayName: Use an existing authentication configuration secret
-        path: auth.use_existing_secret
+        path: auth_config.use_existing_secret
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:advanced
         - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
       - displayName: External authentication configuration secret
-        path: auth.auth_secret_name
+        path: auth_config.auth_secret_name
         x-descriptors:
         - urn:alm:descriptor:io.kubernetes:Secret
-        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:auth.use_existing_secret:true
-      - displayName: Use an existing AI configuration secret
-        path: ai.use_existing_secret
+        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:auth_config.use_existing_secret:true
+      - displayName: Use an existing model configuration secret
+        path: model.use_existing_secret
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:advanced
         - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
-      - displayName: External AI configuration secret
-        path: ai.ai_secret_name
+      - displayName: External model configuration secret
+        path: model_config.model_secret_name
         x-descriptors:
         - urn:alm:descriptor:io.kubernetes:Secret
-        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:ai.use_existing_secret:true
-      - displayName: AAP API URL
-        path: auth.aap_api_url
+        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:model_config.use_existing_secret:true
+      - displayName: Ansible Automation Platform API URL
+        path: auth_config.aap_api_url
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:text
-        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:auth.use_existing_secret:false
-      - displayName: AAP authentication key
-        path: auth.social_auth_aap_key
+        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:auth_config.use_existing_secret:false
+      - displayName: Ansible Automation Platform authentication key
+        path: auth_config.social_auth_aap_key
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:password
-        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:auth.use_existing_secret:false
-      - displayName: AAP authentication secret
-        path: auth.social_auth_aap_secret
+        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:auth_config.use_existing_secret:false
+      - displayName: Ansible Automation Platform authentication secret
+        path: auth_config.social_auth_aap_secret
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:password
-        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:auth.use_existing_secret:false
+        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:auth_config.use_existing_secret:false
       - displayName: Enable SSL verification
-        path: auth.social_auth_verify_ssl
+        path: auth_config.social_auth_verify_ssl
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:advanced
         - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
-        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:auth.use_existing_secret:false
+        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:auth_config.use_existing_secret:false
       - displayName: A list of strings representing the host/domain names that the
-          AI instance can serve
-        path: auth.ansible_wisdom_domain
+          Model instance can serve
+        path: auth_config.ansible_wisdom_domain
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:advanced
         - urn:alm:descriptor:com.tectonic.ui:text
-        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:auth.use_existing_secret:false
-      - displayName: AI provider username
-        path: ai.username
+        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:auth_config.use_existing_secret:false
+      - displayName: Model provider username
+        path: model_config.username
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:text
-        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:ai.use_existing_secret:false
-        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:ai.model_mesh_type:wca-onprem
-      - displayName: AI provider endpoint
-        path: ai.inference_url
+        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:model_config.use_existing_secret:false
+        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:model_config.model_mesh_type:wca-onprem
+      - displayName: Model provider endpoint
+        path: model_config.inference_url
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:text
-        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:ai.use_existing_secret:false
-      - displayName: AI provider API Key
-        path: ai.model_mesh_api_key
+        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:model_config.use_existing_secret:false
+      - displayName: Model provider API Key
+        path: model_config.model_mesh_api_key
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:password
-        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:ai.use_existing_secret:false
+        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:model_config.use_existing_secret:false
       - displayName: AI provider Model Name
-        path: ai.model_mesh_model_name
+        path: model_config.model_mesh_model_name
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:password
-        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:ai.use_existing_secret:false
+        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:model_config.use_existing_secret:false
       - displayName: Type of AI provider
-        path: ai.model_mesh_type
+        path: model_config.model_mesh_type
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:advanced
         - urn:alm:descriptor:com.tectonic.ui:select:wca
         - urn:alm:descriptor:com.tectonic.ui:select:wca-onprem
-        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:ai.use_existing_secret:false
+        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:model_config.use_existing_secret:false
       - displayName: Image Pull Policy
         path: image_pull_policy
         x-descriptors:
@@ -120,7 +120,7 @@ spec:
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:advanced
         - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
-      - description: Defines desired state of AI deployment resources
+      - description: Defines desired state of model deployment resources
         displayName: API deployment configuration
         path: api
         x-descriptors:
@@ -344,7 +344,7 @@ spec:
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:advanced
         - urn:alm:descriptor:com.tectonic.ui:hidden
-      - displayName: Set default labels on AI resource
+      - displayName: Set default labels on model resource
         path: set_self_labels
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:advanced
@@ -371,9 +371,9 @@ spec:
         path: databaseConfigurationSecret
         x-descriptors:
         - urn:alm:descriptor:io.kubernetes:Secret
-      - description: AI Configuration secret name of the deployed instance
-        displayName: AI Configuration
-        path: aiConfigurationSecret
+      - description: Model Configuration secret name of the deployed instance
+        displayName: Model Configuration
+        path: modelConfigurationSecret
         x-descriptors:
         - urn:alm:descriptor:io.kubernetes:Secret
       - description: Database Fields Encryption secret name of the deployed instance

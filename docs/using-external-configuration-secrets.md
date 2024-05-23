@@ -5,11 +5,11 @@
 Configuration parameters for the both the authentication backend and model service can be provided as explicit parameters in the `AnsibleAIConnect` definition. For example:
 ```yaml
 spec:
-  auth:
+  auth_config:
     aap_api_url: 'TBA'
     social_auth_aap_key: 'TBA'
     social_auth_aap_secret: 'TBA'
-  ai:
+  model_config:
     username: 'TBA'
     inference_url: 'TBA'
     model_mesh_api_key: 'TBA'
@@ -19,7 +19,7 @@ If it is undesirable to provide these in plain text _external_ `Secret`'s can be
 
 ## Authentication `Secret`
 
-If `auth.auth_secret_name` is set to the name of an existing `Secret` the Operator will use the values set therein to connect to configure the authentication backend integration. The `Secret` must contain the following values:
+If `auth_config.auth_secret_name` is set to the name of an existing `Secret` the Operator will use the values set therein to connect to configure the authentication backend integration. The `Secret` must contain the following values:
 ```yaml
 apiVersion: v1
 kind: Secret
@@ -27,9 +27,9 @@ metadata:
   name: <secret-name>-auth-configuration
   namespace: <target-namespace>
 data:
-  aap_api_url: <base64 encoded AAP API service URL>
-  social_auth_aap_key: <base64 encoded AAP Application Client ID>
-  social_auth_aap_secret: <base64 encoded AAP Application Secret>
+  aap_api_url: <base64 encoded Ansible Automation Platform API service URL>
+  social_auth_aap_key: <base64 encoded Ansible Automation Platform Application Client ID>
+  social_auth_aap_secret: <base64 encoded Ansible Automation Platform Application Secret>
   social_auth_verify_ssl: <base64 encoded boolean>
   ansible_wisdom_domain: <base64 encoded domains>
 type: Opaque
@@ -43,18 +43,18 @@ metadata:
   namespace: <target-namespace>
 spec:
   ...
-  auth:
+  auth_config:
     auth_secret_name: <secret-name>-auth-configuration
 ```
 
 ## Model service `Secret`
 
-If `ai.ai_secret_name` is set to the name of an existing `Secret` the Operator will use the values set therein to connect to configure the model service integration. The `Secret` must contain the following values:
+If `model_config.model_secret_name` is set to the name of an existing `Secret` the Operator will use the values set therein to connect to configure the model service integration. The `Secret` must contain the following values:
 ```yaml
 apiVersion: v1
 kind: Secret
 metadata:
-  name: <secret-name>-ai-configuration
+  name: <secret-name>-model-configuration
   namespace: <target-namespace>
 data:
   username: <base64 encoded WCA "on prem" username[1]>
@@ -76,8 +76,8 @@ metadata:
   namespace: <target-namespace>
 spec:
   ...
-  ai:
-    ai_secret_name: <secret-name>-ai-configuration
+  model_config:
+    model_secret_name: <secret-name>-model-configuration
 ```
 
 ## Example
@@ -90,20 +90,20 @@ metadata:
   name: my-secret-auth-configuration
   namespace: mynamespace
 data:
-  aap_api_url: <base64 encoded AAP API service URL>
-  social_auth_aap_key: <base64 encoded AAP Application Client ID>
-  social_auth_aap_secret: <base64 encoded AAP Application Secret>
+  aap_api_url: <base64 encoded Ansible Automation Platform API service URL>
+  social_auth_aap_key: <base64 encoded Ansible Automation Platform Application Client ID>
+  social_auth_aap_secret: <base64 encoded Ansible Automation Platform Application Secret>
   social_auth_verify_ssl: <base64 encoded boolean>
   ansible_wisdom_domain: <base64 encoded domains>
 type: Opaque
 ```
 
-### Create the AI `Secret`
+### Create the Model `Secret`
 ```yaml
 apiVersion: v1
 kind: Secret
 metadata:
-  name: my-secret-ai-configuration
+  name: my-secret-model-configuration
   namespace: mynamespace
 data:
   username: <base64 encoded WCA username>
@@ -124,8 +124,8 @@ metadata:
 spec:
   ingress_type: Route
   service_type: ClusterIP
-  auth:
+  auth_config:
     auth_secret_name: my-secret-auth-configuration
-  ai:
-    ai_secret_name: my-secret-ai-configuration
+  model_config:
+    model_secret_name: my-secret-model-configuration
 ```

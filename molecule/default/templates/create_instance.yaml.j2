@@ -20,11 +20,11 @@ spec:
 {% if wisdom_service_version %}
   image_version: {{ wisdom_service_version }}
 {% endif %}
-  auth:
-    aap_api_url: 'my-aap-api-url'
-    social_auth_aap_key: 'my-aap-key'
-    social_auth_aap_secret: 'my-aap-secret'
-  ai:
+  auth_config:
+    aap_api_url: 'my-ansible-automation-platform-api-url'
+    social_auth_aap_key: 'my-ansible-automation-platform-key'
+    social_auth_aap_secret: 'my-ansible-automation-platform-secret'
+  model_config:
     username: 'username'
     inference_url: 'http://my-ai-instance/'
     model_mesh_api_key: 'my-ai-api-key'

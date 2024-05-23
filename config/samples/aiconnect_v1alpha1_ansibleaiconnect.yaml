@@ -12,14 +12,14 @@ spec:
   no_log: false
   service_type: ClusterIP
   ingress_type: Route
-  auth:
-    aap_api_url: 'my-aap-api-url'
-    social_auth_aap_key: 'my-aap-key'
-    social_auth_aap_secret: 'my-aap-secret'
-  ai:
+  auth_config:
+    aap_api_url: 'my-ansible-automation-platform-api-url'
+    social_auth_aap_key: 'my-ansible-automation-platform-key'
+    social_auth_aap_secret: 'my-ansible-automation-platform-secret'
+  model_config:
     username: 'username'
-    inference_url: 'http://my-ai-instance/'
-    model_mesh_api_key: 'my-ai-api-key'
+    inference_url: 'http://my-model-instance/'
+    model_mesh_api_key: 'my-model-api-key'
     model_mesh_model_name: 'my-ai-model_name'
   database:
     postgres_storage_class: standard

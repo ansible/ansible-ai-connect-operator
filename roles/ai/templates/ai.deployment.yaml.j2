@@ -33,12 +33,12 @@ spec:
         {{ lookup("template", "../common/templates/labels/version.yaml.j2") | indent(width=8) | trim }}
         app.kubernetes.io/component: '{{ deployment_type }}-api'
       annotations:
-        kubectl.kubernetes.io/default-container: 'ai-api'
+        kubectl.kubernetes.io/default-container: 'model-api'
 {% for template in [
-    "ai.configmap",
-    "ai.configmap.wisdom-service",
-    "secrets/ai.secret",
-    "secrets/auth.secret",
+    "model_config.configmap",
+    "model_config.configmap.wisdom-service",
+    "secrets/model_config.secret",
+    "secrets/auth_config.secret",
   ] %}
         checksum-{{ template | replace('/', '-') }}: "{{ lookup('template', template + '.yaml.j2') | sha1 }}"
 {% endfor %}
@@ -90,7 +90,7 @@ spec:
             readOnly: true
 {% endif %}
       containers:
-      - name: ai-api
+      - name: model-api
         image: {{ _image }}
         imagePullPolicy: '{{ image_pull_policy }}'
         envFrom:
@@ -155,55 +155,55 @@ spec:
         - name: ANSIBLE_WCA_USERNAME
           valueFrom:
             secretKeyRef:
-              name: '{{ __ai_secret_name }}'
+              name: '{{ __model_secret_name }}'
               key: username
         - name: ANSIBLE_WCA_INFERENCE_URL
           valueFrom:
             secretKeyRef:
-              name: '{{ __ai_secret_name }}'
+              name: '{{ __model_secret_name }}'
               key: inference_url
         - name: ANSIBLE_AI_MODEL_MESH_API_KEY
           valueFrom:
             secretKeyRef:
-              name: '{{ __ai_secret_name }}'
+              name: '{{ __model_secret_name }}'
               key: model_mesh_api_key
         # Used by wisdom-service Health endpoint
         # Use the same value as ANSIBLE_AI_MODEL_MESH_MODEL_NAME
         - name: ANSIBLE_AI_MODEL_NAME
           valueFrom:
             secretKeyRef:
-              name: '{{ __ai_secret_name }}'
+              name: '{{ __model_secret_name }}'
               key: model_mesh_model_name
         # Used by wisdom-service WCAClients
         - name: ANSIBLE_AI_MODEL_MESH_MODEL_NAME
           valueFrom:
             secretKeyRef:
-              name: '{{ __ai_secret_name }}'
+              name: '{{ __model_secret_name }}'
               key: model_mesh_model_name
         - name: ANSIBLE_AI_MODEL_MESH_API_TYPE
           valueFrom:
             secretKeyRef:
-              name: '{{ __ai_secret_name }}'
+              name: '{{ __model_secret_name }}'
               key: model_mesh_type
         - name: ANSIBLE_WCA_HEALTHCHECK_API_KEY
           valueFrom:
             secretKeyRef:
-              name: '{{ __ai_secret_name }}'
+              name: '{{ __model_secret_name }}'
               key: model_mesh_api_key
         - name: ANSIBLE_WCA_HEALTHCHECK_MODEL_ID
           valueFrom:
             secretKeyRef:
-              name: '{{ __ai_secret_name }}'
+              name: '{{ __model_secret_name }}'
               key: model_mesh_model_name
         - name: ANSIBLE_WCA_ONPREM_HEALTHCHECK_API_KEY
           valueFrom:
             secretKeyRef:
-              name: '{{ __ai_secret_name }}'
+              name: '{{ __model_secret_name }}'
               key: model_mesh_api_key
         - name: ANSIBLE_WCA_ONPREM_HEALTHCHECK_MODEL_ID
           valueFrom:
             secretKeyRef:
-              name: '{{ __ai_secret_name }}'
+              name: '{{ __model_secret_name }}'
               key: model_mesh_model_name
         ports:
         - containerPort: 8000

@@ -17,9 +17,9 @@
     definition: "{{ lookup('template', item + '.yaml.j2') }}"
     wait: no
   loop:
-    - 'ai.service'
-    - 'ai.deployment'
-    - 'ai.ingress'
+    - 'model.service'
+    - 'model.deployment'
+    - 'model.ingress'
 
 - name: Check for API Pod
   k8s_info:
@@ -32,14 +32,14 @@
       - "app.kubernetes.io/component={{ deployment_type }}-api"
     field_selectors:
       - status.phase=Running
-  register: ai_pod
+  register: model_pod
   until:
-    - "ai_pod['resources'] | length"
-    - "ai_pod['resources'][0]['status']['phase'] == 'Running'"
-    - "ai_pod['resources'][0]['status']['containerStatuses'][0]['ready'] == true"
+    - "model_pod['resources'] | length"
+    - "model_pod['resources'][0]['status']['phase'] == 'Running'"
+    - "model_pod['resources'][0]['status']['containerStatuses'][0]['ready'] == true"
   retries: 60
   delay: 5
 
 - name: Set the resource pod name as a variable.
   set_fact:
-    ai_pod_name: "{{ ai_pod['resources'][0]['metadata']['name'] | default('') }}"
+    model_pod_name: "{{ model_pod['resources'][0]['metadata']['name'] | default('') }}"
