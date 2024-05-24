@@ -152,11 +152,13 @@ spec:
             secretKeyRef:
               name: '{{ __database_secret_name }}'
               key: password
+{% if model_type == "wca-onprem" %}
         - name: ANSIBLE_WCA_USERNAME
           valueFrom:
             secretKeyRef:
               name: '{{ model_config_secret_name }}'
               key: username
+{% endif %}
         - name: ANSIBLE_WCA_INFERENCE_URL
           valueFrom:
             secretKeyRef:
