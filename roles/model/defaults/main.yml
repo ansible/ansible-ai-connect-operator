@@ -11,7 +11,7 @@ deployment_type: 'ansible-ai-connect'
 image_pull_policy: IfNotPresent
 image_pull_secrets: []
 
-_image: quay.io/ansible/wisdom-service
+_image: quay.io/ansible/ansible-ai-connect-service
 _image_version: "{{ lookup('env', 'DEFAULT_AI_CONNECT_VERSION') or 'latest' }}"
 
 # Labels defined on the resource, which should be propagated to child resources

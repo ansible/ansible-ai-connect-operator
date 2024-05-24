@@ -4,7 +4,7 @@ There are a few variables that are customizable for `AnsibleAIConnect` image man
 
 | Name                     | Description               | Default                                          |
 |--------------------------|---------------------------|--------------------------------------------------|
-| `image`                  | Path of the image to pull | `quay.io/ansible/wisdom-service`                     |
+| `image`                  | Path of the image to pull | `quay.io/ansible/ansible-ai-connect-service`                     |
 | `image_version`          | Image version to pull     | value of `DEFAULT_AI_CONNECT_VERSION` or `main`  |
 | `image_pull_policy`      | The pull policy to adopt  | `IfNotPresent`                                   |
 | `image_pull_secrets`     | The pull secrets to use   | `None`                                           |
