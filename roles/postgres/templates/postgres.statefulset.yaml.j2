@@ -51,6 +51,24 @@ spec:
       tolerations:
         {{ combined_database.tolerations | indent(width=8) }}
 {% endif %}
+{% if combined_database.postgres_data_volume_init and not is_openshift %}
+      initContainers:
+        - name: init
+          image: '{{ _postgres_image }}'
+          imagePullPolicy: '{{ image_pull_policy }}'
+          securityContext:
+            runAsUser: 0
+          command:
+            - /bin/sh
+            - -c
+            - |
+              {{ combined_database.postgres_init_container_commands | indent(width=14) }}
+          resources: {{ combined_database.resource_requirements }}
+          volumeMounts:
+            - name: postgres-{{ supported_pg_version }}
+              mountPath: '{{ _postgres_data_path | dirname }}'
+              subPath: '{{ _postgres_data_path | dirname | basename }}'
+{% endif %}
       containers:
         - image: '{{ _postgres_image }}'
           imagePullPolicy: '{{ image_pull_policy }}'
@@ -106,8 +124,8 @@ spec:
               name: postgres-{{ supported_pg_version }}
           volumeMounts:
             - name: postgres-{{ supported_pg_version }}
-              mountPath: '{{ combined_database.postgres_data_path | dirname }}'
-              subPath: '{{ combined_database.postgres_data_path | dirname | basename }}'
+              mountPath: '{{ _postgres_data_path | dirname }}'
+              subPath: '{{ _postgres_data_path | dirname | basename }}'
 {% if combined_database.resource_requirements is defined %}
           resources: {{ combined_database.resource_requirements }}
 {% endif %}
