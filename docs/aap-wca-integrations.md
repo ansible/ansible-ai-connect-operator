@@ -1,6 +1,6 @@
 # Integrating with Ansible Automation Platform and IBM WCA
 
-When deploying Ansible AI Connect service through operator, you will need to configure the integrations with Ansible Automation Platform and IBM watsonx Code Assistant. You can do this through the UI.  You can also try the more advanced way.
+When deploying Ansible AI Connect service through operator, you will need to configure the integrations with Ansible Automation Platform and IBM watsonx Code Assistant. This is accomplished by providing `Secret`s with the necessary configuration details.
 
 ## Table of Contents
 - [Integrating with Ansible Automation Platform and IBM WCA](#integrating-with-ansible-automation-platform-and-ibm-wca)
@@ -12,12 +12,10 @@ When deploying Ansible AI Connect service through operator, you will need to con
   - [Integrating with IBM watsonx Code Assistant](#integrating-with-ibm-watsonx-code-assistant)
     - [IBM watsonx Code Assistant - Cloud Pack for Data (CPD)](#ibm-watsonx-code-assistant---cloud-pack-for-data-cpd)
     - [IBM watsonx Code Assistant - IBM Cloud](#ibm-watsonx-code-assistant---ibm-cloud)
-  - [Advanced Configuration: Using secrets for configs](#advanced-configuration-using-secrets-for-configs)
-
 
 ## Integrating with Ansible Automation Platform
 
-Lightspeed service depends on a deployed instance of Ansible Automation Platform (AAP).  The following steps decribe how you can configure it.
+Lightspeed service depends on a deployed instance of Ansible Automation Platform (AAP).  The following steps describe how you can configure it.
 
 ### Create An Application in AAP
 
@@ -39,14 +37,14 @@ Lightspeed service depends on a deployed instance of Ansible Automation Platform
   * The AAP API URL which is normally `<aap_web_url>/api/`
 
 
-### When instantiating Ansible Lightspeed CR
+### Authentication `Secret` content
 
-When you instantiate an Ansible Lightspeed Custom Resource in the OpenShift cluster, the 3 pieces of information collected from the above will help you fill
-1. `AAP authentication key`: The application `Client ID`
-2. `AAP authentication secret`: The application `Client secret`
-3. `AAP API URL`: The AAP API URL `<aap_web_url>/api/`
+When you create a `Secret` for the Authentication configuration in the OpenShift cluster, the following pieces of information collected from the above will help:
+1. `auth_api_key`: The application `Client ID`
+2. `auth_api_secret`: The application `Client secret`
+3. `auth_api_url`: The AAP API URL `<aap_web_url>/api/`
 
-You can also use an existing `Secret` to store these _sensitive_ values. See [here](using-external-configuration-secrets.md#authentication-secret) for instructions.
+See [here](using-external-configuration-secrets.md#authentication-secret) for more instructions regarding configuration with `Secret`s.
 
 ### After Ansible Lightspeed CR is created
 
@@ -56,28 +54,29 @@ You can also use an existing `Secret` to store these _sensitive_ values. See [he
 
 ## Integrating with IBM watsonx Code Assistant
 
-Currently, IBM watsonx Code Assistant can be delivered through a cloud verson and a on-premise verion, the Cloud Pack for Data.  Lightspeed service can integrate with either of them.
-
-When you instantiate an Ansible Lightspeed Custom Resource in the OpenShift cluster, there is a config section `ai`.  Near the end of the section, click open the `Advanced configuration` and choose the `Type of AI provider`.  Choose `wca-onprem` to integrate with the Cloud Pack for Data that you have set up in your infrastructure.  Choose `wca` to integrate with the cloud version.
-
+Currently, IBM watsonx Code Assistant can be delivered through a "cloud" version and an "on-premise" version, the Cloud Pack for Data. Lightspeed service can integrate with either of them.
 
 ### IBM watsonx Code Assistant - Cloud Pack for Data (CPD)
 
-You will need to fill in these information:
+#### Authentication `Secret` content
 
-1. `AI provider endpoint`: The URL to your Cloud Pack for Data instance 
-2. `AI provider API Key`: [Cloud Pack for Data API key](https://www.ibm.com/docs/en/cloud-paks/cp-data/4.8.x?topic=steps-generating-api-keys) 
-3. `AI provider Model Name`: An e.g.: `8e7de79b-8bc2-43cc-9d20-c4207cd92fec<|sepofid|>granite-3b`
-4. `AI provider username`: The username that has access to the model/space
+When you create a `Secret` for the Model configuration in the OpenShift cluster, the following pieces of information collected from the above will help:
+1. `model_url`: The URL to your Cloud Pack for Data instance 
+2. `model_api_key`: [Cloud Pack for Data API key](https://www.ibm.com/docs/en/cloud-paks/cp-data/4.8.x?topic=steps-generating-api-keys) 
+3. `model_name`: An e.g.: `8e7de79b-8bc2-43cc-9d20-c4207cd92fec<|sepofid|>granite-3b`
+4. `username`: The username that has access to the model/space
+5. `model_type`: The literal value `"wca-onprem"`.
+
+See [here](using-external-configuration-secrets.md#authentication-secret) for more instructions regarding configuration with `Secret`s.
 
 ### IBM watsonx Code Assistant - IBM Cloud
 
-You will need to fill in these information:
+#### Authentication `Secret` content
 
-1. `AI provider endpoint`: The URL to IBM Cloud `https://dataplatform.cloud.ibm.com`
-2. `AI provider API Key`: API key obtained from your IBM Cloud account
-3. `AI provider Model Name`: An e.g.: `8e7de79b-8bc2-43cc-9d20-c4207cd92fec<|sepofid|>granite-3b`
+When you create a `Secret` for the Model configuration in the OpenShift cluster, the following pieces of information collected from the above will help:
+1. `model_url`: The URL to IBM Cloud `https://dataplatform.cloud.ibm.com`
+2. `model_api_key`: API key obtained from your IBM Cloud account
+3. `model_name`: An e.g.: `8e7de79b-8bc2-43cc-9d20-c4207cd92fec<|sepofid|>granite-3b`
+4. `model_type`: The literal value `"wca"`.
 
-## Advanced Configuration: Using secrets for configs
-
-You can create `Secrets` to store these _sensitive_ values beforehand. See [here](using-external-configuration-secrets.md#model-service-secret) for instructions.
+See [here](using-external-configuration-secrets.md#authentication-secret) for more instructions regarding configuration with `Secret`s.

@@ -33,7 +33,7 @@
           - service_host_response.json.model_name == 'my-ai-model_name'
         fail_msg: /check/status did not return expected model_name. Expected 'my-ai-model_name'.
 
-    - include_tasks: 2_1_update_instance_model_name.yml
+    - include_tasks: 2_1_update_model_config_secret.yml
 
     - name: Get updated model_name
       uri:

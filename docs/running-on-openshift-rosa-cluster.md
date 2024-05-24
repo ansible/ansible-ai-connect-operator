@@ -115,6 +115,8 @@ The [`CSV`](https://olm.operatorframework.io/docs/concepts/crds/clusterserviceve
 
 If the Operator Lifecycle Manager is not being used, or if creation of an `AnsibleAIConnect` instance from the CLI is desirable, the following can performed.
 
+See [here](using-external-configuration-secrets.md#authentication-secret) for more instructions regarding configuration with `Secret`s.
+
 1. Create a file `aiconnect.yaml` with the following content.
 
 ```yaml
@@ -126,15 +128,8 @@ metadata:
 spec:
   image_pull_secrets:
     - redhat-operators-pull-secret
-  auth:
-    aap_api_url: 'TBA'
-    social_auth_aap_key: 'TBA'
-    social_auth_aap_secret: 'TBA'
-  ai:
-    username: 'TBA'
-    inference_url: 'TBA'
-    model_mesh_api_key: 'TBA'
-    model_mesh_model_name: 'TBA'
+  auth_config_secret_name: 'auth-configuration-secret'
+  model_config_secret_name: 'model-configuration-secret'
   database:
     # This has to be the name of a StorageClass in the cluster
     postgres_storage_class: gp3

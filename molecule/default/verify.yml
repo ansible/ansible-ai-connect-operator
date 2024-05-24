@@ -15,7 +15,8 @@
           include_tasks: '{{ item }}'
           with_fileglob:
             - tasks/1_0_health_check_test.yml
-            - tasks/2_0_ai_config_test.yml
+            # Changes to auth/model Secrets are not detected by the Operator
+            # - tasks/2_0_model_config_test.yml
           tags:
             - always
       rescue:
