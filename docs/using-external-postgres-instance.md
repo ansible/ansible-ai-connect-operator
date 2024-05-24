@@ -79,15 +79,8 @@ metadata:
 spec:
   ingress_type: Route
   service_type: ClusterIP
-  auth:
-    auth_api_url: 'TBA'
-    auth_api_key: 'TBA'
-    auth_api_secret: 'TBA'
-  ai:
-    username: 'TBA'
-    model_url: 'TBA'
-    model_api_key: 'TBA'
-    model_name: 'TBA'
+  auth_config_secret_name: 'auth-configuration-secret'
+  model_config_secret_name: 'model-configuration-secret'
   database:
     database_secret: 'my-secret-postgres-configuration'
 ```

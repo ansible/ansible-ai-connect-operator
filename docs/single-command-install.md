@@ -29,6 +29,8 @@ kubectl apply -f https://github.com/ansible/ansible-ai-connect-operator/releases
 
 Now create your `AnsibleAIConnect` custom resource by applying the `aiconnect-demo.yml` file and you will soon have a working `AnsibleAIConnect` instance!
 
+See [here](using-external-configuration-secrets.md#authentication-secret) for more instructions regarding configuration with `Secret`s.
+
 ```yaml
 # aiconnect-demo.yaml
 apiVersion: aiconnect.ansible.com/v1alpha1
@@ -37,15 +39,8 @@ metadata:
   name: my-aiconnect
   namespace: ansibleaiconnect
 spec:
-  auth:
-    auth_api_url: 'TBA'
-    auth_api_key: 'TBA'
-    auth_api_secret: 'TBA'
-  ai:
-    username: 'TBA'
-    model_url: 'TBA'
-    model_api_key: 'TBA'
-    model_name: 'TBA'
+  auth_config_secret_name: 'auth-configuration-secret'
+  model_config_secret_name: 'model-configuration-secret'
 ```
 
 ```bash

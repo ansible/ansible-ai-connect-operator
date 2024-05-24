@@ -2,24 +2,11 @@
 
 ## Overview
 
-Configuration parameters for the both the authentication backend and model service can be provided as explicit parameters in the `AnsibleAIConnect` definition. For example:
-```yaml
-spec:
-  auth:
-    auth_api_url: 'TBA'
-    auth_api_key: 'TBA'
-    auth_api_secret: 'TBA'
-  ai:
-    username: 'TBA'
-    model_url: 'TBA'
-    model_api_key: 'TBA'
-    model_name: 'TBA'
-```
-If it is undesirable to provide these in plain text _external_ `Secret`'s can be used instead.
+Configuration parameters for the both the authentication backend and model service **must** be provided using `Secret`'s.
 
 ## Authentication `Secret`
 
-If `auth.auth_config_secret_name` is set to the name of an existing `Secret` the Operator will use the values set therein to connect to configure the authentication backend integration. The `Secret` must contain the following values:
+`auth_config_secret_name` should be set to the name of an existing `Secret`. The Operator will use the values set therein to configure the authentication backend integration. The `Secret` must contain the following values:
 ```yaml
 apiVersion: v1
 kind: Secret
@@ -27,9 +14,9 @@ metadata:
   name: <secret-name>-auth-configuration
   namespace: <target-namespace>
 data:
-  auth_api_url: <base64 encoded AAP API service URL>
-  auth_api_key: <base64 encoded AAP Application Client ID>
-  auth_api_secret: <base64 encoded AAP Application Secret>
+  auth_api_url: <base64 encoded Authentication service URL>
+  auth_api_key: <base64 encoded Authentication service API Key>
+  auth_api_secret: <base64 encoded Authentication service API Secret>
   auth_verify_ssl: <base64 encoded boolean>
   auth_allowed_hosts: <base64 encoded domains>
 type: Opaque
@@ -43,13 +30,12 @@ metadata:
   namespace: <target-namespace>
 spec:
   ...
-  auth:
-    auth_config_secret_name: <secret-name>-auth-configuration
+  auth_config_secret_name: <secret-name>-auth-configuration
 ```
 
 ## Model service `Secret`
 
-If `ai.model_config_secret_name` is set to the name of an existing `Secret` the Operator will use the values set therein to connect to configure the model service integration. The `Secret` must contain the following values:
+`model_config_secret_name` should be set to the name of an existing `Secret`. The Operator will use the values set therein to configure the model service integration. The `Secret` must contain the following values:
 ```yaml
 apiVersion: v1
 kind: Secret
@@ -76,8 +62,7 @@ metadata:
   namespace: <target-namespace>
 spec:
   ...
-  ai:
-    model_config_secret_name: <secret-name>-ai-configuration
+  model_config_secret_name: <secret-name>-ai-configuration
 ```
 
 ## Example
@@ -90,9 +75,9 @@ metadata:
   name: my-secret-auth-configuration
   namespace: mynamespace
 data:
-  auth_api_url: <base64 encoded AAP API service URL>
-  auth_api_key: <base64 encoded AAP Application Client ID>
-  auth_api_secret: <base64 encoded AAP Application Secret>
+  auth_api_url: <base64 encoded Authentication service URL>
+  auth_api_key: <base64 encoded Authentication service API Key>
+  auth_api_secret: <base64 encoded Authentication service API Secret>
   auth_verify_ssl: <base64 encoded boolean>
   auth_allowed_hosts: <base64 encoded domains>
 type: Opaque
@@ -124,8 +109,6 @@ metadata:
 spec:
   ingress_type: Route
   service_type: ClusterIP
-  auth:
-    auth_config_secret_name: my-secret-auth-configuration
-  ai:
-    model_config_secret_name: my-secret-ai-configuration
+  auth_config_secret_name: 'my-secret-auth-configuration'
+  model_config_secret_name: 'my-secret-ai-configuration'
 ```

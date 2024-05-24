@@ -92,6 +92,8 @@ make deploy
 
 An `AnsibleAIConnect` instance can be created with the following.
 
+See [here](using-external-configuration-secrets.md#authentication-secret) for more instructions regarding configuration with `Secret`s.
+
 1. Create a file `aiconnect.yaml` with the following content.
 
 ```yaml
@@ -106,15 +108,8 @@ spec:
   nodeport_port: 30109
   image_pull_secrets:
     - redhat-operators-pull-secret
-  auth:
-    auth_api_url: 'TBA'
-    auth_api_key: 'TBA'
-    auth_api_secret: 'TBA'
-  ai:
-    username: 'TBA'
-    model_url: 'TBA'
-    model_api_key: 'TBA'
-    model_name: 'TBA'
+  auth_config_secret_name: 'auth-configuration-secret'
+  model_config_secret_name: 'model-configuration-secret'
   database:
     postgres_storage_class: standard
 ```
