@@ -12,7 +12,7 @@
   include_role:
     name: postgres
 
-- name: Set AnsibleAIConnect app images
+- name: Set AnsibleAIConnect service images
   include_tasks: set_images.yml
 
 - name: Set Bundle Certificate Authority
@@ -26,11 +26,11 @@
 - name: Create Admin password
   include_tasks: admin_password_configuration.yml
 
-- name: Create Authentication secret
-  include_tasks: set_auth_configuration_secret.yml
+- name: Read Authentication secret
+  include_tasks: read_auth_configuration_secret.yml
 
-- name: Create AI secret
-  include_tasks: set_ai_configuration_secret.yml
+- name: Read Model secret
+  include_tasks: read_model_configuration_secret.yml
 
 - name: Load Route TLS certificate
   include_tasks: load_route_tls_secret.yml
@@ -38,12 +38,12 @@
     - ingress_type | lower == 'route'
     - route_tls_secret | length
 
-- name: Deploy AnsibleAIConnect
-  include_tasks: deploy_ai.yml
+- name: Deploy Model API service
+  include_tasks: deploy_model_api.yml
 
 - name: Create admin user
   include_tasks: create_admin_user.yml
-  when: ai_pod_name | length
+  when: model_api_pod_name | length
 
 - name: Update status variables
   include_tasks: update_status.yml

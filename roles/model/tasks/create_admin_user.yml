@@ -2,8 +2,8 @@
 - name: Check if there are any super users defined.
   kubernetes.core.k8s_exec:
     namespace: "{{ ansible_operator_meta.namespace }}"
-    pod: "{{ ai_pod_name }}"
-    container: "ai-api"
+    pod: "{{ model_api_pod_name }}"
+    container: "model-api"
     command: >-
       bash -c "echo 'from django.contrib.auth import get_user_model;
       User = get_user_model();
@@ -17,8 +17,8 @@
 - name: Create super user via Django if it doesn't exist.
   kubernetes.core.k8s_exec:
     namespace: "{{ ansible_operator_meta.namespace }}"
-    pod: "{{ ai_pod_name }}"
-    container: "ai-api"
+    pod: "{{ model_api_pod_name }}"
+    container: "model-api"
     command: bash -c "DJANGO_SUPERUSER_PASSWORD={{ admin_password }} wisdom-manage createsuperuser --username={{ admin_user | quote }} --email={{ admin_email | quote }} --noinput"
   register: result
   changed_when: "'That username is already taken' not in result.stderr"

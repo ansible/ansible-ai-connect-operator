@@ -20,15 +20,8 @@ spec:
 {% if wisdom_service_version %}
   image_version: {{ wisdom_service_version }}
 {% endif %}
-  auth:
-    aap_api_url: 'my-aap-api-url'
-    social_auth_aap_key: 'my-aap-key'
-    social_auth_aap_secret: 'my-aap-secret'
-  ai:
-    username: 'username'
-    inference_url: 'http://my-ai-instance/'
-    model_mesh_api_key: 'my-ai-api-key'
-    model_mesh_model_name: 'my-ai-model_name'
+  auth_config_secret_name: 'auth-configuration-secret'
+  model_config_secret_name: 'model-configuration-secret'
   api:
     resource_requirements:
       requests:
@@ -40,8 +33,3 @@ spec:
       requests:
         cpu: 50m
         memory: 100Mi
-  extra_settings:
-    - setting: ENABLE_HEALTHCHECK_WCA
-      value: false
-    - setting: ENABLE_HEALTHCHECK_WCA_ONPREM
-      value: false

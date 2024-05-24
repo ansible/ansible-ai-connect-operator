@@ -8,9 +8,9 @@
     status:
       adminUser: "{{ admin_user }}"
       adminPasswordSecret: "{{ __admin_password_secret_name }}"
-      authConfigurationSecret: "{{ __auth_secret_name }}"
+      authConfigurationSecret: "{{ auth_config_secret_name }}"
       databaseConfigurationSecret: "{{ __database_secret_name }}"
-      aiConfigurationSecret: "{{ __ai_secret_name }}"
+      modelConfigurationSecret: "{{ model_config_secret_name }}"
       dbFieldsEncryptionSecret: "{{ __db_fields_encryption_secret_name }}"
       image: "{{ _image }}"
 
@@ -18,8 +18,8 @@
     - name: Retrieve instance version
       k8s_exec:
         namespace: "{{ ansible_operator_meta.namespace }}"
-        pod: "{{ ai_pod_name }}"
-        container: "ai-api"
+        pod: "{{ model_api_pod_name }}"
+        container: "model-api"
         command: >-
           bash -c "echo 'import pkg_resources;
           print(pkg_resources.get_distribution(\"ansible-wisdom\").version)'
@@ -35,7 +35,7 @@
         namespace: "{{ ansible_operator_meta.namespace }}"
         status:
           version: "{{ instance_version.stdout | trim }}"
-  when: ai_pod_name | length
+  when: model_api_pod_name | length
 
 - block:
     - name: Retrieve route URL
