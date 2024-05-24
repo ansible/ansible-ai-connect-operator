@@ -51,15 +51,8 @@ metadata:
   name: my-aiconnect
   namespace: ansibleaiconnect
 spec:
-  auth:
-    aap_api_url: 'TBA'
-    social_auth_aap_key: 'TBA'
-    social_auth_aap_secret: 'TBA'
-  ai:
-    username: 'TBA'
-    inference_url: 'TBA'
-    model_mesh_api_key: 'TBA'
-    model_mesh_model_name: 'TBA'
+  auth_config_secret_name: 'auth-configuration-secret'
+  model_config_secret_name: 'model-configuration-secret'
 ```
 
 3. Now apply this yaml

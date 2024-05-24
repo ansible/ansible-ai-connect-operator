@@ -1,4 +1,6 @@
 ---
+- include_tasks: 1_2_create_config_secrets.yml
+
 - name: Create an aiconnect.ansible.com/v1alpha1.AnsibleAIConnect instance
   k8s:
     state: present

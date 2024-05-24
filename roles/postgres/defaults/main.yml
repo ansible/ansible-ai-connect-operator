@@ -49,10 +49,11 @@ _database:
   node_selector: ''
   tolerations: ''
   priority_class: ''
-  postgres_data_path: '/var/lib/pgsql/data/userdata'
   postgres_extra_args: ''
-  postgres_storage_class: ''
-
+  postgres_data_volume_init: false
+  postgres_init_container_commands: |
+    chown 26:0 /var/lib/pgsql/data
+    chmod 700 /var/lib/pgsql/data
 
 image_pull_policy: IfNotPresent
 image_pull_secrets: []
