@@ -129,6 +129,33 @@ spec:
                           to an implementation-defined value. More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/'
                         type: object
                     type: object
+                  node_selector:
+                    additionalProperties:
+                      type: string
+                    description: NodeSelector for the database pod.
+                    type: object
+                  postgres_data_volume_init:
+                    description: Sets permissions on the /var/lib/pgdata/data for postgres container using an init container (not Openshift)
+                    type: boolean
+                    default: false
+                  postgres_init_container_commands:
+                    description: Customize the postgres init container commands (Non Openshift)
+                    type: string
+                  postgres_extra_args:
+                    description: Arguments to pass to postgres process
+                    items:
+                      type: string
+                    type: array
+                  priority_class:
+                    description: Assign a pre-existing priority class to the postgres pod
+                    type: string
+                  postgres_storage_class:
+                    description: Storage class to use for the PostgreSQL PVC
+                    type: string
+                  postgres_ssl_mode:
+                    description: 'Configure PostgreSQL connection sslmode option.
+                      Default: "prefer"'
+                    type: string
                   storage_requirements:
                     description: Storage requirements for the PostgreSQL container
                     properties:
@@ -142,11 +169,6 @@ spec:
                           storage:
                             type: string
                         type: object
-                    type: object
-                  node_selector:
-                    additionalProperties:
-                      type: string
-                    description: NodeSelector for the database pod.
                     type: object
                   tolerations:
                     description: Node tolerations for the database pod.
@@ -189,21 +211,6 @@ spec:
                           type: string
                       type: object
                     type: array
-                  priority_class:
-                    description: Assign a pre-existing priority class to the postgres pod
-                    type: string
-                  postgres_data_path:
-                    description: 'Registry path to the PostgreSQL container to use.
-                      Default: "/var/lib/pgsql/data/userdata"'
-                    type: string
-                  postgres_extra_args:
-                    description: Arguments to pass to postgres process
-                    items:
-                      type: string
-                    type: array
-                  postgres_storage_class:
-                    description: Storage class to use for the PostgreSQL PVC
-                    type: string
                 type: object
               api:
                 description: Defines desired state of the resources
