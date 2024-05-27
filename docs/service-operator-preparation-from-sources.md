@@ -45,7 +45,7 @@ In case operator, bundle or catalog images must be generated, please follow:
 - Login into the registry where to push the images, for instance, f.i. [login into quay.io](https://quay.io/tutorial/) 
 - Replace variables as appropriate, and run:
   ```
-  export IMAGE_TAG_BASE=quay.io/<project>>/ansible-ai-connect
+  export IMAGE_TAG_BASE=quay.io/<project>/ansible-ai-connect
   export VERSION=0.x.y
   
   make docker-build docker-push
@@ -54,11 +54,10 @@ In case operator, bundle or catalog images must be generated, please follow:
   make catalog-build catalog-push
   ```
 
-### Install and deploy the operator (Openshift)
+### Install and run the operator in Openshift
 
 - Checkout a branch or tag from [ansible-wisdom-ai-connect-operator](https://github.com/ansible/ansible-ai-connect-operator)
-- [Install the operator](../README.md#install-the-ansible-ai-connect-operator)
-- [Deploy the operator](running-on-openshift-rosa-cluster.md)
+- [Install the operator](running-on-openshift-rosa-cluster.md)
 - [Create an AnsibleAIConnect instance](running-on-openshift-rosa-cluster.md#create-an-ansibleaiconnect-instance)
 
 ### AAP and WCA Integration
