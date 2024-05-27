@@ -14,3 +14,6 @@ spec:
   ingress_type: Route
   auth_config_secret_name: 'auth-configuration-secret'
   model_config_secret_name: 'model-configuration-secret'
+  # StorageClass default value. If not set, using the cluster's default one.
+  # database:
+    # postgres_storage_class: standard

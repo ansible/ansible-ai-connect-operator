@@ -137,5 +137,10 @@ spec:
           - ReadWriteOnce
 {% if combined_database.postgres_storage_class is defined %}
         storageClassName: '{{ combined_database.postgres_storage_class }}'
+{% elif %}
+        # Approach in use - Insert a fact into the host, which comes from a k8s StorageClass default resource, see set_variables.yml
+        # Approach#2: K8s Query => https://docs.ansible.com/ansible/latest/collections/kubernetes/core/k8s_lookup.html#parameter-field_selector
+        # Approach#3: Lookup => https://docs.ansible.com/ansible/latest/collections/ansible/builtin/index.html#lookup-plugins
+        storageClassName: "{{ pg_storage_class }}"
 {% endif %}
         resources: {{ combined_database.storage_requirements }}

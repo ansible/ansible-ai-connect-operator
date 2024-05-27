@@ -12,3 +12,15 @@
 - name: Determine if database is managed based on secret values
   set_fact:
     managed_database: "{{ pg_config['resources'][0]['data']['type'] | default('') | b64decode == 'managed' }}"
+
+- name: Get default storage information
+  k8s_info:
+    kind: StorageClass
+    field_selectors:
+      - metadata.annotations.storageclass.kubernetes.io/is-default-class='true'
+  register: pg_storage_class
+
+- name: Set default storage configuration
+  set_fact:
+    pg_storage_class: '{{ pg_storage_class.name }}'
+  no_log: "{{ no_log }}"
