@@ -3,6 +3,10 @@ name: "[Push] Build and publish Operator, Bundle and Catalog artifacts"
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - README.md
+      - CONTRIBUTING.md
+      - 'docs/**'
 
 jobs:
 
