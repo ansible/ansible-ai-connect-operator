@@ -49,7 +49,7 @@ See [here](using-external-configuration-secrets.md#authentication-secret) for mo
 ### After Ansible Lightspeed CR is created
 
 * A route to the Lightspeed API service will be provisioned in the namespace
-* Revisit the application object you have created in the [Create An Application in AAP](create-an-application-in-aap) section
+* Revisit the application object you have created in the [Create An Application in AAP](#create-an-application-in-aap) section
 * Update the `Redirect URIs` field with `<lightspeed_route>/complete/aap/` where `<lightspeed_route>` is the route you just obtained.
 
 ## Integrating with IBM watsonx Code Assistant
