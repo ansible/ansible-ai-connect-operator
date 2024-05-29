@@ -21,9 +21,9 @@ data:
   auth_allowed_hosts: <base64 encoded domains>
 type: Opaque
 ```
-Set `auth_verify_ssl` to pass the `verify` parameter to HTTP requests made by the service. See [here](https://python-social-auth.readthedocs.io/en/latest/configuration/settings.html#processing-requests-and-redirects) for details.
+Set `auth_verify_ssl` to pass the `verify` parameter to HTTP requests made by the service. A value of `True` is recommended for use in production. See [here](https://python-social-auth.readthedocs.io/en/latest/configuration/settings.html#processing-requests-and-redirects) for details.
 
-`auth_allowed_hosts` contains a list of strings representing the host/domain names that this service can serve. A wildcard `*` can be used to grant access to all hosts sending requests to the service. See [here](https://docs.djangoproject.com/en/5.0/ref/settings/#allowed-hosts) for details.
+`auth_allowed_hosts` contains a list of strings representing the host/domain names that this service can serve. A wildcard `*` can be used to grant access to all hosts sending requests to the service however this is not recommended nor encouraged for production. See [here](https://docs.djangoproject.com/en/5.0/ref/settings/#allowed-hosts) for details.
 
 The `AnsibleAIConnect` configuration would look like this:
 ```yaml
