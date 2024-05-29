@@ -40,7 +40,7 @@ spec:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: <secret-name>-ai-configuration
+  name: <secret-name>-model-configuration
   namespace: <target-namespace>
 data:
   username: <base64 encoded WCA "on prem" username[1]>
@@ -62,7 +62,7 @@ metadata:
   namespace: <target-namespace>
 spec:
   ...
-  model_config_secret_name: <secret-name>-ai-configuration
+  model_config_secret_name: <secret-name>-model-configuration
 ```
 
 ## Example
@@ -83,12 +83,12 @@ data:
 type: Opaque
 ```
 
-### Create the AI `Secret`
+### Create the model `Secret`
 ```yaml
 apiVersion: v1
 kind: Secret
 metadata:
-  name: my-secret-ai-configuration
+  name: my-secret-model-configuration
   namespace: mynamespace
 data:
   username: <base64 encoded WCA username>
@@ -110,5 +110,5 @@ spec:
   ingress_type: Route
   service_type: ClusterIP
   auth_config_secret_name: 'my-secret-auth-configuration'
-  model_config_secret_name: 'my-secret-ai-configuration'
+  model_config_secret_name: 'my-secret-model-configuration'
 ```
