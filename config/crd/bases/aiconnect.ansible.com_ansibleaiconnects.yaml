@@ -79,7 +79,7 @@ spec:
                 properties:
                   database_secret:
                     description:
-                      "Secret where the database configuration can be found. Set this to us your own external PostgreSQL database. 
+                      "Secret where the database configuration can be found. Set this to use your own external PostgreSQL database. 
                       If not specified, this secret will be generated and a managed pod will not be created"
                     type: string
                   resource_requirements:
