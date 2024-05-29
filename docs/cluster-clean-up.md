@@ -17,6 +17,7 @@ oc get clusterserviceversion -A | grep ansible-ai-connect-operator.v
 ```
 For each one, delete it:
 ```
+# Replace the operator version accordingly.
 oc delete clusterserviceversion ansible-ai-connect-operator.v0.1.20 -n <namespace>
 ```
 
