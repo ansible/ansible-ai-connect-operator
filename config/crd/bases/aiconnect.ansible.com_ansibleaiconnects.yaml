@@ -32,7 +32,6 @@ spec:
           spec:
             description: Spec defines the desired state of AnsibleAIConnect
             type: object
-            x-kubernetes-preserve-unknown-fields: true
             required:
               - auth_config_secret_name
               - model_config_secret_name
@@ -699,7 +698,6 @@ spec:
                   type: object
                 type: array
             type: object
-            x-kubernetes-preserve-unknown-fields: true
         type: object
     served: true
     storage: true
