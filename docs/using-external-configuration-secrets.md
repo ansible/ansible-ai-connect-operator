@@ -65,6 +65,23 @@ spec:
   model_config_secret_name: <secret-name>-model-configuration
 ```
 
+## Troubleshooting
+
+### Base64 encoding
+The values in the Secrets have to be base64 encoded. You can do it either:
+- Using linux Base64 command: `echo -n 'somevalue' | base64'`
+- Using [Openshift UI or CLI to create the secrets](https://docs.openshift.com/container-platform/4.15/nodes/pods/nodes-pods-secrets.html), so the values will be automatically base64 encoded
+- Using [Kubectl CLI](https://kubernetes.io/docs/tasks/configmap-secret/managing-secret-using-kubectl/), so the values will be automatically base64 encoded
+
+### Once updating values in a Secret, Operator instances are not taking the latest changes
+Although once updating a configuration value the Secret resource is properly updated in the k8s cluster, the operator is not automatically notified and so it is not taking latest changes. 
+In order to work around this, please do:
+- Update the secret values accordingly, and rename it
+- Update the `AnsibleAIConnect` instance (CRD) by referencing to the renamed secret, click on _Save_ and  _Reload_:
+- 
+![UpdatingCRDSecrets](images/updating-crd-secrets.png)
+
+
 ## Example
 
 ### Create the authentication `Secret`
