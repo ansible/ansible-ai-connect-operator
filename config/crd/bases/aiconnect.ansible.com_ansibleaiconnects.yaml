@@ -634,7 +634,7 @@ spec:
                 type: string
                 default: admin
               admin_email:
-                description: email address to use for the admin account
+                description: E-mail address to use for the admin account
                 type: string
                 default: test@example.com
               admin_password_secret:

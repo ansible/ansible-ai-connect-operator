@@ -52,12 +52,12 @@ spec:
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:advanced
         - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
-      - description: Defines desired state of AI deployment resources
+      - description: Defines desired state of API deployment resources
         displayName: API deployment configuration
         path: api
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:advanced
-      - description: The number of API replicas.
+      - description: The number of API replicas
         displayName: Replicas
         path: api.replicas
         x-descriptors:
@@ -77,12 +77,12 @@ spec:
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:updateStrategy
         - urn:alm:descriptor:com.tectonic.ui:advanced
-      - description: Node tolerations for the pods.
+      - description: Node tolerations for the pods
         displayName: Tolerations
         path: api.tolerations
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:advanced
-      - description: Topology rule(s) for the pods.
+      - description: Topology rule(s) for the pods
         displayName: Topology Spread Constraints
         path: api.topology_spread_constraints
         x-descriptors:
@@ -244,7 +244,8 @@ spec:
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:advanced
         - urn:alm:descriptor:com.tectonic.ui:text
-      - description: Secret where the trusted Certificate Authority Bundle is stored
+      - displayName: Bundle CA Certificate Secret
+        description: Secret where the trusted Certificate Authority Bundle is stored
         path: bundle_cacert_secret
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:advanced
@@ -266,6 +267,11 @@ spec:
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:advanced
         - urn:alm:descriptor:io.kubernetes:Secret
+      - displayName: Admin E-mail Address
+        path: admin_email
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:hidden
+        - urn:alm:descriptor:com.tectonic.ui:text
       - displayName: API Extra Settings
         path: extra_settings
         x-descriptors:
