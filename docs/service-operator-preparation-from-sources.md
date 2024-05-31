@@ -42,7 +42,7 @@ In case the operator code changed, or the service image tag updated, please buil
 In case operator, bundle or catalog images must be generated, please follow:
 
 - Checkout a branch or tag from [ansible-wisdom-ai-connect-operator](https://github.com/ansible/ansible-ai-connect-operator)
-- Login into the registry where to push the images, for instance, f.i. [login into quay.io](https://quay.io/tutorial/) 
+- Login into the registry where to push the images, f.i. [login into quay.io](https://quay.io/tutorial/) 
 - Replace variables as appropriate, and run:
   ```
   export IMAGE_TAG_BASE=quay.io/<project>/ansible-ai-connect
