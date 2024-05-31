@@ -13,12 +13,12 @@ kind: Secret
 metadata:
   name: <secret-name>-auth-configuration
   namespace: <target-namespace>
-data:
-  auth_api_url: <base64 encoded Authentication service URL>
-  auth_api_key: <base64 encoded Authentication service API Key>
-  auth_api_secret: <base64 encoded Authentication service API Secret>
-  auth_verify_ssl: <base64 encoded boolean>
-  auth_allowed_hosts: <base64 encoded domains>
+stringData:
+  auth_api_url: <Authentication service URL>
+  auth_api_key: <Authentication service API Key>
+  auth_api_secret: <Authentication service API Secret>
+  auth_verify_ssl: <boolean>
+  auth_allowed_hosts: <domains>
 type: Opaque
 ```
 Set `auth_verify_ssl` to pass the `verify` parameter to HTTP requests made by the service. A value of `True` is recommended for use in production. See [here](https://python-social-auth.readthedocs.io/en/latest/configuration/settings.html#processing-requests-and-redirects) for details.
@@ -46,12 +46,12 @@ kind: Secret
 metadata:
   name: <secret-name>-model-configuration
   namespace: <target-namespace>
-data:
-  username: <base64 encoded WCA "on prem" username[1]>
-  model_url: <base64 encoded WCA service URL>
-  model_api_key: <base64 encoded WCA API Key>
-  model_name: <base64 encoded WCA Model Name>
-  model_type: <base64 encoded WCA type[2]>
+stringData:
+  username: <WCA "on prem" username[1]>
+  model_url: <WCA service URL>
+  model_api_key: <WCA API Key>
+  model_name: <WCA Model Name>
+  model_type: <WCA type[2]>
 type: Opaque
 ```
 - [1] `username` is only required for `wca-onprem`. The value is discarded for `wca`.
@@ -78,12 +78,12 @@ kind: Secret
 metadata:
   name: my-secret-auth-configuration
   namespace: mynamespace
-data:
-  auth_api_url: <base64 encoded Authentication service URL>
-  auth_api_key: <base64 encoded Authentication service API Key>
-  auth_api_secret: <base64 encoded Authentication service API Secret>
-  auth_verify_ssl: <base64 encoded boolean>
-  auth_allowed_hosts: <base64 encoded domains>
+stringData:
+  auth_api_url: <Authentication service URL>
+  auth_api_key: <Authentication service API Key>
+  auth_api_secret: <Authentication service API Secret>
+  auth_verify_ssl: <boolean>
+  auth_allowed_hosts: <domains>
 type: Opaque
 ```
 
@@ -94,12 +94,12 @@ kind: Secret
 metadata:
   name: my-secret-model-configuration
   namespace: mynamespace
-data:
-  username: <base64 encoded WCA username>
-  model_url: <base64 encoded WCA service URL>
-  model_api_key: <base64 encoded WCA API Key>
-  model_name: <base64 encoded WCA Model Name>
-  model_type: <base64 encoded WCA type>
+stringData:
+  username: <WCA username>
+  model_url: <WCA service URL>
+  model_api_key: <WCA API Key>
+  model_name: <WCA Model Name>
+  model_type: <WCA type>
 type: Opaque
 ```
 

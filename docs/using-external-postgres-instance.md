@@ -19,12 +19,12 @@ kind: Secret
 metadata:
   name: <secret-name>-postgres-configuration
   namespace: <target-namespace>
-data:
-  database: <base64 encoded database name>
-  username: <base64 encoded username>
-  password: <base64 encoded password>
-  host: <base64 encoded host>
-  port: <base64 encoded port>
+stringData:
+  database: <database name>
+  username: <username>
+  password: <password>
+  host: <host>
+  port: <port>
 type: Opaque
 ```
 The `AnsibleAIConnect` configuration would look like this:
@@ -58,14 +58,13 @@ kind: Secret
 metadata:
   name: my-secret-postgres-configuration
   namespace: mynamespace
-data:
-  database: <base64 encoded database name>
-  username: <base64 encoded username>
-  password: <base64 encoded password>
-  # base64 encode "postgresql-15.<target-namespace>.svc.cluster.local"
+stringData:
+  database: <database name>
+  username: <username>
+  password: <password>
   # 'postgresql-15' is the name of the Postgres image/deployment
-  host: <base64 encoded host>
-  port: <base64 encoded port>
+  host: "postgresql-15.mynamespace.svc.cluster.local"
+  port: <port>
 type: Opaque
 ```
 

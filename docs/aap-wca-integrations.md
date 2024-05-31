@@ -13,9 +13,9 @@ When deploying Ansible AI Connect service through operator, you will need to con
     - [IBM watsonx Code Assistant - Cloud Pack for Data (CPD)](#ibm-watsonx-code-assistant---cloud-pack-for-data-cpd)
     - [IBM watsonx Code Assistant - IBM Cloud](#ibm-watsonx-code-assistant---ibm-cloud)
 
-## Integrating with Ansible Automation Platform
+## Integrating with Ansible Automation Platform 2.5
 
-Lightspeed service depends on a deployed instance of Ansible Automation Platform (AAP).  The following steps describe how you can configure it.
+Lightspeed service depends on a deployed instance of Ansible Automation Platform (AAP 2.5). The following steps describe how you can configure it.
 
 ### Create An Application in AAP
 
@@ -34,7 +34,7 @@ Lightspeed service depends on a deployed instance of Ansible Automation Platform
 * Now you will have collected the following
   * The application `Client ID` 
   * The application `Client secret` 
-  * The AAP API URL which is normally `<aap_web_url>/api/`
+  * The AAP 2.5 `AutomationController` URL which is normally `<aap_controller_url>/api/`
 
 
 ### Authentication `Secret` content
@@ -42,7 +42,7 @@ Lightspeed service depends on a deployed instance of Ansible Automation Platform
 When you create a `Secret` for the Authentication configuration in the OpenShift cluster, the following pieces of information collected from the above will help:
 1. `auth_api_key`: The application `Client ID`
 2. `auth_api_secret`: The application `Client secret`
-3. `auth_api_url`: The AAP API URL `<aap_web_url>/api/`
+3. `auth_api_url`: The AAP 2.5 `AutomationController` URL `<aap_controller_url>/api/`
 
 See [here](using-external-configuration-secrets.md#authentication-secret) for more instructions regarding configuration with `Secret`s.
 
