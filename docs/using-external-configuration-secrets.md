@@ -72,7 +72,7 @@ spec:
 ## Troubleshooting
 
 ### Base64 encoding
-In case of using `data`, instead of `stringData`, for Secrets, those have to be base64 encoded. You can do it either:
+In case of using `data`, instead of `stringData`, for Secrets, the values have to be base64 encoded. You can do it either:
 - Using linux Base64 command: `echo -n 'somevalue' | base64'`
 - Using [Openshift UI or CLI to create the secrets](https://docs.openshift.com/container-platform/4.15/nodes/pods/nodes-pods-secrets.html), so the values will be automatically base64 encoded
 - Using [Kubectl CLI](https://kubernetes.io/docs/tasks/configmap-secret/managing-secret-using-kubectl/), so the values will be automatically base64 encoded
