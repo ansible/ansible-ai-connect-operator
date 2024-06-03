@@ -48,9 +48,36 @@ See [here](using-external-configuration-secrets.md#authentication-secret) for mo
 
 ### After Ansible Lightspeed CR is created
 
+#### Login redirect URL
+
+When a User logs in successfully AAP will redirect the User's browser to a specified URL. The URL needs to be configured within the AAP Application otherwise a "Mismatching redirect URI" error will be encountered.  
+
 * A route to the Lightspeed API service will be provisioned in the namespace
 * Revisit the application object you have created in the [Create An Application in AAP](#create-an-application-in-aap) section
 * Update the `Redirect URIs` field with `<lightspeed_route>/complete/aap/` where `<lightspeed_route>` is the route you just obtained.
+
+#### Logout redirect URL
+
+When a User logs out of the application AAP will try to redirect the User's browser to a specified URL. The URL needs to be configured within the AAP Application otherwise the default AAP page is shown (which is a summary of the available REST API at the time of writing).
+
+* Login to the cluster on which the AAP instance is running.
+* Identify the `AutomationController` Custom Resource.
+* Add the following entry to the YAML definition.
+  ```yaml
+  spec:
+  ...
+  extra_settings:
+    - setting: LOGOUT_ALLOWED_HOSTS
+      value: "'<AnsibleAIConnect-Route-HostName>'"
+  ```
+  > The `AnsibleAIConnect-Route-HostName` is the plain host name without network protocol; e.g. `my-aiconnect-instance.somewhere.com` and not `https://my-aiconnect-instance.somewhere.com`.
+
+  > The use of the quotes shown is important!
+  >
+  > Use of either just single or double quotes can lead to their removal when applying the revised YAML. Values such as `'my-aiconnect-instance.somewhere.com'` will have the quotes removed becoming `my-aiconnect-instance.somewhere.com` and the underlying AAP service will interpret this as an expression `my` _subtract_ `aiconnect` _subtract_ `instance` etc and fail.
+* Apply the revised YAML. The `AutomationController` Pod(s) will restart.
+* The setting can be specified as a comma-separated list of multiple values if running multiple instances of `AnsibleAIConnect` with a single AAP deployment. For example `"'my-aiconnect-instance1.somewhere.com','my-aiconnect-instance2.somewhere.com'"`.
+ 
 
 ## Integrating with IBM watsonx Code Assistant
 
