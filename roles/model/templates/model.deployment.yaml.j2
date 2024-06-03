@@ -152,14 +152,12 @@ spec:
             secretKeyRef:
               name: '{{ __database_secret_name }}'
               key: password
-{% if model_type == "wca-onprem" %}
-        - name: ANSIBLE_WCA_USERNAME
+        - name: ANSIBLE_AI_MODEL_MESH_API_TYPE
           valueFrom:
             secretKeyRef:
               name: '{{ model_config_secret_name }}'
-              key: username
-{% endif %}
-        - name: ANSIBLE_WCA_INFERENCE_URL
+              key: model_type
+        - name: ANSIBLE_AI_MODEL_MESH_API_URL
           valueFrom:
             secretKeyRef:
               name: '{{ model_config_secret_name }}'
@@ -169,40 +167,24 @@ spec:
             secretKeyRef:
               name: '{{ model_config_secret_name }}'
               key: model_api_key
-        # Used by wisdom-service Health endpoint
-        # Use the same value as ANSIBLE_AI_MODEL_MESH_MODEL_NAME
-        - name: ANSIBLE_AI_MODEL_NAME
+        - name: ANSIBLE_AI_MODEL_MESH_MODEL_ID
           valueFrom:
             secretKeyRef:
               name: '{{ model_config_secret_name }}'
               key: model_id
-        # Used by wisdom-service WCAClients
-        - name: ANSIBLE_AI_MODEL_MESH_MODEL_NAME
+{% if model_type == "wca-onprem" %}
+        - name: ANSIBLE_WCA_USERNAME
           valueFrom:
             secretKeyRef:
               name: '{{ model_config_secret_name }}'
-              key: model_id
-        - name: ANSIBLE_AI_MODEL_MESH_API_TYPE
-          valueFrom:
-            secretKeyRef:
-              name: '{{ model_config_secret_name }}'
-              key: model_type
+              key: username
+{% endif %}
         - name: ANSIBLE_WCA_HEALTHCHECK_API_KEY
           valueFrom:
             secretKeyRef:
               name: '{{ model_config_secret_name }}'
               key: model_api_key
         - name: ANSIBLE_WCA_HEALTHCHECK_MODEL_ID
-          valueFrom:
-            secretKeyRef:
-              name: '{{ model_config_secret_name }}'
-              key: model_id
-        - name: ANSIBLE_WCA_ONPREM_HEALTHCHECK_API_KEY
-          valueFrom:
-            secretKeyRef:
-              name: '{{ model_config_secret_name }}'
-              key: model_api_key
-        - name: ANSIBLE_WCA_ONPREM_HEALTHCHECK_MODEL_ID
           valueFrom:
             secretKeyRef:
               name: '{{ model_config_secret_name }}'
