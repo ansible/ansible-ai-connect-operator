@@ -79,4 +79,12 @@ spec:
     name: {{ ansible_operator_meta.name }}-api
     weight: 100
   wildcardPolicy: None
+  httpHeaders:
+      actions:
+        response:
+        - name: Server
+          action:
+            type: Set
+            set:
+              value: nginx
 {% endif %}
