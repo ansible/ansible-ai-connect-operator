@@ -7,18 +7,69 @@
     postgres_label_selector: "app.kubernetes.io/instance=postgres-{{ supported_pg_version }}-{{ ansible_operator_meta.name }}"
   when: postgres_label_selector is not defined
 
-- name: Apply database resources
+- name: Create database Service
   k8s:
     apply: yes
-    definition: "{{ lookup('template', item + '.yaml.j2') }}"
+    definition: "{{ lookup('template', 'postgres.service.yaml.j2') }}"
     wait: no
-  register: postgres_resources_result
-  loop:
-    - 'postgres.service'
-    - 'postgres.statefulset'
+  register: postgres_service_result
   no_log: "{{ no_log }}"
 
-- name: Get the postgres pod information
+- name: Create database StatefulSet
+  k8s:
+    apply: yes
+    definition: "{{ lookup('template', 'postgres.statefulset.yaml.j2') }}"
+    wait: no
+  register: postgres_statefulset_result
+  no_log: "{{ no_log }}"
+
+- name: Wait for database PersistentVolumeClaim to initialize
+  k8s_info:
+    kind: PersistentVolumeClaim
+    namespace: "{{ ansible_operator_meta.namespace }}"
+    label_selectors:
+      - "app.kubernetes.io/instance=postgres-{{ supported_pg_version }}-{{ ansible_operator_meta.name }}"
+      - "app.kubernetes.io/managed-by={{ deployment_type }}-operator"
+  register: postgres_pvc
+  ignore_errors: yes
+  until:
+    - "postgres_pvc['resources'] | length"
+    - "postgres_pvc['resources'][0]['status']['phase'] == 'Bound'"
+  delay: 5
+  retries: 5
+
+- block:
+
+    # If the PersistentVolumeClaim could not be created we need to delete
+    # it and related StatefulSet resource. StatefulSet storageClassName
+    # cannot be updated on an existing instance.
+    - name: Delete database PersistentVolumeClaim
+      k8s:
+        state: absent
+        kind: PersistentVolumeClaim
+        namespace: "{{ ansible_operator_meta.namespace }}"
+        label_selectors:
+          - "app.kubernetes.io/instance=postgres-{{ supported_pg_version }}-{{ ansible_operator_meta.name }}"
+          - "app.kubernetes.io/managed-by={{ deployment_type }}-operator"
+      no_log: "{{ no_log }}"
+
+    - name: Delete database StatefulSet
+      k8s:
+        state: absent
+        kind: StatefulSet
+        name: "{{ ansible_operator_meta.name }}-postgres-{{ supported_pg_version }}"
+        namespace: "{{ ansible_operator_meta.namespace }}"
+      no_log: "{{ no_log }}"
+
+    - name: Fail
+      ansible.builtin.fail:
+        msg: "PersistentVolumeClaim failed to be created in time. Deleting resources to re-try."
+
+  when:
+    - "postgres_pvc['resources'] | length"
+    - "postgres_pvc['resources'][0]['status']['phase'] != 'Bound'"
+
+- name: Get the postgres Pod information
   k8s_info:
     kind: Pod
     namespace: "{{ ansible_operator_meta.namespace }}"
