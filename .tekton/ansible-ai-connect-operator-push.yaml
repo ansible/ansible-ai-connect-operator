@@ -22,7 +22,7 @@ spec:
   - name: git-url
     value: '{{source_url}}'
   - name: output-image
-    value: quay.io/redhat-user-workloads/ansible-lightspeed-tenant/ansible-ai-connect-service/ansible-ai-connect-operator:{{revision}}
+    value: quay.io/ansible/ansible-ai-connect-konflux
   - name: revision
     value: '{{revision}}'
   pipelineSpec:
