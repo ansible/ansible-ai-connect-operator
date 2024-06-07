@@ -13,6 +13,7 @@ A Kubernetes operator for Kubernetes built with [Operator SDK](https://github.co
   - [Deploy an `AnsibleAIConnect` instance](#deploy-an-ansibleaiconnect-instance)
     - [Deploying on OpenShift `ROSA`](#deploying-on-openshift-rosa)
     - [Deploying on `minikube`](#deploying-on-minikube)
+  - [Upgrades](#upgrades)
   - [Integrating with Ansible Automation Platform and IBM watsonx Code Assistant](#integrating-with-ansible-automation-platform-and-ibm-watsonx-code-assistant)
   - [Advanced Configuration](#advanced-configuration)
     - [Use external database](#use-external-database)
@@ -92,6 +93,10 @@ Full instructions for using a `minikube` cluster are [here](./docs/running-on-mi
 ## Integrating with Ansible Automation Platform and IBM watsonx Code Assistant
 
 Go [here](docs/aap-wca-integrations.md)
+
+## Upgrades
+
+For information on how to upgrade, please see the [upgrading](./docs/upgrade/upgrading.md) document.
 
 ## Advanced Configuration
 

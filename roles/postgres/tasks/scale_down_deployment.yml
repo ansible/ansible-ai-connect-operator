@@ -1,0 +1,19 @@
+---
+
+- name: Check for presence of Deployment
+  k8s_info:
+    api_version: apps/v1
+    kind: Deployment
+    name: "{{ ansible_operator_meta.name }}-api"
+    namespace: "{{ ansible_operator_meta.namespace }}"
+  register: this_deployment
+
+- name: Scale down Deployment for migration
+  kubernetes.core.k8s_scale:
+    api_version: apps/v1
+    kind: Deployment
+    name: "{{ ansible_operator_meta.name }}-api"
+    namespace: "{{ ansible_operator_meta.namespace }}"
+    replicas: 0
+    wait: yes
+  when: this_deployment['resources'] | length
