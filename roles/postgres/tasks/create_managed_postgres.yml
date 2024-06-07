@@ -43,14 +43,13 @@
     # If the PersistentVolumeClaim could not be created we need to delete
     # it and related StatefulSet resource. StatefulSet storageClassName
     # cannot be updated on an existing instance.
-    - name: Delete database PersistentVolumeClaim
-      k8s:
-        state: absent
-        kind: PersistentVolumeClaim
+    - name: Scale down database StatefulSet
+      k8s_scale:
+        kind: StatefulSet
+        name: "{{ ansible_operator_meta.name }}-postgres-{{ supported_pg_version }}"
         namespace: "{{ ansible_operator_meta.namespace }}"
-        label_selectors:
-          - "app.kubernetes.io/instance=postgres-{{ supported_pg_version }}-{{ ansible_operator_meta.name }}"
-          - "app.kubernetes.io/managed-by={{ deployment_type }}-operator"
+        replicas: 0
+        wait_timeout: 120
       no_log: "{{ no_log }}"
 
     - name: Delete database StatefulSet
@@ -59,6 +58,16 @@
         kind: StatefulSet
         name: "{{ ansible_operator_meta.name }}-postgres-{{ supported_pg_version }}"
         namespace: "{{ ansible_operator_meta.namespace }}"
+      no_log: "{{ no_log }}"
+
+    - name: Delete database PersistentVolumeClaim
+      k8s:
+        state: absent
+        kind: PersistentVolumeClaim
+        namespace: "{{ ansible_operator_meta.namespace }}"
+        label_selectors:
+          - "app.kubernetes.io/instance=postgres-{{ supported_pg_version }}-{{ ansible_operator_meta.name }}"
+          - "app.kubernetes.io/managed-by={{ deployment_type }}-operator"
       no_log: "{{ no_log }}"
 
     - name: Fail

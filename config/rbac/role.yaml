@@ -29,6 +29,7 @@ rules:
       - daemonsets
       - replicasets
       - statefulsets
+      - statefulsets/scale
     verbs:
       - create
       - delete
