@@ -40,7 +40,7 @@ metadata:
   namespace: <target-namespace>
 spec:
   displayName: 'Ansible AI Connect Operator :: Dev'
-  image: "quay.io/ansible/ansible-ai-connect-catalog:0.0.5"
+  image: 'quay.io/ansible/ansible-ai-connect-catalog:0.0.5'
   publisher: 'Ansible AI Connect Dev Team'
   sourceType: grpc
 ```
@@ -53,7 +53,7 @@ metadata:
   namespace: <target-namespace>
 spec:
   displayName: 'Ansible AI Connect Operator :: Dev'
-  image: "quay.io/ansible/ansible-ai-connect-catalog:0.0.5"
+  image: 'quay.io/ansible/ansible-ai-connect-catalog:0.0.5'
   publisher: 'Ansible AI Connect Dev Team'
   sourceType: grpc
   secrets:

@@ -17,13 +17,13 @@ The `Secret` must contain the following values:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: <secret-name>-postgres-configuration
-  namespace: <target-namespace>
+  name: '<secret-name>-postgres-configuration'
+  namespace: '<target-namespace>'
 stringData:
-  database: <database name>
-  username: <username>
-  password: <password>
-  host: <host>
+  database: '<database name>'
+  username: '<username>'
+  password: '<password>'
+  host: '<host>'
   port: <port>
 type: Opaque
 ```
@@ -32,12 +32,12 @@ The `AnsibleAIConnect` configuration would look like this:
 apiVersion: aiconnect.ansible.com/v1alpha1
 kind: AnsibleAIConnect
 metadata:
-  name: <instance-name>
-  namespace: <target-namespace>
+  name: '<instance-name>'
+  namespace: '<target-namespace>'
 spec:
   ...
   database:
-    database_secret: <secret-name>-postgres-configuration
+    database_secret: '<secret-name>-postgres-configuration'
 ```
 ## Example
 
@@ -56,14 +56,14 @@ oc new-app \
 apiVersion: v1
 kind: Secret
 metadata:
-  name: my-secret-postgres-configuration
-  namespace: mynamespace
+  name: 'my-secret-postgres-configuration'
+  namespace: 'mynamespace'
 stringData:
-  database: <database name>
-  username: <username>
-  password: <password>
+  database: '<database name>'
+  username: '<username>'
+  password: '<password>'
   # 'postgresql-15' is the name of the Postgres image/deployment
-  host: "postgresql-15.mynamespace.svc.cluster.local"
+  host: 'postgresql-15.mynamespace.svc.cluster.local'
   port: <port>
 type: Opaque
 ```
@@ -73,8 +73,8 @@ type: Opaque
 apiVersion: aiconnect.ansible.com/v1alpha1
 kind: AnsibleAIConnect
 metadata:
-  name: my-aiconnect-instance
-  namespace: mynamespace
+  name: 'my-aiconnect-instance'
+  namespace: 'mynamespace'
 spec:
   ingress_type: Route
   service_type: ClusterIP

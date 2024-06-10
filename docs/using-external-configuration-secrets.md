@@ -11,14 +11,14 @@ Configuration parameters for the both the authentication backend and model servi
 apiVersion: v1
 kind: Secret
 metadata:
-  name: <secret-name>-auth-configuration
-  namespace: <target-namespace>
+  name: '<secret-name>-auth-configuration'
+  namespace: '<target-namespace>'
 stringData:
-  auth_api_url: <Authentication service URL>
-  auth_api_key: <Authentication service API Key>
-  auth_api_secret: <Authentication service API Secret>
-  auth_verify_ssl: <boolean>
-  auth_allowed_hosts: <domains>
+  auth_api_url: '<Authentication service URL>'
+  auth_api_key: '<Authentication service API Key>'
+  auth_api_secret: '<Authentication service API Secret>'
+  auth_verify_ssl: '<boolean>'
+  auth_allowed_hosts: '<domains>'
 type: Opaque
 ```
 Set `auth_verify_ssl` to pass the `verify` parameter to HTTP requests made by the service. A value of `True` is recommended for use in production. See [here](https://python-social-auth.readthedocs.io/en/latest/configuration/settings.html#processing-requests-and-redirects) for details.
@@ -30,11 +30,11 @@ The `AnsibleAIConnect` configuration would look like this:
 apiVersion: aiconnect.ansible.com/v1alpha1
 kind: AnsibleAIConnect
 metadata:
-  name: <instance-name>
-  namespace: <target-namespace>
+  name: '<instance-name>'
+  namespace: '<target-namespace>'
 spec:
   ...
-  auth_config_secret_name: <secret-name>-auth-configuration
+  auth_config_secret_name: '<secret-name>-auth-configuration'
 ```
 
 ## Model service `Secret`
@@ -44,14 +44,14 @@ spec:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: <secret-name>-model-configuration
-  namespace: <target-namespace>
+  name: '<secret-name>-model-configuration'
+  namespace: '<target-namespace>'
 stringData:
-  username: <WCA "on prem" username[1]>
-  model_url: <WCA service URL>
-  model_api_key: <WCA API Key>
-  model_id: <WCA Model Id>
-  model_type: <WCA type[2]>
+  username: '<WCA "on prem" username[1]>'
+  model_url: '<WCA service URL>'
+  model_api_key: '<WCA API Key>'
+  model_id: '<WCA Model Name>'
+  model_type: '<WCA type[2]>'
 type: Opaque
 ```
 - [1] `username` is only required for `wca-onprem`. The value is discarded for `wca`.
@@ -62,14 +62,18 @@ The `AnsibleAIConnect` configuration would look like this:
 apiVersion: aiconnect.ansible.com/v1alpha1
 kind: AnsibleAIConnect
 metadata:
-  name: <instance-name>
-  namespace: <target-namespace>
+  name: '<instance-name>'
+  namespace: '<target-namespace>'
 spec:
   ...
-  model_config_secret_name: <secret-name>-model-configuration
+  model_config_secret_name: '<secret-name>-model-configuration'
 ```
 
 ## Troubleshooting
+
+### Use quotes
+
+It is encouraged to use quotation marks around the `Secret` values to ensure correct parsing by the underlying service. Problems can be encountered when relying on implicit data-type conversion. 
 
 ### Base64 encoding
 In case of using `data`, instead of `stringData`, for Secrets, the values have to be base64 encoded. You can do it either:
@@ -93,14 +97,14 @@ In order to work around this, please do:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: my-secret-auth-configuration
-  namespace: mynamespace
+  name: 'my-secret-auth-configuration'
+  namespace: 'mynamespace'
 stringData:
-  auth_api_url: <Authentication service URL>
-  auth_api_key: <Authentication service API Key>
-  auth_api_secret: <Authentication service API Secret>
-  auth_verify_ssl: <boolean>
-  auth_allowed_hosts: <domains>
+  auth_api_url: '<Authentication service URL>'
+  auth_api_key: '<Authentication service API Key>'
+  auth_api_secret: '<Authentication service API Secret>'
+  auth_verify_ssl: '<boolean>'
+  auth_allowed_hosts: '<domains>'
 type: Opaque
 ```
 
@@ -109,14 +113,14 @@ type: Opaque
 apiVersion: v1
 kind: Secret
 metadata:
-  name: my-secret-model-configuration
-  namespace: mynamespace
+  name: 'my-secret-model-configuration'
+  namespace: 'mynamespace'
 stringData:
-  username: <WCA username>
-  model_url: <WCA service URL>
-  model_api_key: <WCA API Key>
-  model_id: <WCA Model Id>
-  model_type: <WCA type>
+  username: '<WCA username>'
+  model_url: '<WCA service URL>'
+  model_api_key: '<WCA API Key>'
+  model_id: '<WCA Model Name>'
+  model_type: '<WCA type>'
 type: Opaque
 ```
 
@@ -125,8 +129,8 @@ type: Opaque
 apiVersion: aiconnect.ansible.com/v1alpha1
 kind: AnsibleAIConnect
 metadata:
-  name: my-aiconnect-instance
-  namespace: mynamespace
+  name: 'my-aiconnect-instance'
+  namespace: 'mynamespace'
 spec:
   ingress_type: Route
   service_type: ClusterIP
