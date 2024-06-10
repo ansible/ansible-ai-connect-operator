@@ -12,6 +12,7 @@ metadata:
 {% if ingress_annotations %}
   annotations:
     {{ ingress_annotations | indent(width=4) }}
+    haproxy.router.openshift.io/timeout: 50s
     nginx.ingress.kubernetes.io/session-cookie-samesite: Lax
     nginx.ingress.kubernetes.io/session-cookie-name: r_p_session
 {% endif %}
