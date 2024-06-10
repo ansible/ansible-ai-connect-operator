@@ -175,13 +175,13 @@ spec:
           valueFrom:
             secretKeyRef:
               name: '{{ model_config_secret_name }}'
-              key: model_name
+              key: model_id
         # Used by wisdom-service WCAClients
         - name: ANSIBLE_AI_MODEL_MESH_MODEL_NAME
           valueFrom:
             secretKeyRef:
               name: '{{ model_config_secret_name }}'
-              key: model_name
+              key: model_id
         - name: ANSIBLE_AI_MODEL_MESH_API_TYPE
           valueFrom:
             secretKeyRef:
@@ -196,7 +196,7 @@ spec:
           valueFrom:
             secretKeyRef:
               name: '{{ model_config_secret_name }}'
-              key: model_name
+              key: model_id
         - name: ANSIBLE_WCA_ONPREM_HEALTHCHECK_API_KEY
           valueFrom:
             secretKeyRef:
@@ -206,7 +206,7 @@ spec:
           valueFrom:
             secretKeyRef:
               name: '{{ model_config_secret_name }}'
-              key: model_name
+              key: model_id
         ports:
         - containerPort: 8000
           protocol: TCP

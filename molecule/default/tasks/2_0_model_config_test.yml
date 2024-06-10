@@ -16,7 +16,7 @@
           - app.kubernetes.io/name = ansibleaiconnect-sample
       register: aiconnect_api_service
 
-    - name: Get original model_name
+    - name: Get original model_id
       uri:
         url: 'http://{{ service_host_ip }}:{{ service_host_port }}/check/status/'
         return_content: true
@@ -25,17 +25,17 @@
         service_host_port: '{{ aiconnect_api_service.resources[0].spec.ports[0].nodePort }}'
       register: service_host_response
 
-    - name: Assert original model_name response
+    - name: Assert original model_id response
       assert:
         that:
           - service_host_response.status == 200
           - service_host_response.json.status == 'ok'
-          - service_host_response.json.model_name == 'my-ai-model_name'
-        fail_msg: /check/status did not return expected model_name. Expected 'my-ai-model_name'.
+          - service_host_response.json.model_id== 'my-ai-model_id'
+        fail_msg: /check/status did not return expected model_id. Expected 'my-ai-model_id'.
 
     - include_tasks: 2_1_update_model_config_secret.yml
 
-    - name: Get updated model_name
+    - name: Get updated model_id
       uri:
         url: 'http://{{ service_host_ip }}:{{ service_host_port }}/check/status/'
         return_content: true
@@ -44,10 +44,10 @@
         service_host_port: '{{ aiconnect_api_service.resources[0].spec.ports[0].nodePort }}'
       register: updated_service_host_response
 
-    - name: Assert updated model_name response
+    - name: Assert updated model_id response
       assert:
         that:
         - updated_service_host_response.status == 200
         - updated_service_host_response.json.status == 'ok'
-        - updated_service_host_response.json.model_name == 'updated__my-ai-model_name'
-        fail_msg: /check/status did not return expected model_name. Expected 'updated__my-ai-model_name'.
+        - updated_service_host_response.json.model_id == 'updated__my-ai-model_id'
+        fail_msg: /check/status did not return expected model_id. Expected 'updated__my-ai-model_id'.

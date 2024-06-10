@@ -90,7 +90,7 @@ Currently, IBM watsonx Code Assistant can be delivered through a "cloud" version
 When you create a `Secret` for the Model configuration in the OpenShift cluster, the following pieces of information collected from the above will help:
 1. `model_url`: The URL to your Cloud Pack for Data instance 
 2. `model_api_key`: [Cloud Pack for Data API key](https://www.ibm.com/docs/en/cloud-paks/cp-data/4.8.x?topic=steps-generating-api-keys) 
-3. `model_name`: An e.g.: `8e7de79b-8bc2-43cc-9d20-c4207cd92fec<|sepofid|>granite-3b`
+3. `model_id`: An e.g.: `8e7de79b-8bc2-43cc-9d20-c4207cd92fec<|sepofid|>granite-3b`
 4. `username`: The username that has access to the model/space
 5. `model_type`: The literal value `"wca-onprem"`.
 
@@ -103,7 +103,7 @@ See [here](using-external-configuration-secrets.md#authentication-secret) for mo
 When you create a `Secret` for the Model configuration in the OpenShift cluster, the following pieces of information collected from the above will help:
 1. `model_url`: The URL to IBM Cloud `https://dataplatform.cloud.ibm.com`
 2. `model_api_key`: API key obtained from your IBM Cloud account
-3. `model_name`: An e.g.: `8e7de79b-8bc2-43cc-9d20-c4207cd92fec<|sepofid|>granite-3b`
+3. `model_id`: An e.g.: `8e7de79b-8bc2-43cc-9d20-c4207cd92fec<|sepofid|>granite-3b`
 4. `model_type`: The literal value `"wca"`.
 
 See [here](using-external-configuration-secrets.md#authentication-secret) for more instructions regarding configuration with `Secret`s.

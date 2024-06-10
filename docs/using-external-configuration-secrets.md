@@ -50,7 +50,7 @@ stringData:
   username: <WCA "on prem" username[1]>
   model_url: <WCA service URL>
   model_api_key: <WCA API Key>
-  model_name: <WCA Model Name>
+  model_id: <WCA Model Id>
   model_type: <WCA type[2]>
 type: Opaque
 ```
@@ -115,7 +115,7 @@ stringData:
   username: <WCA username>
   model_url: <WCA service URL>
   model_api_key: <WCA API Key>
-  model_name: <WCA Model Name>
+  model_id: <WCA Model Id>
   model_type: <WCA type>
 type: Opaque
 ```
