@@ -245,6 +245,9 @@ spec:
 
               echo  $LATEST_TAG > $(results.operator_version_latest.path)
 
+              echo $(git tag)
+
+
               MAJOR=$(echo $LATEST_TAG | cut -d. -f1)
               MINOR=$(echo $LATEST_TAG | cut -d. -f2)
               PATCH=$(echo $LATEST_TAG | cut -d. -f3)
