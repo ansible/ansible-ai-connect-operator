@@ -241,6 +241,8 @@ spec:
               set -euo pipefail
               cd "$(workspaces.source.path)/source"
               LATEST_TAG=$(git tag -l --sort=v:refname | tail -n1)
+              echo $LATEST_TAG
+
               echo  $LATEST_TAG > $(results.operator_version_latest.path)
 
               MAJOR=$(echo $LATEST_TAG | cut -d. -f1)
@@ -248,11 +250,9 @@ spec:
               PATCH=$(echo $LATEST_TAG | cut -d. -f3)
               PATCH=$((PATCH + 1))
               NEW_TAG="$MAJOR.$MINOR.$PATCH"
-              echo $NEW_TAG > $(results.operator_version_next.path)
-
-              echo $LATEST_TAG
               echo $NEW_TAG
 
+              echo $NEW_TAG > $(results.operator_version_next.path)
         results:
           - name: operator_version_latest
             description: the _latest_ Operator version
