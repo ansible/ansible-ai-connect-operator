@@ -350,7 +350,7 @@ spec:
           - name: source
         steps:
           - name: bundle-build
-            image: quay.io/buildah/stable:v1.17.0
+            image: quay.io/buildah/stable:v1.35.4
             script: |
               cd "$(workspaces.source.path)/source"
 
@@ -370,7 +370,7 @@ spec:
               capabilities:
                 add: ["SETFCAP"]
           - name: bundle-push
-            image: quay.io/buildah/stable:v1.17.0
+            image: quay.io/buildah/stable:v1.35.4
             script: |
               OPERATOR_VERSION_NEXT=$(tasks.common-get-operator-versions.results.operator_version_next)
               ADDITIONAL_TAGS="quay.io/srajaram/test:latest quay.io/srajaram/test:$OPERATOR_VERSION_NEXT"
