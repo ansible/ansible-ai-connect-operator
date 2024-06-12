@@ -258,7 +258,48 @@ spec:
             description: the _latest_ Operator version
           - name: operator_version_next
             description: The _next_ Operator version
-   
+    - name: bundle
+      runAfter:
+        - clone-repository
+        - common-get-operator-versions
+      workspaces:
+        - name: source
+          workspace: workspace
+      taskSpec:
+        params:
+          - name: IMAGE
+            default: quay.io/srajaram/test
+          - name: ADDITIONAL_TAGS
+            default: "latest"
+          - name: STORAGE_DRIVER
+            default: overlay
+        workspaces:
+          - name: source
+        steps:
+          - name: bundle
+            image: quay.io/operator-framework/operator-sdk:v1.10.0
+            script: |
+              cd "$(workspaces.source.path)/source"
+              operator-sdk generate kustomize manifests -q
+
+              curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash
+              mv kustomize /usr/local/bin/
+
+              cd config/manager
+              kustomize edit set image controller=quay.io/srajaram/test:0.1.0
+
+              cd ../..
+              kustomize build config/manifests | operator-sdk generate bundle -q --overwrite --version 0.1.0
+              operator-sdk bundle validate ./bundle
+            volumeMounts:
+              - name: varlibcontainers
+                mountPath: /var/lib/containers
+            securityContext:
+              capabilities:
+                add: ["SETFCAP"]
+        volumes:
+          - name: varlibcontainers
+            emptyDir: {}
    
     - name: build-container
       params:
