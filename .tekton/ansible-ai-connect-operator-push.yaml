@@ -224,6 +224,42 @@ spec:
               echo -n $(date -d @$(git log -1 --format=%at) "+%Y%m%d%H%M") > $(results.commit-timestamp.path)
         results:
           - name: commit-timestamp
+    - name: common-get-operator-versions
+      runAfter:
+        - clone-repository
+      workspaces:
+        - name: source
+          workspace: workspace
+      taskSpec:
+        workspaces:
+          - name: source
+        steps:
+          - name: get-latest-tag
+            image: alpine/git
+            script: |
+              #!/bin/sh
+              set -euo pipefail
+              cd "$(workspaces.source.path)/source"
+              LATEST_TAG=$(git tag -l --sort=v:refname | tail -n1)
+              echo  $LATEST_TAG > $(results.operator_version_latest.path)
+
+              MAJOR=$(echo $LATEST_TAG | cut -d. -f1)
+              MINOR=$(echo $LATEST_TAG | cut -d. -f2)
+              PATCH=$(echo $LATEST_TAG | cut -d. -f3)
+              PATCH=$((PATCH + 1))
+              NEW_TAG="$MAJOR.$MINOR.$PATCH"
+              echo $NEW_TAG > $(results.operator_version_next.path)
+
+              echo $LATEST_TAG
+              echo $NEW_TAG
+
+        results:
+          - name: operator_version_latest
+            description: the _latest_ Operator version
+          - name: operator_version_next
+            description: The _next_ Operator version
+   
+   
     - name: build-container
       params:
       - name: IMAGE
