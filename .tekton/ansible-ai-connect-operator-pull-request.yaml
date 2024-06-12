@@ -303,7 +303,33 @@ spec:
         volumes:
           - name: varlibcontainers
             emptyDir: {}
+    - name: update-cluster-service-version
+      runAfter:
+        - bundle
+      workspaces:
+        - name: source
+          workspace: workspace
+      taskSpec:
+        workspaces:
+          - name: source
+        steps:
+          - name: update-cluster-service-version
+            image: alpine/git
+            script: |
+              #!/bin/sh
+              set -euo pipefail
+              cd "$(workspaces.source.path)/source"
+              if [[ "$(tasks.common-get-operator-versions.results.operator_version_latest)" == "0.0.0" ]]; then
+                >&2 echo "No previous version found."
+                exit 0
+              fi
 
+              VERSION="$(tasks.common-get-operator-versions.results.operator_version_next)"
+              PREV_VERSION="$(tasks.common-get-operator-versions.results.operator_version_latest)"
+              if ! grep -qF "replaces: ansible-ai-connect-operator.v${PREV_VERSION}" bundle/manifests/ansible-ai-connect-operator.clusterserviceversion.yaml; then
+                sed -i "/version: ${VERSION}/a\\
+                  replaces: ansible-ai-connect-operator.v${PREV_VERSION}" ./bundle/manifests/ansible-ai-connect-operator.clusterserviceversion.yaml
+              fi
 
     - name: build-container
       params:
