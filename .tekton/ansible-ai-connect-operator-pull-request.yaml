@@ -8,26 +8,26 @@ metadata:
     build.appstudio.redhat.com/target_branch: '{{target_branch}}'
     pipelinesascode.tekton.dev/max-keep-runs: "3"
     pipelinesascode.tekton.dev/on-cel-expression: event == "pull_request" && target_branch
-      == "main"
+      == "konflux_migration"
   creationTimestamp: null
   labels:
-    appstudio.openshift.io/application: ansible-ai-connect-service
+    appstudio.openshift.io/application: ansible-ai-connect-operator
     appstudio.openshift.io/component: ansible-ai-connect-operator
     pipelines.appstudio.openshift.io/type: build
   name: ansible-ai-connect-operator-on-pull-request
-  namespace: ansible-lightspeed-tenant
+  namespace: rh-ee-srajaram-tenant
 spec:
   params:
-  - name: dockerfile
-    value: /Dockerfile
   - name: git-url
     value: '{{source_url}}'
-  - name: image-expires-after
-    value: 5d
-  - name: output-image
-    value: quay.io/ansible/ansible-ai-connect-konflux
   - name: revision
     value: '{{revision}}'
+  - name: output-image
+    value: quay.io/redhat-user-workloads/rh-ee-srajaram-tenant/ansible-ai-connect-operator/ansible-ai-connect-operator:on-pr-{{revision}}
+  - name: image-expires-after
+    value: 5d
+  - name: dockerfile
+    value: Dockerfile
   pipelineSpec:
     finally:
     - name: show-sbom
