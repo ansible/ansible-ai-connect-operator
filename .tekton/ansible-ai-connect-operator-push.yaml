@@ -327,6 +327,74 @@ spec:
                 sed -i "/version: ${VERSION}/a\\
                   replaces: ansible-ai-connect-operator.v${PREV_VERSION}" ./bundle/manifests/ansible-ai-connect-operator.clusterserviceversion.yaml
               fi
+    - name: bundle-build-push
+      runAfter:
+        - update-cluster-service-version
+      workspaces:
+        - name: source
+          workspace: workspace
+      taskSpec:
+        params:
+          - name: IMAGE
+            default: quay.io/srajaram/test
+          - name: ADDITIONAL_TAGS
+            default: "latest"
+          - name: STORAGE_DRIVER
+            default: overlay
+        workspaces:
+          - name: source
+        steps:
+          - name: bundle-build
+            image: quay.io/buildah/stable:v1.17.0
+            script: |
+              cd "$(workspaces.source.path)/source"
+
+              OPERATOR_VERSION_NEXT=$(tasks.common-get-operator-versions.results.operator_version_next)
+              ADDITIONAL_TAGS="quay.io/srajaram/test:latest quay.io/srajaram/test:$OPERATOR_VERSION_NEXT"
+
+              buildah --storage-driver=$(params.STORAGE_DRIVER) bud \
+                --no-cache -f bundle.Dockerfile -t $(params.IMAGE) .
+
+              for tag in $ADDITIONAL_TAGS; do
+                buildah tag $(params.IMAGE) $tag
+              done
+            volumeMounts:
+              - name: varlibcontainers
+                mountPath: /var/lib/containers
+            securityContext: 
+              capabilities:
+                add: ["SETFCAP"]
+          - name: bundle-push
+            image: quay.io/buildah/stable:v1.17.0
+            script: |
+              OPERATOR_VERSION_NEXT=$(tasks.common-get-operator-versions.results.operator_version_next)
+              ADDITIONAL_TAGS="quay.io/srajaram/test:latest quay.io/srajaram/test:$OPERATOR_VERSION_NEXT"
+
+              for tag in $ADDITIONAL_TAGS; do
+                buildah --storage-driver=$(params.STORAGE_DRIVER) push \
+                  --creds ${USERNAME}:${PASSWORD} $tag
+              done
+            volumeMounts:
+              - name: varlibcontainers
+                mountPath: /var/lib/containers
+            securityContext:
+              capabilities:
+                add: ["SETFCAP"]
+            env:
+              - name: USERNAME
+                valueFrom:
+                  secretKeyRef:
+                    name: quay-user
+                    key: quay-user
+              - name: PASSWORD
+                valueFrom:
+                  secretKeyRef:
+                    name: quay-token
+                    key: quay-token
+        volumes:
+          - name: varlibcontainers
+            emptyDir: {}
+
 
     - name: build-container
       params:
