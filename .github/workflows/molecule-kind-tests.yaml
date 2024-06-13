@@ -20,7 +20,7 @@ jobs:
   build:
     name: Run Molecule Tests (Kind)
     timeout-minutes: 60
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     env:
       OPERATOR_IMAGE: ${{ vars.TESTING_OPERATOR_IMAGE }}
       OPERATOR_PULL_POLICY: ${{ vars.TESTING_OPERATOR_PULL_POLICY }}

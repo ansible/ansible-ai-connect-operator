@@ -16,7 +16,7 @@ jobs:
     secrets: inherit
 
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs: [get_operator_versions, get_service_version]
     env:
       REGISTRY: "quay.io/ansible"

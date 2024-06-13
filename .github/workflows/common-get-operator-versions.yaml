@@ -12,7 +12,7 @@ on:
 
 jobs:
   get_operator_versions:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     outputs:
       operator_version_latest: ${{ steps.latest_tag.outputs.latest_tag }}

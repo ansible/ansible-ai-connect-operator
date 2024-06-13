@@ -9,7 +9,7 @@ on:
 
 jobs:
   get_service_version:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     outputs:
       service_version: ${{ steps.read_service_version.outputs.service_version }}
