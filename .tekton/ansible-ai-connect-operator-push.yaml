@@ -159,6 +159,8 @@ spec:
         value: $(params.git-url)
       - name: revision
         value: $(params.revision)
+      - name: fetchTags
+        value: true
       runAfter:
       - init
       taskRef:
@@ -199,7 +201,163 @@ spec:
               echo -n $(date -d @$(git log -1 --format=%at) "+%Y%m%d%H%M") > $(results.commit-timestamp.path)
         results:
           - name: commit-timestamp
-   
+    - name: common-get-operator-versions
+      runAfter:
+        - clone-repository
+      workspaces:
+        - name: source
+          workspace: workspace
+      taskSpec:
+        workspaces:
+          - name: source
+        steps:
+          - name: get-latest-tag
+            image: alpine/git
+            script: |
+              #!/bin/sh
+              set -euo pipefail
+              cd "$(workspaces.source.path)/source"
+              LATEST_TAG=$(git tag -l --sort=v:refname | tail -n1)
+              echo -n $LATEST_TAG > $(results.operator_version_latest.path)
+
+              MAJOR=$(echo $LATEST_TAG | cut -d. -f1)
+              MINOR=$(echo $LATEST_TAG | cut -d. -f2)
+              PATCH=$(echo $LATEST_TAG | cut -d. -f3)
+              PATCH=$((PATCH + 1))
+              NEW_TAG="$MAJOR.$MINOR.$PATCH"
+              echo $NEW_TAG > $(results.operator_version_next.path)
+        results:
+          - name: operator_version_latest
+            description: the _latest_ Operator version
+          - name: operator_version_next
+            description: The _next_ Operator version
+    - name: bundle
+      runAfter:
+        - clone-repository
+        - common-get-operator-versions
+      workspaces:
+        - name: source
+          workspace: workspace
+      taskSpec:
+        params:
+          - name: IMAGE
+            default: quay.io/ansible/ansible-ai-connect-konflux
+          - name: ADDITIONAL_TAGS
+            default: "latest $(tasks.common-get-operator-versions.results.operator_version_next)"
+          - name: STORAGE_DRIVER
+            default: overlay
+        workspaces:
+          - name: source
+        steps:
+          - name: bundle
+            image: quay.io/operator-framework/operator-sdk:v1.10.0
+            script: |
+              cd "$(workspaces.source.path)/source"
+              operator-sdk generate kustomize manifests -q
+
+              #install kustomize
+              curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash
+              mv kustomize /usr/local/bin/
+
+              cd config/manager
+
+              kustomize edit set image controller=$(params.IMAGE):0.1.0
+
+              cd ../..
+              kustomize build config/manifests | operator-sdk generate bundle -q --overwrite --version 0.1.0
+              operator-sdk bundle validate ./bundle
+            volumeMounts:
+              - name: varlibcontainers
+                mountPath: /var/lib/containers
+            securityContext:
+              capabilities:
+                add: ["SETFCAP"]
+        volumes:
+          - name: varlibcontainers
+            emptyDir: {}
+    - name: update-cluster-service-version
+      runAfter:
+        - bundle
+      workspaces:
+        - name: source
+          workspace: workspace
+      taskSpec:
+        workspaces:
+          - name: source
+        steps:
+          - name: update-cluster-service-version
+            image: alpine/git
+            script: |
+              #!/bin/sh
+              set -euo pipefail
+              cd "$(workspaces.source.path)/source"
+              if [[ "$(tasks.common-get-operator-versions.results.operator_version_latest)" == "0.0.0" ]]; then
+                >&2 echo "No previous version found."
+                exit 0
+              fi
+
+              VERSION="$(tasks.common-get-operator-versions.results.operator_version_next)"
+              PREV_VERSION="$(tasks.common-get-operator-versions.results.operator_version_latest)"
+              if ! grep -qF "replaces: ansible-ai-connect-operator.v${PREV_VERSION}" bundle/manifests/ansible-ai-connect-operator.clusterserviceversion.yaml; then
+                sed -i "/version: ${VERSION}/a\\
+                  replaces: ansible-ai-connect-operator.v${PREV_VERSION}" ./bundle/manifests/ansible-ai-connect-operator.clusterserviceversion.yaml
+              fi
+    - name: bundle-build-push
+      runAfter:
+        - update-cluster-service-version
+      workspaces:
+        - name: source
+          workspace: workspace
+      taskSpec:
+        params:
+          - name: IMAGE
+            default: quay.io/ansible/ansible-ai-connect-konflux
+          - name: ADDITIONAL_TAGS
+            default: "latest"
+          - name: STORAGE_DRIVER
+            default: overlay
+        workspaces:
+          - name: source
+        steps:
+          - name: bundle-build
+            image: quay.io/buildah/stable:v1.17.0
+            script: |
+              cd "$(workspaces.source.path)/source"
+
+              OPERATOR_VERSION_NEXT=$(tasks.common-get-operator-versions.results.operator_version_next)
+              ADDITIONAL_TAGS="$(params.IMAGE):bundle-latest $(params.IMAGE):bundle-$OPERATOR_VERSION_NEXT"
+
+              buildah --storage-driver=$(params.STORAGE_DRIVER) bud \
+                --no-cache -f bundle.Dockerfile -t $(params.IMAGE) .
+
+              for tag in $ADDITIONAL_TAGS; do
+                buildah tag $(params.IMAGE) $tag
+              done
+            volumeMounts:
+              - name: varlibcontainers
+                mountPath: /var/lib/containers
+            securityContext: 
+              capabilities:
+                add: ["SETFCAP"]
+          - name: bundle-push
+            image: quay.io/buildah/stable:v1.17.0
+            script: |
+              OPERATOR_VERSION_NEXT=$(tasks.common-get-operator-versions.results.operator_version_next)
+              ADDITIONAL_TAGS="$(params.IMAGE):bundle-latest $(params.IMAGE):bundle-$OPERATOR_VERSION_NEXT"
+
+              for tag in $ADDITIONAL_TAGS; do
+                buildah --storage-driver=$(params.STORAGE_DRIVER) push \
+                $tag
+              done
+            volumeMounts:
+              - name: varlibcontainers
+                mountPath: /var/lib/containers
+            securityContext:
+              capabilities:
+                add: ["SETFCAP"]
+        volumes:
+          - name: varlibcontainers
+            emptyDir: {}
     - name: prefetch-dependencies
       params:
       - name: input
@@ -242,7 +400,7 @@ spec:
       - name: COMMIT_SHA
         value: $(tasks.clone-repository.results.commit)
       - name: BUILD_ARGS
-        value: ["IMAGE_TAGS=latest 1.0.$(tasks.git-metadata.results.commit-timestamp)", "GIT_COMMIT=$(tasks.clone-repository.results.commit)"]
+        value: ["IMAGE_TAGS=latest "]
       - name: BUILD_ARGS_FILE
         value: $(params.build-args-file)
       runAfter:
@@ -428,9 +586,10 @@ spec:
       - name: IMAGE
         value: $(tasks.build-container.results.IMAGE_URL)
       - name: ADDITIONAL_TAGS
-        value: ["latest", "1.0.$(tasks.git-metadata.results.commit-timestamp)"]
+        value: ["latest", "$(tasks.common-get-operator-versions.results.operator_version_next)"]
       runAfter:
       - build-container
+      - common-get-operator-versions
       taskRef:
         params:
         - name: name
