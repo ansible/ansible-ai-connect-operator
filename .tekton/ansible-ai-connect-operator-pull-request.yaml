@@ -441,42 +441,43 @@ spec:
           - name: prepare-catalog
             image: quay.io/buildah/stable:v1.17.0
             script: |
-              #!/bin/sh
-              set -euo pipefail
+              echo $0
+              # #!/bin/sh
+              # set -euo pipefail
 
-              # Install bash
-              apk add --no-cache bash
+              # # Install bash
+              # apk add --no-cache bash
 
-              # Create the actual script to run
-              cat << 'EOF' > /tmp/script.sh
-              #!/bin/bash
-              set -euo pipefail
-              bundles="hi,bye,cya,soccer,football,futbol"
-              IFS=',' read -r -a bundle_array <<< "$bundles"
+              # # Create the actual script to run
+              # cat << 'EOF' > /tmp/script.sh
+              # #!/bin/bash
+              # set -euo pipefail
+              # bundles="hi,bye,cya,soccer,football,futbol"
+              # IFS=',' read -r -a bundle_array <<< "$bundles"
 
-              mkdir -p catalog/operators/ansible-ai-connect
-              for tag in "${bundle_array[@]}"; do
-                version=$(echo $tag | awk -F: '{print $2}')
-                mkdir -p "catalog/operators/ansible-ai-connect/$version"
-                cp -r path/to/your/bundle/* "catalog/operators/ansible-ai-connect/$version/"
-              done
+              # mkdir -p catalog/operators/ansible-ai-connect
+              # for tag in "${bundle_array[@]}"; do
+              #   version=$(echo $tag | awk -F: '{print $2}')
+              #   mkdir -p "catalog/operators/ansible-ai-connect/$version"
+              #   cp -r path/to/your/bundle/* "catalog/operators/ansible-ai-connect/$version/"
+              # done
 
-              cat << EOD > catalog.Dockerfile
-              FROM alpine:3.12
-              COPY catalog /catalog
-              LABEL operators.operatorframework.io.index.configs.v1=/catalog
-              EOD
+              # cat << EOD > catalog.Dockerfile
+              # FROM alpine:3.12
+              # COPY catalog /catalog
+              # LABEL operators.operatorframework.io.index.configs.v1=/catalog
+              # EOD
 
-              mv catalog.Dockerfile "$(workspaces.source.path)/source"
+              # mv catalog.Dockerfile "$(workspaces.source.path)/source"
 
-              exit 0
-              EOF
+              # exit 0
+              # EOF
 
-              # Make the script executable
-              chmod +x /tmp/script.sh
+              # # Make the script executable
+              # chmod +x /tmp/script.sh
 
-              # Execute the script using bash
-              /bin/bash
+              # # Execute the script using bash
+              # /bin/bash
 
 
 
