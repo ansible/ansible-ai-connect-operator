@@ -366,6 +366,69 @@ spec:
           - name: varlibcontainers
             emptyDir: {}
 
+    - name: build-catalog-index-bundle-image-list
+      runAfter:
+        - clone-repository
+      workspaces:
+        - name: source
+          workspace: workspace
+      taskSpec:
+        workspaces:
+          - name: source
+        steps:
+          - name: build-catalog-index-bundle-image-list
+            image: alpine/git
+            script: |
+              #!/bin/sh
+              set -euo pipefail
+
+              # Install bash
+              apk add --no-cache bash
+
+              # Create the actual script to run
+              cat << 'EOF' > /tmp/script.sh
+              #!/bin/bash
+              set -euo pipefail
+              cd "$(workspaces.source.path)/source"
+              LATEST_TAGS=($(git tag -l --sort=v:refname))
+              echo "${LATEST_TAGS[@]}"
+
+              # Filter array by tags that end with a semver 
+              filtered_tags=()
+              regex="^([0-9]+\.[0-9]+\.[0-9]+)$"
+              for i in "${LATEST_TAGS[@]}" ; do
+                if [[ $i =~ $regex ]]; then
+                  filtered_tags+=("quay.io/ansible/ansible-ai-connect-bundle:${BASH_REMATCH[1]}") ;
+                fi
+              done
+
+              echo "${filtered_tags[@]}"
+
+              # Include the version being built
+              filtered_tags+=("quay.io/ansible/ansible-ai-connect-bundle:$(tasks.common-get-operator-versions.results.operator_version_next)")
+
+              # Convert array back to comma separated list
+              output_tags=${filtered_tags[@]}
+              output=${output_tags// /,}
+
+              echo "================"
+                echo "${output}"
+              echo "================"
+
+              # echo "${output}" > $(results.BUILD_IMGS.path)
+
+              exit 0
+              EOF
+
+              # Make the script executable
+              chmod +x /tmp/script.sh
+
+              # Execute the script using bash
+              /bin/bash /tmp/script.sh
+        results:
+          - name: BUILD_IMGS
+
+
     - name: prefetch-dependencies
       params:
       - name: input
