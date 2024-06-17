@@ -442,7 +442,8 @@ spec:
             image: quay.io/buildah/stable:v1.17.0
             script: |
               echo "hi"
-              echo $SHELL
+              echo $BASH_VERSION
+              echo $ZSH_VERSION
               # #!/bin/sh
               # set -euo pipefail
 
