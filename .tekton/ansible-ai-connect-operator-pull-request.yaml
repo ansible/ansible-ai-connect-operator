@@ -428,6 +428,22 @@ spec:
         results:
           - name: BUILD_IMGS
 
+    - name: prepare-catalog
+      runAfter:
+        - build-catalog-index-bundle-image-list
+      workspaces:
+        - name: source
+          workspace: workspace
+      taskSpec:
+        workspaces:
+          - name: source
+        steps:
+          - name: prepare-catalog
+            image: alpine/git
+            script: |
+              #!/bin/sh
+              echo $(tasks.build-catalog-index-bundle-image-list.results.BUILD_IMGS)
+
 
     - name: prefetch-dependencies
       params:
