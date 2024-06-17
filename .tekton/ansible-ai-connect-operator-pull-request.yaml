@@ -442,6 +442,14 @@ spec:
             image: quay.io/buildah/stable:v1.17.0
             script: |
               echo "hi"
+              #!/bin/bash
+              set -euo pipefail
+              bundles="hi,bye,cya,soccer,football,futbol"
+              IFS=',' read -r -a bundle_array <<< "$bundles"
+
+
+
+
               # echo $BASH_VERSION
               # echo $ZSH_VERSION
               # #!/bin/sh
