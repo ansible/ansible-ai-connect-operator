@@ -442,7 +442,21 @@ spec:
             image: alpine/git
             script: |
               #!/bin/sh
-              echo $(tasks.build-catalog-index-bundle-image-list.results.BUILD_IMGS)
+              bundles="hi, bye, cya, soccer, football, futbol"
+              IFS=',' read -r -a bundle_array <<< "$bundles"
+
+              mkdir -p catalog/operators/ansible-ai-connect
+              for tag in "${bundle_array[@]}"; do
+                version=$(echo $tag | awk -F: '{print $2}')
+                mkdir -p "catalog/operators/ansible-ai-connect/$version"
+                cp -r path/to/your/bundle/* "catalog/operators/ansible-ai-connect/$version/"
+              done
+
+              cat <<EOF > Dockerfile
+              FROM alpine:3.12
+              COPY catalog /catalog
+              LABEL operators.operatorframework.io.index.configs.v1=/catalog
+              EOF
 
 
     - name: prefetch-dependencies
