@@ -441,7 +441,8 @@ spec:
           - name: prepare-catalog
             image: quay.io/buildah/stable:v1.17.0
             script: |
-              echo $0
+              echo "hi"
+              ps -p $$
               # #!/bin/sh
               # set -euo pipefail
 
