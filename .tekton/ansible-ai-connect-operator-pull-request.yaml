@@ -439,13 +439,13 @@ spec:
           - name: source
         steps:
           - name: prepare-catalog
-            image: alpine/git
+            image: quay.io/buildah/stable:v1.17.0
             script: |
               #!/bin/sh
               set -euo pipefail
 
               # Install bash
-              apk add --no-cache bash buildah
+              apk add --no-cache bash
 
               # Create the actual script to run
               cat << 'EOF' > /tmp/script.sh
