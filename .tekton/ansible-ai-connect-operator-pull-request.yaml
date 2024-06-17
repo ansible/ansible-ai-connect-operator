@@ -445,7 +445,7 @@ spec:
               set -euo pipefail
 
               # Install bash
-              apk add --no-cache bash
+              apk add --no-cache bash buildah
 
               # Create the actual script to run
               cat << 'EOF' > /tmp/script.sh
@@ -461,11 +461,13 @@ spec:
                 cp -r path/to/your/bundle/* "catalog/operators/ansible-ai-connect/$version/"
               done
 
-              cat << EOD > Dockerfile
+              cat << EOD > catalog.Dockerfile
               FROM alpine:3.12
               COPY catalog /catalog
               LABEL operators.operatorframework.io.index.configs.v1=/catalog
               EOD
+
+              mv catalog.Dockerfile "$(workspaces.source.path)/source"
 
               exit 0
               EOF
