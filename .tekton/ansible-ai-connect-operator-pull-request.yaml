@@ -441,11 +441,19 @@ spec:
           - name: prepare-catalog
             image: alpine/git
             script: |
+
               #!/bin/sh
+              set -euo pipefail
+
+              # Install bash
+              apk add --no-cache bash
+
+              # Create the actual script to run
+              cat << 'EOF' > /tmp/script.sh
+              #!/bin/bash
+              set -euo pipefail
               bundles="hi, bye, cya, soccer, football, futbol"
-              IFS=',' read -r -a bundle_array <<EOF
-              $bundles
-              EOF
+              IFS=',' read -r -a bundle_array <<< "$bundles"
 
               mkdir -p catalog/operators/ansible-ai-connect
               for tag in "${bundle_array[@]}"; do
@@ -459,6 +467,25 @@ spec:
               COPY catalog /catalog
               LABEL operators.operatorframework.io.index.configs.v1=/catalog
               EOF
+
+              exit 0
+              EOF
+
+              # Make the script executable
+              chmod +x /tmp/script.sh
+
+              # Execute the script using bash
+              /bin/bash /tmp/script.sh
+
+
+
+
+
+
+
+
+
+
 
 
     - name: prefetch-dependencies
