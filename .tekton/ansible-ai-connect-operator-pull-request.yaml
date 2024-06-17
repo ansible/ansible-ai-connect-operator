@@ -442,7 +442,7 @@ spec:
             image: quay.io/buildah/stable:v1.17.0
             script: |
               echo "hi"
-              ps -p $$
+              $SHELL
               # #!/bin/sh
               # set -euo pipefail
 
