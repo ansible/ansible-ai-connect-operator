@@ -441,7 +441,6 @@ spec:
           - name: prepare-catalog
             image: alpine/git
             script: |
-
               #!/bin/sh
               set -euo pipefail
 
@@ -452,7 +451,7 @@ spec:
               cat << 'EOF' > /tmp/script.sh
               #!/bin/bash
               set -euo pipefail
-              bundles="hi, bye, cya, soccer, football, futbol"
+              bundles="hi,bye,cya,soccer,football,futbol"
               IFS=',' read -r -a bundle_array <<< "$bundles"
 
               mkdir -p catalog/operators/ansible-ai-connect
@@ -462,11 +461,11 @@ spec:
                 cp -r path/to/your/bundle/* "catalog/operators/ansible-ai-connect/$version/"
               done
 
-              cat <<EOF > Dockerfile
+              cat << EOD > Dockerfile
               FROM alpine:3.12
               COPY catalog /catalog
               LABEL operators.operatorframework.io.index.configs.v1=/catalog
-              EOF
+              EOD
 
               exit 0
               EOF
@@ -475,7 +474,8 @@ spec:
               chmod +x /tmp/script.sh
 
               # Execute the script using bash
-              /bin/bash /tmp/script.sh
+              /bin/bash
+
 
 
 
