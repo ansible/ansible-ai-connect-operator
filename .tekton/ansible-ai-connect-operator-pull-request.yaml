@@ -443,7 +443,9 @@ spec:
             script: |
               #!/bin/sh
               bundles="hi, bye, cya, soccer, football, futbol"
-              IFS=',' read -r -a bundle_array <<< "$bundles"
+              IFS=',' read -r -a bundle_array <<EOF
+              $bundles
+              EOF
 
               mkdir -p catalog/operators/ansible-ai-connect
               for tag in "${bundle_array[@]}"; do
