@@ -25,7 +25,7 @@ spec:
   - name: image-expires-after
     value: 5d
   - name: output-image
-    value: quay.io/ansible/ansible-ai-connect-konflux
+    value: quay.io/ansible/ansible-ai-connect-konflux:pr-{{pull_request_number}}-{{revision}}
   - name: revision
     value: '{{revision}}'
   pipelineSpec:

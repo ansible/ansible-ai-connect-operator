@@ -22,7 +22,7 @@ spec:
   - name: git-url
     value: '{{source_url}}'
   - name: output-image
-    value: quay.io/ansible/ansible-ai-connect-konflux
+    value: quay.io/ansible/ansible-ai-connect-konflux:{{revision}}
   - name: revision
     value: '{{revision}}'
   pipelineSpec:
