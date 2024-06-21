@@ -41,6 +41,9 @@
 - name: Deploy Model API service
   include_tasks: deploy_model_api.yml
 
+- name: Setup HorizontalPodAutoscaler for Model API deployment
+  include_tasks: setup_hpa.yml
+
 - name: Create admin user
   include_tasks: create_admin_user.yml
   when: model_api_pod_name | length

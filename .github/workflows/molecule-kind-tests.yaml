@@ -16,6 +16,7 @@ on:
       - README.md
       - CONTRIBUTING.md
       - 'docs/**'
+
 jobs:
   build:
     name: Run Molecule Tests (Kind)

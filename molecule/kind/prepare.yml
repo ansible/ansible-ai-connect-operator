@@ -7,6 +7,8 @@
     - kubernetes.core
   vars:
     nginx_ingress_definition: 'https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml'
+    metrics_server_definition: 'https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml'
+
   tasks:
 
     - name: Install NGINX ingress
@@ -30,6 +32,23 @@
       until: result is not failed
       tags:
         - always
+
+    - name: Install metrics server
+      k8s:
+        definition: |
+          {{ lookup('url', metrics_server_definition, split_lines=False) | from_yaml_all }}
+      tags:
+        - always
+
+    - name: Patch metrics server
+      k8s_json_patch:
+        kind: Deployment
+        name: metrics-server
+        namespace: kube-system
+        patch:
+          - op: add
+            path: /spec/template/spec/containers/0/args/-
+            value: --kubelet-insecure-tls
 
     - name: Build operator image
       docker_image:
