@@ -415,7 +415,7 @@ spec:
                 echo "${output}"
               echo "================"
 
-              # echo "${output}" > $(results.BUILD_IMGS.path)
+              # echo "${output}" > $(results.build-imgs.path)
 
               exit 0
               EOF
@@ -426,7 +426,7 @@ spec:
               # Execute the script using bash
               /bin/bash /tmp/script.sh
         results:
-          - name: BUILD_IMGS
+          - name: build-imgs
 
     - name: prepare-catalog
       runAfter:
@@ -444,7 +444,7 @@ spec:
               echo "hi"
               #!/bin/bash
               set -euo pipefail
-              echo $(tasks.build-catalog-index-bundle-image-list.results.BUILD_IMGS)
+              echo $(tasks.build-catalog-index-bundle-image-list.results.build-imgs)
 
 
 
