@@ -444,55 +444,7 @@ spec:
               echo "hi"
               #!/bin/bash
               set -euo pipefail
-              bundles="hi,bye,cya,soccer,football,futbol"
-              IFS=',' read -r -a bundle_array <<< "$bundles"
-
-              mkdir -p catalog/operators/ansible-ai-connect
-              for tag in "${bundle_array[@]}"; do
-                version=$(echo $tag | awk -F: '{print $2}')
-                mkdir -p "catalog/operators/ansible-ai-connect/$version"
-                cp -r path/to/your/bundle/* "catalog/operators/ansible-ai-connect/$version/"
-              done
-
-
-              # echo $BASH_VERSION
-              # echo $ZSH_VERSION
-              # #!/bin/sh
-              # set -euo pipefail
-
-              # # Install bash
-              # apk add --no-cache bash
-
-              # # Create the actual script to run
-              # cat << 'EOF' > /tmp/script.sh
-              # #!/bin/bash
-              # set -euo pipefail
-              # bundles="hi,bye,cya,soccer,football,futbol"
-              # IFS=',' read -r -a bundle_array <<< "$bundles"
-
-              # mkdir -p catalog/operators/ansible-ai-connect
-              # for tag in "${bundle_array[@]}"; do
-              #   version=$(echo $tag | awk -F: '{print $2}')
-              #   mkdir -p "catalog/operators/ansible-ai-connect/$version"
-              #   cp -r path/to/your/bundle/* "catalog/operators/ansible-ai-connect/$version/"
-              # done
-
-              # cat << EOD > catalog.Dockerfile
-              # FROM alpine:3.12
-              # COPY catalog /catalog
-              # LABEL operators.operatorframework.io.index.configs.v1=/catalog
-              # EOD
-
-              # mv catalog.Dockerfile "$(workspaces.source.path)/source"
-
-              # exit 0
-              # EOF
-
-              # # Make the script executable
-              # chmod +x /tmp/script.sh
-
-              # # Execute the script using bash
-              # /bin/bash
+              echo $(tasks.build-catalog-index-bundle-image-list.results.BUILD_IMGS)
 
 
 
