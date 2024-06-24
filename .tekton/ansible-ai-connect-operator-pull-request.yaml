@@ -277,6 +277,11 @@ spec:
               echo "====================="
               ls
               echo "====================="
+              cd bundle
+              echo "cd bundle"
+              echo "====================="
+              ls
+              echo "====================="
             volumeMounts:
               - name: varlibcontainers
                 mountPath: /var/lib/containers
