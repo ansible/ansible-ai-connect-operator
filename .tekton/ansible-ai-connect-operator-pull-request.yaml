@@ -392,7 +392,7 @@ spec:
               set -euo pipefail
 
               # Install bash
-              apk add --no-cache bash
+              apk add --no-cache bash skopeo podman tar
 
               # Create the actual script to run
               cat << 'EOF' > /tmp/script.sh
@@ -424,7 +424,13 @@ spec:
                 echo "${output}"
               echo "================"
 
-              echo "${output}" > $(results.build-imgs.path)
+              skopeo copy docker://quay.io/ansible/ansible-ai-connect-bundle:0.1.0 dir:/workspace/image
+
+              cd workspace/image
+              ls
+
+
+              # echo "${output}" > $(results.build-imgs.path)
 
               exit 0
               EOF
