@@ -392,7 +392,7 @@ spec:
               set -euo pipefail
 
               # Install bash
-              apk add --no-cache bash skopeo podman tar
+              apk add --no-cache --no-xattrs bash skopeo podman tar
 
               # Create the actual script to run
               cat << 'EOF' > /tmp/script.sh
