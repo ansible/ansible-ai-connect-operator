@@ -273,6 +273,10 @@ spec:
               cd ../..
               kustomize build config/manifests | operator-sdk generate bundle -q --overwrite --version 0.1.0
               operator-sdk bundle validate ./bundle
+
+              echo "====================="
+              ls
+              echo "====================="
             volumeMounts:
               - name: varlibcontainers
                 mountPath: /var/lib/containers
