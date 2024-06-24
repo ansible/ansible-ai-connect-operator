@@ -415,7 +415,7 @@ spec:
                 echo "${output}"
               echo "================"
 
-              # echo "${output}" > $(results.build-imgs.path)
+              echo "${output}" > $(results.build-imgs.path)
 
               exit 0
               EOF
