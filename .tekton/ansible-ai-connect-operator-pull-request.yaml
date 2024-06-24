@@ -432,12 +432,6 @@ spec:
               ls
               echo "================"
               echo "cd temp"
-              cd temp
-              echo "================"
-              ls
-              echo "================"
-
-
 
               # echo "${output}" > $(results.build-imgs.path)
 
