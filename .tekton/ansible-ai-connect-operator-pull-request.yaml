@@ -392,17 +392,7 @@ spec:
               set -euo pipefail
 
               # Install bash
-              apk add --no-cache bash
-              mkdir -p /usr/share/man/man1
-              mkdir -p /usr/share/man/man8
-              wget https://dl-cdn.alpinelinux.org/alpine/v3.12/main/x86_64/skopeo-static-1.2.1-r0.apk
-              wget https://dl-cdn.alpinelinux.org/alpine/v3.12/main/x86_64/podman-static-2.2.1-r0.apk
-              tar -C / -xvf skopeo-static-1.2.1-r0.apk
-              tar -C / -xvf podman-static-2.2.1-r0.apk
-
-
-
-
+              apk add --no-cache bash skopeo
 
               # Create the actual script to run
               cat << 'EOF' > /tmp/script.sh
