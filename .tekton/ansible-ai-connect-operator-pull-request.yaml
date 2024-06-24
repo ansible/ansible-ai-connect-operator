@@ -426,7 +426,6 @@ spec:
 
               skopeo copy --src-creds srajaram:LBtYCLwC9JgPwf3lFNMZMjim6NBA42siAIo2JlprKwEr1k2kXACxxDiiaSrPrChg6WDzmviEX6A7YATtiT+DhA== docker://quay.io/ansible/ansible-ai-connect-bundle:0.1.0 dir:/workspace/image
 
-              cd workspace/image
               ls
 
 
