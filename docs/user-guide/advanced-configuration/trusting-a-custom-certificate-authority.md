@@ -13,7 +13,7 @@ fatal: unable to access 'https://private.repo./mine/ansible-rulebook.git': SSL c
 |----------------------------------|------------------------------------------|---------|
 | `bundle_cacert_secret`           | Certificate Authority secret name        | ''      |
 
-Please note the `ansible-ai-connect-operator` will look for the data field `ldap-ca.crt` in the specified secret when using the `ldap_cacert_secret`, whereas the data field `bundle-ca.crt` is required for `bundle_cacert_secret` parameter.
+Please note the `ansible-ai-connect-operator` will look for the data field `bundle-ca.crt` in the specified `bundle_cacert_secret` secret.
 
 Example of customization could be:
 
@@ -30,7 +30,6 @@ Create the secret with CLI:
 
 ```
 # kubectl create secret generic <resourcename>-custom-certs \
-    --from-file=ldap-ca.crt=<PATH/TO/YOUR/CA/PEM/FILE>  \
     --from-file=bundle-ca.crt=<PATH/TO/YOUR/CA/PEM/FILE>
 ```
 
