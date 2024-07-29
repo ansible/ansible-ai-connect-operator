@@ -189,6 +189,10 @@ spec:
             secretKeyRef:
               name: '{{ model_config_secret_name }}'
               key: model_id
+{% if bundle_ca_crt %}
+        - name: REQUESTS_CA_BUNDLE
+          value: "/etc/pki/tls/certs/ca-bundle.crt"
+{% endif %}
         ports:
         - containerPort: 8000
           protocol: TCP
