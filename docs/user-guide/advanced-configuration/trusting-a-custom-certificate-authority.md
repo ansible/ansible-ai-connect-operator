@@ -15,7 +15,9 @@ fatal: unable to access 'https://private.repo./mine/ansible-rulebook.git': SSL c
 
 Please note the `ansible-ai-connect-operator` will look for the data field `bundle-ca.crt` in the specified `bundle_cacert_secret` secret.
 
-Example of customization could be:
+
+
+### Example of customization could be:
 
 ```yaml
 ---
@@ -24,7 +26,14 @@ spec:
   bundle_cacert_secret: <resourcename>-custom-certs
 ```
 
-Create the secret with CLI:
+### Download the self-signed cert from the subject host
+
+```
+openssl s_client -showcerts -connect {HOST}:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > certificate.crt)
+
+```
+
+### Create the secret with CLI:
 
 * Certificate Authority secret
 
