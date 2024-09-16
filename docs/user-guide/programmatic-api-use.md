@@ -12,6 +12,7 @@ In order to programmatically use the API an Access Token must be created.
 Username: admin
 Password: <password>
 ```
+- The Django Administration Portal is at `http[s]://<aaic-instance-route>/admin`
 - The password can be found in the `Secret` named `<aaic-instance-name>-admin-password` in the cluster namespace where the `AnsibleAIConnect` instance is deployed.
 
 2. In the Django Administration Portal, select "Users" from the "Users" area. 
@@ -20,6 +21,8 @@ Password: <password>
 
 
 3. Verify that the user to whom you want to grant programmatic access is in the Users list.
+
+NOTE: An access token can only be granted to an existing AAP User. The applicable User must first log into `Ansible AI Connect` with their credentials to create a User record in the Django database. Users created with `wisdom-manage createsuperuser` cannot be granted API access tokens.
 
 
 4. From the "Django Oauth toolkit" area, select "Access tokens" → "Add". 
