@@ -34,7 +34,7 @@ Lightspeed service depends on a deployed instance of Ansible Automation Platform
 * Now you will have collected the following
   * The application `Client ID` 
   * The application `Client secret` 
-  * The AAP 2.5 `AutomationController` URL which is normally `<aap_controller_url>/api/`
+  * The AAP 2.5 `AutomationController` URL which is normally `<aap_controller_url>`
 
 
 ### Authentication `Secret` content
@@ -42,7 +42,7 @@ Lightspeed service depends on a deployed instance of Ansible Automation Platform
 When you create a `Secret` for the Authentication configuration in the OpenShift cluster, the following pieces of information collected from the above will help:
 1. `auth_api_key`: The application `Client ID`
 2. `auth_api_secret`: The application `Client secret`
-3. `auth_api_url`: The AAP 2.5 `AutomationController` URL `<aap_controller_url>/api/`
+3. `auth_api_url`: The AAP 2.5 `AutomationController` URL `<aap_controller_url>`
 
 See [here](using-external-configuration-secrets.md#authentication-secret) for more instructions regarding configuration with `Secret`s.
 
