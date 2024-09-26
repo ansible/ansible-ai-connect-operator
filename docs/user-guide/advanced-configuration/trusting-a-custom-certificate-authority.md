@@ -29,7 +29,7 @@ spec:
 ### Download the self-signed cert from the subject host
 
 ```
-openssl s_client -showcerts -connect {HOST}:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > certificate.crt)
+openssl s_client -showcerts -connect {HOST}:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > certificate.crt
 
 ```
 
