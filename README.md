@@ -22,6 +22,7 @@ A Kubernetes operator for Kubernetes built with [Operator SDK](https://github.co
     - [Admin user account configuration](#admin-user-account-configuration)
     - [Database Fields Encryption Configuration](#database-fields-encryption-configuration)
     - [Additional Advanced Configuration](#additional-advanced-configuration)
+  - [Programmatic usage of the API](docs/user-guide/programmatic-api-use.md)
   - [Maintainers Docs](#maintainers-docs)
 
 ## Overview
