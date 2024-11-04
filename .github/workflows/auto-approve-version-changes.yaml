@@ -1,0 +1,16 @@
+---
+name: Auto approve ansible-ai-connect-service version changes
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  auto-approve:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    if: ${{ startsWith(github.event.pull_request.title, '[Automated PR]') }}
+    steps:
+      - uses: hmarr/auto-approve-action@v4
