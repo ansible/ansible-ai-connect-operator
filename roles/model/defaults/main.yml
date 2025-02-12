@@ -49,6 +49,12 @@ auth_config_secret_name: ''
 model_config_secret_name: ''
 # ========================================
 
+# ----------------------------------------
+# Configuration for Chatbot provider
+# ----------------------------------------
+chatbot_config_secret_name: ''
+# ========================================
+
 
 # ----------------------------------------
 # Configuration for underlying service

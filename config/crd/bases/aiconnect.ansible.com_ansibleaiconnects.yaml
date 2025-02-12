@@ -73,6 +73,9 @@ spec:
               model_config_secret_name:
                 description: "Secret where the model configuration can be found"
                 type: string
+              chatbot_config_secret_name:
+                description: "Secret where the chatbot configuration can be found"
+                type: string
               database:
                 description: The PostgreSQL database StatefulSet
                 properties:

@@ -53,6 +53,7 @@ metadata:
 spec:
   auth_config_secret_name: 'auth-configuration-secret'
   model_config_secret_name: 'model-configuration-secret'
+  chatbot_config_secret_name: 'chatbot-configuration-secret'
 ```
 
 3. Now apply this yaml

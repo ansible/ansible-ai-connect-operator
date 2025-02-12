@@ -110,6 +110,7 @@ spec:
     - redhat-operators-pull-secret
   auth_config_secret_name: 'auth-configuration-secret'
   model_config_secret_name: 'model-configuration-secret'
+  chatbot_config_secret_name: 'chatbot-configuration-secret'
   database:
     postgres_storage_class: standard
 ```
