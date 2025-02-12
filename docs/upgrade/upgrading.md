@@ -12,6 +12,8 @@ OPERATOR_VERSION=1.0.1
 docker run --entrypoint="" quay.io/ansible/ansible-ai-connect-operator:$OPERATOR_VERSION bash -c "env | egrep DEFAULT_AI_CONNECT_VERSION"
 ```
 
+To check the version of Chatbot you can use the same command but version is specified in the `DEFAULT_CHATBOT_AI_CONNECT_VERSION`
+
 Follow the installation instructions (`make deploy`, `kustomization`, etc) using the new release version to apply the new operator `yaml` and upgrade the operator. This will in turn also upgrade your `AnsibleAIConnect` deployment.
 
 For example, if you installed with `kustomize`, you could modify the version in your `kustomization.yaml` file from `1.0.0` to `1.0.1` and then apply it.

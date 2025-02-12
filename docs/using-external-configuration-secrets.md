@@ -69,6 +69,23 @@ spec:
   model_config_secret_name: <secret-name>-model-configuration
 ```
 
+## Chatbot service `Secret`
+
+`chatbot_config_secret_name` should be set to the name of an existing `Secret`. The Operator will use the values set therein to configure the chatbot service integration. The `Secret` must contain the following values:
+
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: <secret-name>-chatbot-configuration
+  namespace: <target-namespace>
+stringData:
+  chatbot_model: <Chatbot model name>
+  chatbot_provider: <Chatbot model provide>
+  chatbot_url: <Chatbot model url>
+type: Opaque
+```
+
 ## Troubleshooting
 
 ### Base64 encoding
@@ -132,4 +149,5 @@ spec:
   service_type: ClusterIP
   auth_config_secret_name: 'my-secret-auth-configuration'
   model_config_secret_name: 'my-secret-model-configuration'
+  chatbot_config_secret_name: 'my-secret-chatbot-configuration'
 ```

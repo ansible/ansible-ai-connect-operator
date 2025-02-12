@@ -1,0 +1,44 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: wisdom-service-uwsgi-configmap
+  namespace: '{{ ansible_operator_meta.namespace }}'
+  labels:
+    app.kubernetes.io/name: '{{ ansible_operator_meta.name }}'
+    app.kubernetes.io/part-of: '{{ ansible_operator_meta.name }}'
+    app.kubernetes.io/managed-by: '{{ deployment_type }}-operator'
+    app.kubernetes.io/component: '{{ deployment_type }}'
+    app.kubernetes.io/operator-version: '{{ lookup("env", "OPERATOR_VERSION") }}'
+data:
+  uwsgi_ini: |
+    [uwsgi]
+    socket = /var/run/uwsgi/ansible_wisdom.sock
+    chmod-socket = 660
+    vacuum = true
+    stats = /tmp/uwsgi-stats
+    listen = 100                         ; This is limited by net.core.somaxconn
+    master = true
+    enable-threads = true                ; For running Segment Python library in async mode
+    vacuum = true
+    no-orphans = true
+    lazy-apps = true
+    skip-atexit = true
+    manage-script-name = true
+    mount = /=ansible_ai_connect.main.wsgi:application
+
+    need-app = true                      ; Exit if no python application loaded
+    harakiri = 60                        ; Forcefully kill workers after 60 seconds
+    max-requests = 1000                  ; Restart workers after this many requests
+    max-worker-lifetime = 3600           ; Restart workers after this many seconds
+    max-worker-lifetime-delta = 360      ; Add (worker_id * delta) to the max_worker_lifetime value of each worker
+    reload-on-rss = 2048                 ; Restart workers after this much resident memory
+    worker-reload-mercy = 60             ; How long to wait before forcefully killing workers
+    py-callos-afterfork = true           ; Allow workers to trap signals
+    buffer-size = 65535                  ; Increase max header buffer size to 65K (for cookies)
+
+    processes = 10                       ; Number of workers to spawn
+
+    log-4xx = true
+    log-5xx = true
+    disable-logging = true

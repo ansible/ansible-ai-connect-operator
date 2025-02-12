@@ -14,6 +14,8 @@
       modelPipelineConfigurationSecret: "{{ __model_pipeline_secret_name }}"
       dbFieldsEncryptionSecret: "{{ __db_fields_encryption_secret_name }}"
       image: "{{ _image }}"
+      chatbotImage: "{{ _chatbot_image }}"
+      chatbotVersion: "{{ chatbot_pod_name }}"
 
 - block:
     - name: Retrieve instance version
@@ -37,6 +39,27 @@
         status:
           version: "{{ instance_version.stdout | trim }}"
   when: model_api_pod_name | length
+
+- block:
+    - name: Retrieve Chatbot instance version
+      k8s_exec:
+        namespace: "{{ ansible_operator_meta.namespace }}"
+        pod: "{{ chatbot_pod_name }}"
+        container: "chatbot-api"
+        command: >-
+          bash -c "python3.11 runner.py --version"
+      register: instance_version
+      changed_when: false
+
+    - name: Update Chatbot version status
+      operator_sdk.util.k8s_status:
+        api_version: '{{ api_version }}'
+        kind: "{{ kind }}"
+        name: "{{ ansible_operator_meta.name }}"
+        namespace: "{{ ansible_operator_meta.namespace }}"
+        status:
+          version: "{{ instance_version.stdout | trim }}"
+  when: chatbot_pod_name | length
 
 - block:
     - name: Retrieve route URL

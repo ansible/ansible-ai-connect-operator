@@ -56,6 +56,7 @@ spec:
   no_log: false        # <------------
   auth_config_secret_name: 'auth-configuration-secret'
   model_config_secret_name: 'model-configuration-secret'
+  chatbot_config_secret_name: 'chatbot-configuration-secret'
 ```
 
 ## Iterating on the installer without deploying the operator

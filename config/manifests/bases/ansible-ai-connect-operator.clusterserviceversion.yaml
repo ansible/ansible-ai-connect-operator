@@ -23,6 +23,10 @@ spec:
         path: model_config_secret_name
         x-descriptors:
         - urn:alm:descriptor:io.kubernetes:Secret
+      - displayName: Secret where the Chatbot configuration can be found
+        path: chatbot_config_secret_name
+        x-descriptors:
+        - urn:alm:descriptor:io.kubernetes:Secret
       - displayName: Image Pull Policy
         path: image_pull_policy
         x-descriptors:
@@ -39,6 +43,14 @@ spec:
         - urn:alm:descriptor:com.tectonic.ui:advanced
       - displayName: API container image Version
         path: image_version
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:advanced
+      - displayName: Chatbot API container image
+        path: chatbot_image
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:advanced
+      - displayName: Chatbot API container image Version
+        path: chatbot_image_version
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:advanced
       - displayName: Additional labels defined on the resource, which should be propagated

@@ -130,6 +130,7 @@ spec:
     - redhat-operators-pull-secret
   auth_config_secret_name: 'auth-configuration-secret'
   model_config_secret_name: 'model-configuration-secret'
+  chatbot_config_secret_name: 'chatbot-configuration-secret'
   database:
     # This has to be the name of a StorageClass in the cluster
     postgres_storage_class: gp3

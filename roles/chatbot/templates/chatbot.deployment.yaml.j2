@@ -1,0 +1,187 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    {{ lookup("template", "../common/templates/labels/common.yaml.j2")  | indent(width=4) | trim }}
+    {{ lookup("template", "../common/templates/labels/version.yaml.j2") | indent(width=4) | trim }}
+    app.kubernetes.io/component: '{{ deployment_type }}-api'
+  name: '{{ ansible_operator_meta.name }}-api'
+  namespace: '{{ ansible_operator_meta.namespace }}'
+spec:
+  replicas: {{ combined_chatbot_api.replicas }}
+{% if combined_chatbot_api.strategy is defined %}
+  strategy:
+    type: {{ combined_chatbot_api.strategy.type }}
+{% if combined_chatbot_api.strategy.type == "Recreate" %}
+    rollingUpdate: null
+{% elif combined_chatbot_api.strategy.type == "RollingUpdate" %}
+    rollingUpdate:
+      maxSurge:  {{ combined_chatbot_api.strategy.rollingUpdate.maxSurge | default("25%")}}
+      maxUnavailable: {{ combined_chatbot_api.strategy.rollingUpdate.maxUnavailable | default("25%")}}
+{% endif %}
+{% endif %}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: '{{ ansible_operator_meta.name }}'
+      app.kubernetes.io/managed-by: '{{ deployment_type }}-chatbot-operator'
+      app.kubernetes.io/component: '{{ deployment_type }}-chatbot'
+  template:
+    metadata:
+      labels:
+        {{ lookup("template", "../common/templates/labels/common.yaml.j2")  | indent(width=8) | trim }}
+        {{ lookup("template", "../common/templates/labels/version.yaml.j2") | indent(width=8) | trim }}
+        app.kubernetes.io/component: '{{ deployment_type }}-chatbot'
+      annotations:
+        kubectl.kubernetes.io/default-container: 'chatbot-api'
+{% for template in [
+    "chatbot.configmap",
+    "chatbot.configmap.chatbot",
+  ] %}
+        checksum-{{ template | replace('/', '-') }}: "{{ lookup('template', template + '.yaml.j2') | sha1 }}"
+{% endfor %}
+    spec:
+      serviceAccountName: '{{ ansible_operator_meta.name }}'
+{% if image_pull_secrets | length > 0 %}
+      imagePullSecrets:
+{% for secret in image_pull_secrets %}
+        - name: {{ secret }}
+{% endfor %}
+{% endif %}
+{% if combined_chatbot_api.node_selector is defined %}
+      nodeSelector:
+        {{ combined_chatbot_api.node_selector | indent(width=8) }}
+{% endif %}
+{% if combined_chatbot_api.tolerations is defined %}
+      tolerations:
+        {{ combined_chatbot_api.tolerations | indent(width=8) }}
+{% endif %}
+{% if combined_chatbot_api.topology_spread_constraints is defined %}
+      topologySpreadConstraints:
+        {{ combined_chatbot_api.topology_spread_constraints | indent(width=8) }}
+{% endif %}
+      initContainers:
+{% if bundle_ca_crt  %}
+      - name: configure-bundle-ca-cert
+        image: {{ _chatbot_image }}
+        imagePullPolicy: '{{ image_pull_policy }}'
+        command:
+          - /bin/sh
+          - -c
+          - |
+            mkdir -p /etc/pki/ca-trust/extracted/{java,pem,openssl,edk2}
+            update-ca-trust
+{% if combined_chatbot_api.resource_requirements is defined %}
+        resources: {{ combined_chatbot_api.resource_requirements }}
+{% endif %}
+        volumeMounts:
+          - name: "ca-trust-extracted"
+            mountPath: "/etc/pki/ca-trust/extracted"
+          - name: "{{ ansible_operator_meta.name }}-bundle-cacert"
+            mountPath: /etc/pki/ca-trust/source/anchors/bundle-ca.crt
+            subPath: bundle-ca.crt
+            readOnly: true
+{% endif %}
+      containers:
+      - name: chatbot-api
+        image: {{ _chatbot_image }}
+        imagePullPolicy: '{{ image_pull_policy }}'
+        envFrom:
+          - configMapRef:
+              name: '{{ ansible_operator_meta.name }}-{{ deployment_type }}-chatbot-env-properties'
+        env:
+        - name: CHATBOT_DEFAULT_MODEL
+          valueFrom:
+            secretKeyRef:
+              name: '{{ chatbot_config_secret_name }}'
+              key: chatbot_model
+        - name: CHATBOT_DEFAULT_PROVIDER
+          valueFrom:
+            secretKeyRef:
+              name: '{{ chatbot_config_secret_name }}'
+              key: chatbot_provider
+        - name: CHATBOT_URL
+          valueFrom:
+            secretKeyRef:
+              name: '{{ chatbot_config_secret_name }}'
+              key: chatbot_url
+        ports:
+        - containerPort: 8000
+          protocol: TCP
+        startupProbe:
+          exec:
+            command:
+            - venv/bin/uwsgi-is-ready
+            - --stats-socket
+            - /tmp/uwsgi-stats
+            - --queue-threshold
+            - '0.7'
+          failureThreshold: 10
+          successThreshold: 1
+          periodSeconds: 30
+          timeoutSeconds: 1
+        readinessProbe:
+          exec:
+            command:
+            - venv/bin/uwsgi-is-ready
+            - --stats-socket
+            - /tmp/uwsgi-stats
+            - --queue-threshold
+            - '0.7'
+          initialDelaySeconds: 5
+          failureThreshold: 2
+          successThreshold: 1
+          periodSeconds: 5
+          timeoutSeconds: 1
+        livenessProbe:
+          exec:
+            command:
+            - venv/bin/uwsgi-is-ready
+            - --stats-socket
+            - /tmp/uwsgi-stats
+            - --queue-threshold
+            - '0.7'
+          initialDelaySeconds: 5
+          failureThreshold: 2
+          successThreshold: 1
+          periodSeconds: 5
+          timeoutSeconds: 1
+        volumeMounts:
+            - name: mnt
+              mountPath: /etc/wisdom/uwsgi.ini
+              subPath: uwsgi_ini
+        securityContext:
+          runAsNonRoot: true
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - "ALL"
+          seccompProfile:
+            type: RuntimeDefault
+{% if combined_chatbot_api.resource_requirements is defined %}
+        resources: {{ combined_chatbot_api.resource_requirements }}
+{% endif %}
+{% if bundle_ca_crt %}
+        volumeMounts:
+          - name: "ca-trust-extracted"
+            mountPath: "/etc/pki/ca-trust/extracted"
+          - name: "{{ ansible_operator_meta.name }}-bundle-cacert"
+            mountPath: /etc/pki/ca-trust/source/anchors/bundle-ca.crt
+            subPath: bundle-ca.crt
+            readOnly: true
+{% endif %}
+      restartPolicy: Always
+      volumes:
+        - name: mnt
+          configMap:
+            name: wisdom-service-uwsgi-configmap
+{% if bundle_ca_crt %}
+        - name: "ca-trust-extracted"
+          emptyDir: {}
+        - name: "{{ ansible_operator_meta.name }}-bundle-cacert"
+          secret:
+            secretName: "{{ bundle_cacert_secret }}"
+            items:
+              - key: bundle-ca.crt
+                path: 'bundle-ca.crt'
+{% endif %}
