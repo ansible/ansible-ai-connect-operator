@@ -107,7 +107,7 @@ Ansible AI Connect can be configured to use an existing database. Here is an [ex
 
 ### Use existing `Secret`'s
 
-`AnsibleAIConnect` can be configured to use existing `Secret`'s for both the `auth_config_secret_name` and `model_config_secret_name` configuration. Here is an [example](/docs/using-external-configuration-secrets.md)
+`AnsibleAIConnect` can be configured to use existing `Secret`'s for both the `auth_config_secret_name`, `model_config_secret_name`, and `chatbot_config_secret_name` configuration. Here is an [example](/docs/using-external-configuration-secrets.md)
 
 ### Deploying Ansible AI Connect Operator using OLM
 
@@ -123,7 +123,6 @@ There are three variables that are customizable for the admin user account creat
 | `admin_user`            | Name of the admin user                       | `admin`            |
 | `admin_email`           | email address of the admin user              | `test@example.com` |
 | `admin_password_secret` | Secret that contains the admin user password | Empty string     |
-
 
 > :warning: **`admin_password_secret` must be a Kubernetes secret and not your text clear password**.
 

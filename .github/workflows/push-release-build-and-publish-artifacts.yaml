@@ -18,11 +18,16 @@ jobs:
     uses: ./.github/workflows/common-get-service-version.yaml
     secrets: inherit
 
+  get_chatbot_version:
+    uses: ./.github/workflows/common-get-chatbot-version.yaml
+    secrets: inherit
+
   build:
     uses: ./.github/workflows/common-build-and-publish-artifacts.yaml
-    needs: [get_operator_versions, get_service_version]
+    needs: [get_operator_versions, get_service_version, get_chatbot_version]
     with:
       operator_version_latest: ${{ needs.get_operator_versions.outputs.operator_version_latest }}
       operator_version_next: ${{ needs.get_operator_versions.outputs.operator_version_next }}
       service_version: ${{ needs.get_service_version.outputs.service_version }}
+      chatbot_version: ${{ needs.get_chatbot_version.outputs.chatbot_version }}
     secrets: inherit

@@ -1,0 +1,10 @@
+---
+
+- name: Combine default variables for components
+  set_fact:
+    combined_chatbot_api: "{{ _chatbot_api | combine(chatbot_api, recursive=True) }}"
+
+- name: Display API variables
+  debug:
+    var: combined_chatbot_api
+  no_log: "{{ no_log }}"

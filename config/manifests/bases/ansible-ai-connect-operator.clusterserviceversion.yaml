@@ -23,6 +23,10 @@ spec:
         path: model_config_secret_name
         x-descriptors:
         - urn:alm:descriptor:io.kubernetes:Secret
+      - displayName: Secret where the Chatbot configuration can be found
+        path: chatbot_config_secret_name
+        x-descriptors:
+        - urn:alm:descriptor:io.kubernetes:Secret
       - displayName: Image Pull Policy
         path: image_pull_policy
         x-descriptors:
@@ -39,6 +43,14 @@ spec:
         - urn:alm:descriptor:com.tectonic.ui:advanced
       - displayName: API container image Version
         path: image_version
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:advanced
+      - displayName: Chatbot API container image
+        path: chatbot_image
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:advanced
+      - displayName: Chatbot API container image Version
+        path: chatbot_image_version
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:advanced
       - displayName: Additional labels defined on the resource, which should be propagated
@@ -90,6 +102,41 @@ spec:
       - description: Topology rule(s) for the pods
         displayName: Topology Spread Constraints
         path: api.topology_spread_constraints
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:advanced
+      - description: Defines desired state of ChatBot API deployment resources
+        displayName: ChatBot API deployment configuration
+        path: chatbot_api
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:advanced
+      - description: The number of ChatBot API replicas
+        displayName: ChatBot Replicas
+        path: chatbot_api.replicas
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:podCount
+      - displayName: ChatBot API server resource requirements
+        path: chatbot_api.resource_requirements
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:resourceRequirements
+      - displayName: ChatBot Node Selector
+        path: chatbot_api.node_selector
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:advanced
+      - description: The ChatBot deployment strategy to use to replace existing pods with
+          new ones.
+        displayName: ChatBot Strategy
+        path: chatbot_api.strategy
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:updateStrategy
+        - urn:alm:descriptor:com.tectonic.ui:advanced
+      - description: ChatBot node tolerations for the pods
+        displayName: ChatBot Tolerations
+        path: chatbot_api.tolerations
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:advanced
+      - description: ChatBot topology rule(s) for the pods
+        displayName: ChatBot topology Spread Constraints
+        path: chatbot_api.topology_spread_constraints
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:advanced
       - displayName: PostgreSQL Database configuration
@@ -314,9 +361,14 @@ spec:
         path: databaseConfigurationSecret
         x-descriptors:
         - urn:alm:descriptor:io.kubernetes:Secret
-      - description: Model Configuration secret name of the deployed instance
-        displayName: Model Configuration
+      - description: ChatBot Configuration secret name of the deployed instance
+        displayName: ChatBot Configuration
         path: modelConfigurationSecret
+        x-descriptors:
+        - urn:alm:descriptor:io.kubernetes:Secret
+      - description: Model Configuration secret name of the deployed instance
+        displayName: Chatbot Configuration
+        path: chatbotConfigurationSecret
         x-descriptors:
         - urn:alm:descriptor:io.kubernetes:Secret
       - description: Database Fields Encryption secret name of the deployed instance

@@ -15,9 +15,13 @@ jobs:
     uses: ./.github/workflows/common-get-service-version.yaml
     secrets: inherit
 
+  get_chatbot_version:
+    uses: ./.github/workflows/common-get-chatbot-version.yaml
+    secrets: inherit
+
   build:
     runs-on: ubuntu-24.04
-    needs: [get_operator_versions, get_service_version]
+    needs: [get_operator_versions, get_service_version, get_chatbot_version]
     env:
       REGISTRY: "quay.io/ansible"
 
@@ -74,7 +78,7 @@ jobs:
       # -------------------------------
       - name: Build and store Operator image in @ghcr
         run: |
-          BUILD_ARGS="--build-arg DEFAULT_AI_CONNECT_VERSION=${{ needs.get_service_version.service_version }} --build-arg OPERATOR_VERSION=${IMAGE_SEMVER_VERSION}" \
+          BUILD_ARGS="--build-arg DEFAULT_AI_CONNECT_VERSION=${{ needs.get_service_version.service_version }} --build-arg DEFAULT_CHATBOT_AI_CONNECT_VERSION=${{ needs.get_chatbot_version.chatbot_version }} --build-arg OPERATOR_VERSION=${IMAGE_SEMVER_VERSION}" \
           IMG=ghcr.io/${{ github.repository_owner }}/ansible-ai-connect-operator:${{ github.sha }} \
           make docker-buildx
 

@@ -1,0 +1,17 @@
+---
+# Tasks file for AnsibleAIConnectChatbot
+
+- name: Combine default and custom vars for each component
+  include_tasks: combine_defaults.yml
+
+- name: Set AnsibleAIConnectChatbot service images
+  include_tasks: set_images.yml
+
+- name: Read Chatbot secret
+  include_tasks: read_chatbot_configuration_secret.yml
+
+- name: Deploy Chatbot service
+  include_tasks: deploy_chatbot_api.yml
+
+- name: Update status variables
+  include_tasks: update_status.yml
