@@ -32,6 +32,9 @@
 - name: Read Model secret
   include_tasks: read_model_configuration_secret.yml
 
+- name: Read Chatbot secret
+  include_tasks: read_chatbot_configuration_secret.yml
+
 - name: Set Model Pipeline Configuration secret
   include_tasks: set_model_pipeline_configuration_secret.yml
 

@@ -152,26 +152,6 @@ spec:
             secretKeyRef:
               name: '{{ __database_secret_name }}'
               key: password
-        - name: ANSIBLE_AI_MODEL_MESH_API_TYPE
-          valueFrom:
-            secretKeyRef:
-              name: '{{ model_config_secret_name }}'
-              key: model_type
-        - name: ANSIBLE_AI_MODEL_MESH_API_URL
-          valueFrom:
-            secretKeyRef:
-              name: '{{ model_config_secret_name }}'
-              key: model_url
-        - name: ANSIBLE_AI_MODEL_MESH_API_KEY
-          valueFrom:
-            secretKeyRef:
-              name: '{{ model_config_secret_name }}'
-              key: model_api_key
-        - name: ANSIBLE_AI_MODEL_MESH_MODEL_ID
-          valueFrom:
-            secretKeyRef:
-              name: '{{ model_config_secret_name }}'
-              key: model_id
         - name: CHATBOT_DEFAULT_MODEL
           valueFrom:
             secretKeyRef:
@@ -187,23 +167,6 @@ spec:
             secretKeyRef:
               name: '{{ chatbot_config_secret_name }}'
               key: chatbot_url
-{% if model_type == "wca-onprem" %}
-        - name: ANSIBLE_WCA_USERNAME
-          valueFrom:
-            secretKeyRef:
-              name: '{{ model_config_secret_name }}'
-              key: username
-{% endif %}
-        - name: ANSIBLE_WCA_HEALTHCHECK_API_KEY
-          valueFrom:
-            secretKeyRef:
-              name: '{{ model_config_secret_name }}'
-              key: model_api_key
-        - name: ANSIBLE_WCA_HEALTHCHECK_MODEL_ID
-          valueFrom:
-            secretKeyRef:
-              name: '{{ model_config_secret_name }}'
-              key: model_id
         ports:
         - containerPort: 8000
           protocol: TCP

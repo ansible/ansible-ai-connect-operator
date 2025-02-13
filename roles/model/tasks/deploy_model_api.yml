@@ -5,12 +5,6 @@
     definition: "{{ lookup('template', 'model.configmap.yaml.j2') }}"
     wait: yes
 
-- name: Apply Model ConfigMap resources
-  k8s:
-    apply: yes
-    definition: "{{ lookup('template', 'model.configmap.yaml.j2') }}"
-    wait: yes
-
 - name: Apply underlying service ConfigMap resources
   k8s:
     apply: yes
