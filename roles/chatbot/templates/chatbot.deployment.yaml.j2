@@ -24,19 +24,19 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: '{{ ansible_operator_meta.name }}'
-      app.kubernetes.io/managed-by: '{{ deployment_type }}-operator'
-      app.kubernetes.io/component: '{{ deployment_type }}-api'
+      app.kubernetes.io/managed-by: '{{ deployment_type }}-chatbot-operator'
+      app.kubernetes.io/component: '{{ deployment_type }}-chatbot'
   template:
     metadata:
       labels:
         {{ lookup("template", "../common/templates/labels/common.yaml.j2")  | indent(width=8) | trim }}
         {{ lookup("template", "../common/templates/labels/version.yaml.j2") | indent(width=8) | trim }}
-        app.kubernetes.io/component: '{{ deployment_type }}-api'
+        app.kubernetes.io/component: '{{ deployment_type }}-chatbot'
       annotations:
-        kubectl.kubernetes.io/default-container: 'model-api'
+        kubectl.kubernetes.io/default-container: 'chatbot'
 {% for template in [
-    "model.configmap",
-    "model.configmap.wisdom-service",
+    "chatbot.configmap",
+    "chatbot.configmap.chatbot",
   ] %}
         checksum-{{ template | replace('/', '-') }}: "{{ lookup('template', template + '.yaml.j2') | sha1 }}"
 {% endfor %}
@@ -97,26 +97,6 @@ spec:
           - configMapRef:
               name: '{{ ansible_operator_meta.name }}-{{ deployment_type }}-env-properties'
         env:
-        - name: AAP_API_URL
-          valueFrom:
-            secretKeyRef:
-              name: '{{ auth_config_secret_name }}'
-              key: auth_api_url
-        - name: SOCIAL_AUTH_AAP_KEY
-          valueFrom:
-            secretKeyRef:
-              name: '{{ auth_config_secret_name }}'
-              key: auth_api_key
-        - name: SOCIAL_AUTH_AAP_SECRET
-          valueFrom:
-            secretKeyRef:
-              name: '{{ auth_config_secret_name }}'
-              key: auth_api_secret
-        - name: SOCIAL_AUTH_VERIFY_SSL
-          valueFrom:
-            secretKeyRef:
-              name: '{{ auth_config_secret_name }}'
-              key: auth_verify_ssl
         - name: ANSIBLE_WISDOM_DOMAIN
           valueFrom:
             secretKeyRef:
