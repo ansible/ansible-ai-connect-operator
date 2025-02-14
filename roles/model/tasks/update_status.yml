@@ -8,7 +8,6 @@
     status:
       adminUser: "{{ admin_user }}"
       adminPasswordSecret: "{{ __admin_password_secret_name }}"
-      chatbotAdminPasswordSecret: "{{ __chatbot_admin_password_secret_name }}"
       authConfigurationSecret: "{{ auth_config_secret_name }}"
       databaseConfigurationSecret: "{{ __database_secret_name }}"
       modelConfigurationSecret: "{{ model_config_secret_name }}"
