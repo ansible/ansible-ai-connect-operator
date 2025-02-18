@@ -51,7 +51,7 @@ metadata:
   namespace: '{{ ansible_operator_meta.namespace }}'
   annotations:
     haproxy.router.openshift.io/hsts_header: max-age=31536000
-    haproxy.router.openshift.io/timeout: 50s
+    haproxy.router.openshift.io/timeout: 30s
     router.openshift.io/cookie-same-site: Lax
     router.openshift.io/cookie_name: r_p_session
   labels:
