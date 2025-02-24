@@ -57,6 +57,11 @@ spec:
         path: api
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:advanced
+      - displayName: External Model Pipeline configuration secret
+        path: api.model_pipeline_secret
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:advanced
+        - urn:alm:descriptor:io.kubernetes:Secret
       - description: The number of API replicas
         displayName: Replicas
         path: api.replicas
@@ -118,8 +123,8 @@ spec:
       - displayName: Should PostgreSQL data for managed databases be kept after upgrades?
         path: database.postgres_keep_pvc_after_upgrade
         x-descriptors:
-          - urn:alm:descriptor:com.tectonic.ui:advanced
-          - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+        - urn:alm:descriptor:com.tectonic.ui:advanced
+        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
       - displayName: Database Extra Arguments
         path: database.postgres_extra_args
         x-descriptors:
@@ -249,8 +254,8 @@ spec:
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:advanced
         - urn:alm:descriptor:com.tectonic.ui:text
-      - displayName: Bundle CA Certificate Secret
-        description: Secret where the trusted Certificate Authority Bundle is stored
+      - description: Secret where the trusted Certificate Authority Bundle is stored
+        displayName: Bundle CA Certificate Secret
         path: bundle_cacert_secret
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:advanced

@@ -11,6 +11,7 @@
       authConfigurationSecret: "{{ auth_config_secret_name }}"
       databaseConfigurationSecret: "{{ __database_secret_name }}"
       modelConfigurationSecret: "{{ model_config_secret_name }}"
+      modelPipelineConfigurationSecret: "{{ __model_pipeline_secret_name }}"
       dbFieldsEncryptionSecret: "{{ __db_fields_encryption_secret_name }}"
       image: "{{ _image }}"
 

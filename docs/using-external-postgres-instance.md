@@ -4,11 +4,11 @@
 
 The Operator will create a _managed_ instance of Postgres by default. The Operator also creates a `Secret` containing the various parameters required for the service to connect to the database.
 
-If you have an existing Postgres instance that you wish to use you can create the `Secret` manually with the necessary parameters and the Operator will use this instead. You will need to set `database.database_secret` to the name of the `Secret` you create.
+If you have an existing Postgres instance that you wish to use you can create the `Secret` manually with the necessary parameters and the Operator will use this instead. You will need to set `spec.database.database_secret` to the name of the `Secret` you create.
 
 _Managed_ instances of Postgres follow the lifecycle of the `AnsibleAIConnect` instance and the Operator will destroy the applicable resources if the `AnsibleAIConnect` instance is deleted.
 
-You will need to manage the Postgres resources yourself for _unmanaged_ instances where you've specified an existing `database.database_secret`.
+You will need to manage the Postgres resources yourself for _unmanaged_ instances where you've specified an existing `spec.database.database_secret`.
 
 ## Create the database `Secret`
 

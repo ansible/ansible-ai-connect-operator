@@ -43,6 +43,7 @@ spec:
 {% for secret in [
     "auth_config",
     "model_config",
+    "model_pipeline_config",
     "db_fields_encryption",
   ] %}
         checksum-secret-{{ secret }}: "{{ lookup('ansible.builtin.vars', secret, default='')["resources"][0]["data"] | default('') | sha1 }}"
@@ -92,103 +93,71 @@ spec:
       containers:
       - name: model-api
         image: {{ _image }}
-        imagePullPolicy: '{{ image_pull_policy }}'
+        imagePullPolicy: "{{ image_pull_policy }}"
         envFrom:
           - configMapRef:
-              name: '{{ ansible_operator_meta.name }}-{{ deployment_type }}-env-properties'
+              name: "{{ ansible_operator_meta.name }}-{{ deployment_type }}-env-properties"
         env:
         - name: AAP_API_URL
           valueFrom:
             secretKeyRef:
-              name: '{{ auth_config_secret_name }}'
+              name: "{{ auth_config_secret_name }}"
               key: auth_api_url
         - name: SOCIAL_AUTH_AAP_KEY
           valueFrom:
             secretKeyRef:
-              name: '{{ auth_config_secret_name }}'
+              name: "{{ auth_config_secret_name }}"
               key: auth_api_key
         - name: SOCIAL_AUTH_AAP_SECRET
           valueFrom:
             secretKeyRef:
-              name: '{{ auth_config_secret_name }}'
+              name: "{{ auth_config_secret_name }}"
               key: auth_api_secret
         - name: SOCIAL_AUTH_VERIFY_SSL
           valueFrom:
             secretKeyRef:
-              name: '{{ auth_config_secret_name }}'
+              name: "{{ auth_config_secret_name }}"
               key: auth_verify_ssl
         - name: ANSIBLE_WISDOM_DOMAIN
           valueFrom:
             secretKeyRef:
-              name: '{{ auth_config_secret_name }}'
+              name: "{{ auth_config_secret_name }}"
               key: auth_allowed_hosts
         - name: SECRET_KEY
           valueFrom:
             secretKeyRef:
-              name: '{{ __db_fields_encryption_secret_name }}'
+              name: "{{ __db_fields_encryption_secret_name }}"
               key: secret_key
         - name: ANSIBLE_AI_DATABASE_HOST
           valueFrom:
             secretKeyRef:
-              name: '{{ __database_secret_name }}'
+              name: "{{ __database_secret_name }}"
               key: host
         - name: ANSIBLE_AI_DATABASE_NAME
           valueFrom:
             secretKeyRef:
-              name: '{{ __database_secret_name }}'
+              name: "{{ __database_secret_name }}"
               key: database
         - name: ANSIBLE_AI_DATABASE_PORT
           valueFrom:
             secretKeyRef:
-              name: '{{ __database_secret_name }}'
+              name: "{{ __database_secret_name }}"
               key: port
         - name: ANSIBLE_AI_DATABASE_USER
           valueFrom:
             secretKeyRef:
-              name: '{{ __database_secret_name }}'
+              name: "{{ __database_secret_name }}"
               key: username
         - name: ANSIBLE_AI_DATABASE_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: '{{ __database_secret_name }}'
+              name: "{{ __database_secret_name }}"
               key: password
-        - name: ANSIBLE_AI_MODEL_MESH_API_TYPE
+        - name: ANSIBLE_AI_MODEL_MESH_CONFIG
           valueFrom:
             secretKeyRef:
-              name: '{{ model_config_secret_name }}'
-              key: model_type
-        - name: ANSIBLE_AI_MODEL_MESH_API_URL
-          valueFrom:
-            secretKeyRef:
-              name: '{{ model_config_secret_name }}'
-              key: model_url
-        - name: ANSIBLE_AI_MODEL_MESH_API_KEY
-          valueFrom:
-            secretKeyRef:
-              name: '{{ model_config_secret_name }}'
-              key: model_api_key
-        - name: ANSIBLE_AI_MODEL_MESH_MODEL_ID
-          valueFrom:
-            secretKeyRef:
-              name: '{{ model_config_secret_name }}'
-              key: model_id
-{% if model_type == "wca-onprem" %}
-        - name: ANSIBLE_WCA_USERNAME
-          valueFrom:
-            secretKeyRef:
-              name: '{{ model_config_secret_name }}'
-              key: username
-{% endif %}
-        - name: ANSIBLE_WCA_HEALTHCHECK_API_KEY
-          valueFrom:
-            secretKeyRef:
-              name: '{{ model_config_secret_name }}'
-              key: model_api_key
-        - name: ANSIBLE_WCA_HEALTHCHECK_MODEL_ID
-          valueFrom:
-            secretKeyRef:
-              name: '{{ model_config_secret_name }}'
-              key: model_id
+              name: "{{ __model_pipeline_secret_name }}"
+              key: config
         ports:
         - containerPort: 8000
           protocol: TCP

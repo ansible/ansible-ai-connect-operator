@@ -6,7 +6,7 @@ Configuration parameters for the both the authentication backend and model servi
 
 ## Authentication `Secret`
 
-`auth_config_secret_name` should be set to the name of an existing `Secret`. The Operator will use the values set therein to configure the authentication backend integration. The `Secret` must contain the following values:
+`spec.auth_config_secret_name` should be set to the name of an existing `Secret`. The Operator will use the values set therein to configure the authentication backend integration. The `Secret` must contain the following values:
 ```yaml
 apiVersion: v1
 kind: Secret
@@ -39,7 +39,7 @@ spec:
 
 ## Model service `Secret`
 
-`model_config_secret_name` should be set to the name of an existing `Secret`. The Operator will use the values set therein to configure the model service integration. The `Secret` must contain the following values:
+`spec.model_config_secret_name` should be set to the name of an existing `Secret`. The Operator will use the values set therein to configure the model service integration. The `Secret` must contain the following values:
 ```yaml
 apiVersion: v1
 kind: Secret

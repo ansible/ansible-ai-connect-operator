@@ -1,0 +1,41 @@
+---
+- block:
+    - name: Get API Deployment details
+      k8s_info:
+        namespace: '{{ namespace }}'
+        kind: Deployment
+        label_selectors:
+          - app.kubernetes.io/name = ansibleaiconnect-sample
+      register: aiconnect_api_deployment
+
+    - name: Get Deployment environment variables
+      set_fact:
+        env_vars: '{{ aiconnect_api_deployment.resources[0].spec.template.spec.containers[0].env }}'
+
+    - name: Display environment variables
+      debug:
+        msg: '{{ env_vars }}'
+
+    - name: Get ANSIBLE_AI_MODEL_MESH_CONFIG environment variable
+      set_fact:
+        model_pipeline_config: '{{ env_vars | map(attribute="name") | select("match", "ANSIBLE_AI_MODEL_MESH_CONFIG") | list }}'
+
+    - name: Assert environment variables contains ANSIBLE_AI_MODEL_MESH_CONFIG
+      assert:
+        that:
+          - '{{ model_pipeline_config | count > 0 }}'
+        fail_msg: Deployment does not contain environment variable ANSIBLE_AI_MODEL_MESH_CONFIG
+
+    - name: Get Model Pipeline configuration Secret details
+      k8s_info:
+        namespace: '{{ namespace }}'
+        kind: Secret
+        label_selectors:
+          - app.kubernetes.io/name = ansibleaiconnect-sample
+      register: aiconnect_api_model_pipeline_secret
+
+    - name: Assert Model Mesh Secret exists
+      assert:
+        that:
+          - aiconnect_api_model_pipeline_secret is defined
+        fail_msg: Model Pipeline configuration Secret does not exist.

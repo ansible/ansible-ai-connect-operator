@@ -218,6 +218,11 @@ spec:
               api:
                 description: Defines desired state of the resources
                 properties:
+                  model_pipeline_secret:
+                    description:
+                      "Secret where the Model Pipeline configuration can be found. Set this to use your own external configuration. 
+                      If not specified, this secret will be generated based on the content of the 'model_config_secret_name' Secret."
+                    type: string
                   replicas:
                     default: 1
                     description: 'The number of replicas. Default: 1'
