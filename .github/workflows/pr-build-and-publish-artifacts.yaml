@@ -74,7 +74,7 @@ jobs:
       # -------------------------------
       - name: Build and store Operator image in @ghcr
         run: |
-          BUILD_ARGS="--build-arg DEFAULT_AI_CONNECT_VERSION=${{ needs.get_service_version.service_version }} --build-arg OPERATOR_VERSION=${IMAGE_SEMVER_VERSION}" \
+          BUILD_ARGS="--build-arg DEFAULT_AI_CONNECT_VERSION=${{ needs.get_service_version.service_version }} --build-arg DEFAULT_CHATBOT_AI_CONNECT_VERSION=${{ needs.get_chatbot_version.chatbot_version }} --build-arg OPERATOR_VERSION=${IMAGE_SEMVER_VERSION}" \
           IMG=ghcr.io/${{ github.repository_owner }}/ansible-ai-connect-operator:${{ github.sha }} \
           make docker-buildx
 
