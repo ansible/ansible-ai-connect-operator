@@ -1,10 +1,9 @@
 ---
-# defaults file for AnsibleAIConnect
+# defaults file for AnsibleAIConnectChatbot
 
 # ========================================
 # Basic k8s configuration
 # ----------------------------------------
-kind: 'AnsibleAIConnectChatbot'
 api_version: 'aiconnect.ansible.com/v1alpha1'
 deployment_type: 'ansible-ai-connect-chatbot'
 

@@ -2,7 +2,6 @@
 - name: Update custom resource status
   operator_sdk.util.k8s_status:
     api_version: '{{ api_version }}'
-    kind: "{{ kind }}"
     name: "{{ ansible_operator_meta.name }}"
     namespace: "{{ ansible_operator_meta.namespace }}"
     status:
@@ -26,14 +25,6 @@
       register: instance_version
       changed_when: false
 
-    - name: Update version status
-      operator_sdk.util.k8s_status:
-        api_version: '{{ api_version }}'
-        kind: "{{ kind }}"
-        name: "{{ ansible_operator_meta.name }}"
-        namespace: "{{ ansible_operator_meta.namespace }}"
-        status:
-          version: "{{ instance_version.stdout | trim }}"
   when: chatbot_pod_name | length
 
 - block:
@@ -45,12 +36,4 @@
         name: '{{ ansible_operator_meta.name }}'
       register: route_url
 
-    - name: Update URL status
-      operator_sdk.util.k8s_status:
-        api_version: '{{ api_version }}'
-        kind: "{{ kind }}"
-        name: "{{ ansible_operator_meta.name }}"
-        namespace: "{{ ansible_operator_meta.namespace }}"
-        status:
-          URL: "https://{{ route_url['resources'][0]['status']['ingress'][0]['host'] }}"
   when: ingress_type | lower == 'route'
