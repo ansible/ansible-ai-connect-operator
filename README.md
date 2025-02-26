@@ -123,11 +123,10 @@ There are three variables that are customizable for the admin user account creat
 | `admin_user`            | Name of the admin user                       | `admin`            |
 | `admin_email`           | email address of the admin user              | `test@example.com` |
 | `admin_password_secret` | Secret that contains the admin user password | Empty string     |
-| `chatbot_admin_password_secret` | Secret that contains the chatbot admin user password | Empty string     |
 
-> :warning: **`admin_password_secret` and `chatbot_admin_password_secret` must be a Kubernetes secret and not your text clear password**.
+> :warning: **`admin_password_secret` must be a Kubernetes secret and not your text clear password**.
 
-If `admin_password_secret` or `chatbot_admin_password_secret` is not provided, the operator will look for a secret named `<resourcename>-admin-password` `<resourcename>-chatbot-admin-password` for the admin password. If it is not present, the operator will generate a password and create a `Secret` from it named `<resourcename>-admin-password`.
+If `admin_password_secret` is not provided, the operator will look for a secret named `<resourcename>-admin-password` `<resourcename>-chatbot-admin-password` for the admin password. If it is not present, the operator will generate a password and create a `Secret` from it named `<resourcename>-admin-password`.
 
 To retrieve the admin password, run `kubectl get secret <resourcename>-admin-password -o jsonpath="{.data.password}" | base64 --decode ; echo`
 
