@@ -45,6 +45,14 @@ spec:
         path: image_version
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:advanced
+      - displayName: Chatbot API container image
+        path: chatbot_image
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:advanced
+      - displayName: Chatbot API container image Version
+        path: chatbot_image_version
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:advanced
       - displayName: Additional labels defined on the resource, which should be propagated
           to child resources
         path: additional_labels

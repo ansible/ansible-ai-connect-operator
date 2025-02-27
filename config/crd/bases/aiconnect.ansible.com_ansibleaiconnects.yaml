@@ -58,6 +58,12 @@ spec:
               image_version:
                 description: API container image tag or version to use
                 type: string
+              chatbot_image:
+                description: Registry path to Chatbot API container image to use
+                type: string
+              chatbot_image_version:
+                description: Chatbot API container image tag or version to use
+                type: string
               additional_labels:
                 description: Additional labels defined on the resource, which should be propagated to child resources
                 type: array

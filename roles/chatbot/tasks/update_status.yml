@@ -10,7 +10,7 @@
       databaseConfigurationSecret: "{{ __database_secret_name }}"
       dbFieldsEncryptionSecret: "{{ __db_fields_encryption_secret_name }}"
       chatbotConfigurationSecret: "{{ chatbot_config_secret_name }}"
-      image: "{{ _image }}"
+      image: "{{ _chatbot_image }}"
 
 - block:
     - name: Retrieve instance version

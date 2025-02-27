@@ -1,4 +1,4 @@
-## Deploying a specific version of `AnsibleAIConnect`
+## Deploying a specific version of `AnsibleAIConnect` or `Chatbot`
 
 There are a few variables that are customizable for `AnsibleAIConnect` image management.
 
@@ -21,12 +21,14 @@ spec:
   ...
   image: myorg/my-custom-aiconnect
   image_version: main
+  chatbot_image: myorg/my-custom-chatbot
+  chatbot_image_version: main
   image_pull_policy: Always
   image_pull_secrets:
     - pull_secret_name
 ```
 
-  > **Note**: The `image` and `image_version` style variables are intended for local mirroring scenarios. Please note that using a version of `AnsibleAIConnect` other than the one bundled with the `ansible-ai-connect-operator` is **not** supported even though it will likely work and can be useful for pinning a version. For the default values, check the [main.yml](https://github.com/ansible/ansible-ai-connect_operator/blob/main/roles/ansibleaiconnect/defaults/main.yml) file.
+  > **Note**: The `image`/`chatbot_image` and `image_version`/`chatbot_image_version` style variables are intended for local mirroring scenarios. Please note that using a version of `AnsibleAIConnect`/Chatbot other than the one bundled with the `ansible-ai-connect-operator` is **not** supported even though it will likely work and can be useful for pinning a version. For the default values, check the [main.yml](https://github.com/ansible/ansible-ai-connect_operator/blob/main/roles/ansibleaiconnect/defaults/main.yml) file.
 
 
 ### Configuring an image pull secret

@@ -10,8 +10,8 @@ deployment_type: 'ansible-ai-connect-chatbot'
 image_pull_policy: IfNotPresent
 image_pull_secrets: []
 
-_image: quay.io/ansible/ansible-chatbot-service
-_image_version: "{{ lookup('env', 'DEFAULT_CHATBOT_AI_CONNECT_VERSION') or 'latest' }}"
+_chatbot_image: quay.io/ansible/ansible-chatbot-service
+_chatbot_image_version: "{{ lookup('env', 'DEFAULT_CHATBOT_AI_CONNECT_VERSION') or 'latest' }}"
 
 # Labels defined on the resource, which should be propagated to child resources
 additional_labels: []

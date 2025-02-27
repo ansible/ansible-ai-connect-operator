@@ -63,7 +63,7 @@ spec:
       initContainers:
 {% if bundle_ca_crt  %}
       - name: configure-bundle-ca-cert
-        image: {{ _image }}
+        image: {{ _chatbot_image }}
         imagePullPolicy: '{{ image_pull_policy }}'
         command:
           - /bin/sh
@@ -84,7 +84,7 @@ spec:
 {% endif %}
       containers:
       - name: model-api
-        image: {{ _image }}
+        image: {{ _chatbot_image }}
         imagePullPolicy: '{{ image_pull_policy }}'
         envFrom:
           - configMapRef:
