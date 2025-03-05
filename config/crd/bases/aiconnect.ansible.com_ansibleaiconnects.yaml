@@ -34,7 +34,6 @@ spec:
             type: object
             required:
               - auth_config_secret_name
-              - model_config_secret_name
             properties:
               image_pull_policy:
                 description: The image pull policy

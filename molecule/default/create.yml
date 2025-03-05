@@ -6,7 +6,7 @@
   tasks:
 
     - name: Ensure Docker Config JSON is set
-      fail:
+      ansible.builtin.fail:
         msg: |
           You must specify the DOCKER_CONFIG_JSON environment variable in order to run the
           'default' scenario

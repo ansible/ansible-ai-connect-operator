@@ -6,14 +6,14 @@
   tasks:
 
     - name: Ensure Docker Config JSON is set
-      fail:
+      ansible.builtin.fail:
         msg: |
           You must specify the DOCKER_CONFIG_JSON environment variable in order to run the
           'default' scenario
       when: not docker_config_json
 
     - name: Create test kind cluster
-      shell: |
+      ansible.builtin.shell: |
         cat <<EOF | kind create cluster --name osdk-test --kubeconfig {{ kubeconfig }} --config=-
         kind: Cluster
         apiVersion: kind.x-k8s.io/v1alpha4

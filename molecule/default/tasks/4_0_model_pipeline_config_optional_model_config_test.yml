@@ -1,5 +1,7 @@
 ---
-- ansible.builtin.include_tasks: 1_1_create_instance.yml
+- ansible.builtin.include_tasks: 4_1_delete_existing_instance.yml
+
+- ansible.builtin.include_tasks: 4_2_create_instance-optional-model-config.yml
 
 - block:
     - name: Get API Pod details
@@ -7,7 +9,7 @@
         namespace: '{{ namespace }}'
         kind: Pod
         label_selectors:
-          - app.kubernetes.io/name = ansibleaiconnect-sample
+          - app.kubernetes.io/name = ansibleaiconnect-sample-optional-model-config
       register: aiconnect_api_pod
 
     - name: Get API Service details
@@ -15,7 +17,7 @@
         namespace: '{{ namespace }}'
         kind: Service
         label_selectors:
-          - app.kubernetes.io/name = ansibleaiconnect-sample
+          - app.kubernetes.io/name = ansibleaiconnect-sample-optional-model-config
       register: aiconnect_api_service
 
     - name: Get Health Check
@@ -30,6 +32,6 @@
     - name: Assert Health Check response
       ansible.builtin.assert:
         that:
-        - service_host_response.status == 200
-        - service_host_response.json.status == 'ok'
+          - service_host_response.status == 200
+          - service_host_response.json.status == 'ok'
         fail_msg: /check endpoint did not return expected response. Expected HTTP200, OK.

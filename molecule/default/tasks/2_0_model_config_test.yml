@@ -1,7 +1,7 @@
 ---
 - block:
     - name: Get API Pod details
-      k8s_info:
+      kubernetes.core.k8s_info:
         namespace: '{{ namespace }}'
         kind: Pod
         label_selectors:
@@ -9,7 +9,7 @@
       register: aiconnect_api_pod
 
     - name: Get API Service details
-      k8s_info:
+      kubernetes.core.k8s_info:
         namespace: '{{ namespace }}'
         kind: Service
         label_selectors:
@@ -17,7 +17,7 @@
       register: aiconnect_api_service
 
     - name: Get original model_id
-      uri:
+      ansible.builtin.uri:
         url: 'http://{{ service_host_ip }}:{{ service_host_port }}/check/status/'
         return_content: true
       vars:
@@ -26,17 +26,17 @@
       register: service_host_response
 
     - name: Assert original model_id response
-      assert:
+      ansible.builtin.assert:
         that:
           - service_host_response.status == 200
           - service_host_response.json.status == 'ok'
           - service_host_response.json.model_id== 'my-ai-model_id'
         fail_msg: /check/status did not return expected model_id. Expected 'my-ai-model_id'.
 
-    - include_tasks: 2_1_update_model_config_secret.yml
+    - ansible.builtin.include_tasks: 2_1_update_model_config_secret.yml
 
     - name: Get updated model_id
-      uri:
+      ansible.builtin.uri:
         url: 'http://{{ service_host_ip }}:{{ service_host_port }}/check/status/'
         return_content: true
       vars:
@@ -45,7 +45,7 @@
       register: updated_service_host_response
 
     - name: Assert updated model_id response
-      assert:
+      ansible.builtin.assert:
         that:
         - updated_service_host_response.status == 200
         - updated_service_host_response.json.status == 'ok'

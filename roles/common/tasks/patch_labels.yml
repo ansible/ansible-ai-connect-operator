@@ -1,7 +1,6 @@
 ---
-
 - name: Patching labels to AnsibleAIConnect resource
-  k8s:
+  kubernetes.core.k8s:
     state: present
     definition:
       apiVersion: '{{ api_version }}'
@@ -17,7 +16,7 @@
 - name: Build `additional_labels_items` labels from `additional_labels`
   block:
   - name: Look up details for this deployment
-    k8s_info:
+    kubernetes.core.k8s_info:
       api_version: "{{ api_version }}"
       kind: "{{ kind }}"
       name: "{{ ansible_operator_meta.name }}"
@@ -25,7 +24,7 @@
     register: this_ansibleaiconnect
 
   - name: Select resource labels which are in `additional_labels`
-    set_fact:
+    ansible.builtin.set_fact:
       additional_labels_items: >-
         {{ this_ansibleaiconnect['resources'][0]['metadata']['labels']
            | dict2items | selectattr('key', 'in', additional_labels)

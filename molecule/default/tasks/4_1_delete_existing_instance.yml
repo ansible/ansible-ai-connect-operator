@@ -1,0 +1,10 @@
+---
+- name: Delete existing aiconnect.ansible.com/v1alpha1.AnsibleAIConnect instance
+  kubernetes.core.k8s:
+    state: absent
+    namespace: '{{ namespace }}'
+    definition: "{{ lookup('template', 'create_instance.yaml.j2') | from_yaml }}"
+    wait: yes
+    wait_timeout: 900
+    wait_condition:
+      status: "False"

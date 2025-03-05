@@ -12,14 +12,14 @@
   tasks:
 
     - name: Install NGINX ingress
-      k8s:
+      kubernetes.core.k8s:
         definition: |
           {{ lookup('url', nginx_ingress_definition, split_lines=False) | from_yaml_all }}
       tags:
         - always
 
     - name: Wait for NGINX ingress to become available
-      k8s_info:
+      kubernetes.core.k8s_info:
         kind: Pod
         namespace: ingress-nginx
         label_selectors:
@@ -34,7 +34,7 @@
         - always
 
     - name: Install metrics server
-      k8s:
+      kubernetes.core.k8s:
         definition: |
           {{ lookup('url', metrics_server_definition, split_lines=False) | from_yaml_all }}
       tags:
@@ -65,7 +65,7 @@
         - operator_image == 'latest'
 
     - name: Load operator image into kind cluster
-      command: kind load docker-image --name osdk-test '{{ operator_image }}'
+      ansible.builtin.command: kind load docker-image --name osdk-test '{{ operator_image }}'
       register: result
       changed_when: '"not yet present" in result.stdout'
       when:
@@ -73,7 +73,7 @@
         - operator_image == 'latest'
 
     - name: Load wisdom-service image into kind cluster
-      command: kind load docker-image --name osdk-test '{{ wisdom_service_image }}:{{ wisdom_service_version }}'
+      ansible.builtin.command: kind load docker-image --name osdk-test '{{ wisdom_service_image }}:{{ wisdom_service_version }}'
       register: result
       changed_when: '"not yet present" in result.stdout'
       when:
@@ -83,16 +83,16 @@
         - wisdom_service_version != ''
 
     - name: Set testing image
-      command: '{{ kustomize }} edit set image testing={{ operator_image }}'
+      ansible.builtin.command: '{{ kustomize }} edit set image testing={{ operator_image }}'
       args:
         chdir: '{{ config_dir }}/testing'
 
     - name: Set pull policy
-      command: '{{ kustomize }} edit add patch --path pull_policy/{{ operator_pull_policy }}.yaml'
+      ansible.builtin.command: '{{ kustomize }} edit add patch --path pull_policy/{{ operator_pull_policy }}.yaml'
       args:
         chdir: '{{ config_dir }}/testing'
 
     - name: Set testing namespace
-      command: '{{ kustomize }} edit set namespace {{ namespace }}'
+      ansible.builtin.command: '{{ kustomize }} edit set namespace {{ namespace }}'
       args:
         chdir: '{{ config_dir }}/testing'

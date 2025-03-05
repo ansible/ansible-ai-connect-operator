@@ -9,7 +9,7 @@
       adminUser: "{{ admin_user }}"
       adminPasswordSecret: "{{ __admin_password_secret_name }}"
       authConfigurationSecret: "{{ auth_config_secret_name }}"
-      modelConfigurationSecret: "{{ model_config_secret_name }}"
+      modelConfigurationSecret: ""
       modelPipelineConfigurationSecret: "{{ __model_pipeline_secret_name }}"
       databaseConfigurationSecret: "{{ __database_secret_name }}"
       dbFieldsEncryptionSecret: "{{ __db_fields_encryption_secret_name }}"
@@ -24,7 +24,7 @@
 # ============================================
 - block:
     - name: Retrieve instance version
-      k8s_exec:
+      kubernetes.core.k8s_exec:
         namespace: "{{ ansible_operator_meta.namespace }}"
         pod: "{{ model_api_pod_name }}"
         container: "model-api"
@@ -47,9 +47,21 @@
     - model_api_pod_name is defined
     - model_api_pod_name | length
 
+- name: Update Model Configuration Secret status
+  operator_sdk.util.k8s_status:
+    api_version: '{{ api_version }}'
+    kind: "{{ kind }}"
+    name: "{{ ansible_operator_meta.name }}"
+    namespace: "{{ ansible_operator_meta.namespace }}"
+    status:
+      modelConfigurationSecret: "{{ model_config_secret_name }}"
+  when:
+  - model_config_secret_name is defined
+  - model_config_secret_name | length
+
 - block:
     - name: Retrieve route URL
-      k8s_info:
+      kubernetes.core.k8s_info:
         api_version: 'route.openshift.io/v1'
         kind: Route
         namespace: '{{ ansible_operator_meta.namespace }}'
@@ -71,7 +83,7 @@
 # ============================================
 - block:
     - name: Retrieve Chatbot instance version
-      k8s_exec:
+      kubernetes.core.k8s_exec:
         namespace: "{{ ansible_operator_meta.namespace }}"
         pod: "{{ chatbot_api_pod_name }}"
         container: "ansible-chatbot"

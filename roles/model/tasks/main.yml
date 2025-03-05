@@ -2,58 +2,58 @@
 # Tasks file for AnsibleAIConnect
 
 - name: Combine default and custom vars for each component
-  include_tasks: combine_defaults.yml
+  ansible.builtin.include_tasks: combine_defaults.yml
 
 - name: Configure cluster
-  include_role:
+  ansible.builtin.include_role:
     name: common
 
 - name: Setup PostgreSQL Database
-  include_role:
+  ansible.builtin.include_role:
     name: postgres
 
 - name: Set AnsibleAIConnect service images
-  include_tasks: set_images.yml
+  ansible.builtin.include_tasks: set_images.yml
 
 - name: Set Bundle Certificate Authority
-  include_tasks: set_bundle_cacert.yml
+  ansible.builtin.include_tasks: set_bundle_cacert.yml
   when:
   - bundle_cacert_secret | length
 
 - name: Create DB fields encryption
-  include_tasks: db_fields_encryption_configuration.yml
+  ansible.builtin.include_tasks: db_fields_encryption_configuration.yml
 
 - name: Create Admin password
-  include_tasks: admin_password_configuration.yml
+  ansible.builtin.include_tasks: admin_password_configuration.yml
 
 - name: Read Authentication secret
-  include_tasks: read_auth_configuration_secret.yml
+  ansible.builtin.include_tasks: read_auth_configuration_secret.yml
 
 - name: Read Model secret
-  include_tasks: read_model_configuration_secret.yml
+  ansible.builtin.include_tasks: read_model_configuration_secret.yml
 
 - name: Setup Chatbot
   include_role:
     name: chatbot
 
 - name: Set Model Pipeline Configuration secret
-  include_tasks: set_model_pipeline_configuration_secret.yml
+  ansible.builtin.include_tasks: set_model_pipeline_configuration_secret.yml
 
 - name: Load Route TLS certificate
-  include_tasks: load_route_tls_secret.yml
+  ansible.builtin.include_tasks: load_route_tls_secret.yml
   when:
     - ingress_type | lower == 'route'
     - route_tls_secret | length
 
 - name: Deploy Model API service
-  include_tasks: deploy_model_api.yml
+  ansible.builtin.include_tasks: deploy_model_api.yml
 
 - name: Setup HorizontalPodAutoscaler for Model API deployment
-  include_tasks: setup_hpa.yml
+  ansible.builtin.include_tasks: setup_hpa.yml
 
 - name: Create admin user
-  include_tasks: create_admin_user.yml
+  ansible.builtin.include_tasks: create_admin_user.yml
   when: model_api_pod_name | length
 
 - name: Update status variables
-  include_tasks: update_status.yml
+  ansible.builtin.include_tasks: update_status.yml

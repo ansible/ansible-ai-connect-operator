@@ -1,10 +1,10 @@
 ---
 
 - name: Combine default and custom variables from the CR for each component
-  set_fact:
+  ansible.builtin.set_fact:
     combined_database: "{{ _database | combine (database, recursive=True) }}"
 
 - name: Display database variables
-  debug:
+  ansible.builtin.debug:
     var: combined_database
   no_log: "{{ no_log }}"

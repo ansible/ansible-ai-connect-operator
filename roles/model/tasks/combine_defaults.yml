@@ -1,10 +1,10 @@
 ---
 
 - name: Combine default variables for components
-  set_fact:
+  ansible.builtin.set_fact:
     combined_api: "{{ _api | combine(api, recursive=True) }}"
 
 - name: Display API variables
-  debug:
+  ansible.builtin.debug:
     var: combined_api
   no_log: "{{ no_log }}"

@@ -12,17 +12,19 @@
   tasks:
     - block:
         - name: Import all test files from tasks
-          include_tasks: '{{ item }}'
+          ansible.builtin.include_tasks: '{{ item }}'
           with_fileglob:
             - tasks/1_0_health_check_test.yml
             # Changes to auth/model Secrets are not detected by the Operator
             # - tasks/2_0_model_config_test.yml
             - tasks/3_0_model_pipeline_config_test.yml
+            # See https://issues.redhat.com/browse/AAP-41996
+            # - tasks/4_0_model_pipeline_config_optional_model_config_test.yml
           tags:
             - always
       rescue:
         - name: Retrieve relevant resources
-          k8s_info:
+          kubernetes.core.k8s_info:
             api_version: '{{ item.api_version }}'
             kind: '{{ item.kind }}'
             namespace: '{{ namespace }}'
@@ -40,7 +42,7 @@
             - always
 
         - name: Retrieve Pod logs
-          k8s_log:
+          kubernetes.core.k8s_log:
             name: '{{ item.metadata.name }}'
             namespace: '{{ namespace }}'
             container: ansibleaiconnect-manager
@@ -50,13 +52,13 @@
             - always
 
         - name: Output gathered resources
-          debug:
+          ansible.builtin.debug:
             var: debug_resources
           tags:
             - always
 
         - name: Output gathered logs
-          debug:
+          ansible.builtin.debug:
             var: item.log_lines
           loop: '{{ debug_logs.results }}'
           tags:
@@ -66,7 +68,7 @@
           vars:
             failed_task:
               result: '{{ ansible_failed_result }}'
-          fail:
+          ansible.builtin.fail:
             msg: '{{ failed_task }}'
           tags:
             - always

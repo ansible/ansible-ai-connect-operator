@@ -3,12 +3,12 @@
 # Create Managed Postgres StatefulSet, add labels, and wait for migrations to complete
 
 - name: Set Default label selector for custom resource generated postgres
-  set_fact:
+  ansible.builtin.set_fact:
     postgres_label_selector: "app.kubernetes.io/instance=postgres-{{ supported_pg_version }}-{{ ansible_operator_meta.name }}"
   when: postgres_label_selector is not defined
 
 - name: Create database Service
-  k8s:
+  kubernetes.core.k8s:
     apply: yes
     definition: "{{ lookup('template', 'postgres.service.yaml.j2') }}"
     wait: no
@@ -16,7 +16,7 @@
   no_log: "{{ no_log }}"
 
 - name: Create database StatefulSet
-  k8s:
+  kubernetes.core.k8s:
     apply: yes
     definition: "{{ lookup('template', 'postgres.statefulset.yaml.j2') }}"
     wait: no
@@ -24,7 +24,7 @@
   no_log: "{{ no_log }}"
 
 - name: Wait for database PersistentVolumeClaim to initialize
-  k8s_info:
+  kubernetes.core.k8s_info:
     kind: PersistentVolumeClaim
     namespace: "{{ ansible_operator_meta.namespace }}"
     label_selectors:
@@ -44,7 +44,7 @@
     # it and related StatefulSet resource. StatefulSet storageClassName
     # cannot be updated on an existing instance.
     - name: Scale down database StatefulSet
-      k8s_scale:
+      kubernetes.core.k8s_scale:
         kind: StatefulSet
         name: "{{ ansible_operator_meta.name }}-postgres-{{ supported_pg_version }}"
         namespace: "{{ ansible_operator_meta.namespace }}"
@@ -53,7 +53,7 @@
       no_log: "{{ no_log }}"
 
     - name: Delete database StatefulSet
-      k8s:
+      kubernetes.core.k8s:
         state: absent
         kind: StatefulSet
         name: "{{ ansible_operator_meta.name }}-postgres-{{ supported_pg_version }}"
@@ -61,7 +61,7 @@
       no_log: "{{ no_log }}"
 
     - name: Delete database PersistentVolumeClaim
-      k8s:
+      kubernetes.core.k8s:
         state: absent
         kind: PersistentVolumeClaim
         namespace: "{{ ansible_operator_meta.namespace }}"
@@ -79,7 +79,7 @@
     - "postgres_pvc['resources'][0]['status']['phase'] != 'Bound'"
 
 - name: Get the postgres Pod information
-  k8s_info:
+  kubernetes.core.k8s_info:
     kind: Pod
     namespace: "{{ ansible_operator_meta.namespace }}"
     label_selectors:
@@ -89,7 +89,7 @@
   register: postgres_pod
 
 - name: Wait for Database to initialize if managed DB
-  k8s_info:
+  kubernetes.core.k8s_info:
     kind: Pod
     namespace: '{{ ansible_operator_meta.namespace }}'
     label_selectors:

@@ -2,22 +2,22 @@
 # Configure PostgreSQL database and required resources
 
 - name: Combine default and custom vars for each component
-  include_tasks: combine_defaults.yml
+  ansible.builtin.include_tasks: combine_defaults.yml
 
 - name: Determine and set postgres configuration secret and variables
-  import_tasks: set_configuration_secret.yml
+  ansible.builtin.include_tasks: set_configuration_secret.yml
 
 - name: Set default postgres image to be used
-  import_tasks: set_images.yml
+  ansible.builtin.include_tasks: set_images.yml
 
 - name: Set variables to be used in Postgres templates
-  import_tasks: set_variables.yml
+  ansible.builtin.include_tasks: set_variables.yml
 
 # Managed Database block
 - name: Check PostgreSQL version to determine if an upgrade is needed
-  import_tasks: check_postgres_version.yml
+  ansible.builtin.include_tasks: check_postgres_version.yml
   when: managed_database
 
 - name: Create managed Postgres StatefulSet if no external db is defined
-  import_tasks: create_managed_postgres.yml
+  ansible.builtin.include_tasks: create_managed_postgres.yml
   when: managed_database

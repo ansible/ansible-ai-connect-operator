@@ -1,13 +1,13 @@
 ---
 - name: Get information about the cluster
-  set_fact:
+  ansible.builtin.set_fact:
     api_groups: "{{ lookup('k8s', cluster_info='api_groups') }}"
   when:
     - not is_openshift | bool
     - not is_k8s | bool
 
 - name: Determine the cluster type
-  set_fact:
+  ansible.builtin.set_fact:
     is_openshift: "{{ True if 'route.openshift.io' in api_groups else False }}"
     is_k8s: "{{ False if 'route.openshift.io' in api_groups else True }}"
   when:
@@ -15,13 +15,13 @@
     - not is_k8s | bool
 
 # Indicate what kind of cluster we are in (OpenShift or Kubernetes).
-- debug:
+- ansible.builtin.debug:
     msg: "CLUSTER TYPE: is_openshift={{ is_openshift }}; is_k8s={{ is_k8s }}"
 
 # Tasks file for AnsibleAIConnect
 
 - name: Create AnsibleAIConnect ServiceAccount
-  k8s:
+  kubernetes.core.k8s:
     apply: yes
     definition: "{{ lookup('template', item + '.yaml.j2') }}"
   loop:
@@ -29,4 +29,4 @@
   no_log: "{{ no_log }}"
 
 - name: Patch Labels
-  include_tasks: patch_labels.yml
+  ansible.builtin.include_tasks: patch_labels.yml
