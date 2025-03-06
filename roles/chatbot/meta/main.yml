@@ -1,7 +1,7 @@
 ---
 galaxy_info:
   author: Ansible
-  description: Application role for Ansible AI Connect Chatbot Operator configuration
+  description: Application role for Ansible AI Connect Chatbot configuration
   company: Red Hat, Inc.
 
   # If the issue tracker for your role is not on github, uncomment the

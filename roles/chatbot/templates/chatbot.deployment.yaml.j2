@@ -9,16 +9,16 @@ metadata:
   name: '{{ ansible_operator_meta.name }}-api'
   namespace: '{{ ansible_operator_meta.namespace }}'
 spec:
-  replicas: {{ combined_api.replicas }}
-{% if combined_api.strategy is defined %}
+  replicas: {{ combined_chatbot_api.replicas }}
+{% if combined_chatbot_api.strategy is defined %}
   strategy:
-    type: {{ combined_api.strategy.type }}
-{% if combined_api.strategy.type == "Recreate" %}
+    type: {{ combined_chatbot_api.strategy.type }}
+{% if combined_chatbot_api.strategy.type == "Recreate" %}
     rollingUpdate: null
-{% elif combined_api.strategy.type == "RollingUpdate" %}
+{% elif combined_chatbot_api.strategy.type == "RollingUpdate" %}
     rollingUpdate:
-      maxSurge:  {{ combined_api.strategy.rollingUpdate.maxSurge | default("25%")}}
-      maxUnavailable: {{ combined_api.strategy.rollingUpdate.maxUnavailable | default("25%")}}
+      maxSurge:  {{ combined_chatbot_api.strategy.rollingUpdate.maxSurge | default("25%")}}
+      maxUnavailable: {{ combined_chatbot_api.strategy.rollingUpdate.maxUnavailable | default("25%")}}
 {% endif %}
 {% endif %}
   selector:
@@ -48,17 +48,17 @@ spec:
         - name: {{ secret }}
 {% endfor %}
 {% endif %}
-{% if combined_api.node_selector is defined %}
+{% if combined_chatbot_api.node_selector is defined %}
       nodeSelector:
-        {{ combined_api.node_selector | indent(width=8) }}
+        {{ combined_chatbot_api.node_selector | indent(width=8) }}
 {% endif %}
-{% if combined_api.tolerations is defined %}
+{% if combined_chatbot_api.tolerations is defined %}
       tolerations:
-        {{ combined_api.tolerations | indent(width=8) }}
+        {{ combined_chatbot_api.tolerations | indent(width=8) }}
 {% endif %}
-{% if combined_api.topology_spread_constraints is defined %}
+{% if combined_chatbot_api.topology_spread_constraints is defined %}
       topologySpreadConstraints:
-        {{ combined_api.topology_spread_constraints | indent(width=8) }}
+        {{ combined_chatbot_api.topology_spread_constraints | indent(width=8) }}
 {% endif %}
       initContainers:
 {% if bundle_ca_crt  %}
@@ -71,8 +71,8 @@ spec:
           - |
             mkdir -p /etc/pki/ca-trust/extracted/{java,pem,openssl,edk2}
             update-ca-trust
-{% if combined_api.resource_requirements is defined %}
-        resources: {{ combined_api.resource_requirements }}
+{% if combined_chatbot_api.resource_requirements is defined %}
+        resources: {{ combined_chatbot_api.resource_requirements }}
 {% endif %}
         volumeMounts:
           - name: "ca-trust-extracted"
@@ -158,8 +158,8 @@ spec:
               - "ALL"
           seccompProfile:
             type: RuntimeDefault
-{% if combined_api.resource_requirements is defined %}
-        resources: {{ combined_api.resource_requirements }}
+{% if combined_chatbot_api.resource_requirements is defined %}
+        resources: {{ combined_chatbot_api.resource_requirements }}
 {% endif %}
 {% if bundle_ca_crt %}
         volumeMounts:

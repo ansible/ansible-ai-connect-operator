@@ -5,12 +5,6 @@
     definition: "{{ lookup('template', 'chatbot.configmap.yaml.j2') }}"
     wait: yes
 
-- name: Apply underlying service ConfigMap resources
-  k8s:
-    apply: yes
-    definition: "{{ lookup('template', 'chatbot.configmap.chatbot.yaml.j2') }}"
-    wait: yes
-
 - name: Apply deployment resources
   k8s:
     apply: yes
@@ -19,7 +13,6 @@
   loop:
     - 'chatbot.service'
     - 'chatbot.deployment'
-    - 'chatbot.ingress'
 
 - name: Check for Chatbot Pod
   k8s_info:

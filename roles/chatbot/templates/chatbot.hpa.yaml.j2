@@ -9,7 +9,7 @@ metadata:
   namespace: '{{ ansible_operator_meta.namespace }}'
 spec:
   maxReplicas: 20
-  minReplicas: {{ combined_api.replicas }}
+  minReplicas: {{ combined_chatbot_api.replicas }}
   metrics:
   - resource:
       name: cpu

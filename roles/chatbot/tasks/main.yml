@@ -11,25 +11,11 @@
 - name: Set AnsibleAIConnectChatbot service images
   include_tasks: set_images.yml
 
-- name: Set Bundle Certificate Authority
-  include_tasks: set_bundle_cacert.yml
-  when:
-  - bundle_cacert_secret | length
-
 - name: Read Chatbot secret
   include_tasks: read_chatbot_configuration_secret.yml
 
-- name: Load Route TLS certificate
-  include_tasks: load_route_tls_secret.yml
-  when:
-    - ingress_type | lower == 'route'
-    - route_tls_secret | length
-
 - name: Deploy Chatbot service
-  include_tasks: deploy_chatobt_api.yml
-
-- name: Setup HorizontalPodAutoscaler for Chatbot deployment
-  include_tasks: setup_hpa.yml
+  include_tasks: deploy_chatbot_api.yml
 
 - name: Update status variables
   include_tasks: update_status.yml
