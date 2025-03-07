@@ -1,4 +1,2 @@
 ---
-# vars file for AnsibleAIConnect
-
-bundle_ca_crt: ''
+# vars file for Chatbot

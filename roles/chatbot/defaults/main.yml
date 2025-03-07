@@ -85,11 +85,3 @@ service_account_annotations: ''
 #   zone: internal
 service_annotations: ''
 # ========================================
-
-
-# ========================================
-# Custom CA Certificates
-# ----------------------------------------
-# Secret to lookup that provides the custom CA trusted bundle
-bundle_cacert_secret: ''
-# ----------------------------------------
