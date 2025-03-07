@@ -12,19 +12,18 @@ metadata:
     {{ service_annotations | indent(width=4) }}
 {% endif %}
 spec:
-  clusterIP: "{{ cluster_ip }}"
-  ipFamilies:
-    - IPv4
-  ports:
-    - name: 8080-tcp
-      protocol: TCP
-      port: 8080
-      targetPort: 8080
   internalTrafficPolicy: Cluster
-  clusterIPs:
-    - "{{ cluster_ip }}"
-  type: ClusterIP
+  ipFamilies:
+  - IPv4
   ipFamilyPolicy: SingleStack
-  sessionAffinity: None
+  ports:
+  - name: 8080-tcp
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
   selector:
     app: "{{ ansible_operator_meta.name }}-chatbot-api"
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}

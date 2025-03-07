@@ -2,18 +2,18 @@
 # Chatbot Image
 - name: Set default AnsibleAIConnect Chatbot container image
   set_fact:
-    _default_image: "{{ _chatbot_image }}:{{ _chatbot_image_version }}"
+    _default_chatbot_image: "{{ _chatbot_image }}:{{ _chatbot_image_version }}"
 
 - name: Set user provided image
   set_fact:
-    _custom_image: "{{ image }}:{{ image_version }}"
+    _custom_chatbot_image: "{{ chatbot_image }}:{{ chatbot_image_version }}"
   when:
     - chatbot_image | default([]) | length
     - chatbot_image_version is defined or chatbot_image_version != ''
 
-- name: Set image URL
+- name: Set Chatbot image URL
   set_fact:
-    _image: >-
-      {{ _custom_image |
-         default(lookup('env', 'RELATED_IMAGE_ANSIBLE_AI_CONNECT_CHATBOT')) |
-         default(_default_image, true) }}
+    _chatbot_image: >-
+      {{ _custom_chatbot_image |
+         default(lookup('env', 'RELATED_CHATBOT_IMAGE_ANSIBLE_AI_CONNECT_CHATBOT')) |
+         default(_default_chatbot_image, true) }}

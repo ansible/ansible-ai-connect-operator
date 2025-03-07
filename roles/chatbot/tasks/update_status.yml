@@ -1,39 +1,30 @@
 ---
-- name: Update custom resource status
+- name: Update Chatbot status in AnsibleAIConnect Custom Resource
   operator_sdk.util.k8s_status:
     api_version: '{{ api_version }}'
     name: "{{ ansible_operator_meta.name }}"
     namespace: "{{ ansible_operator_meta.namespace }}"
     status:
-      adminUser: "{{ admin_user }}"
-      adminPasswordSecret: "{{ __admin_password_secret_name }}"
-      databaseConfigurationSecret: "{{ __database_secret_name }}"
-      dbFieldsEncryptionSecret: "{{ __db_fields_encryption_secret_name }}"
       chatbotConfigurationSecret: "{{ chatbot_config_secret_name }}"
       image: "{{ _chatbot_image }}"
 
 - block:
-    - name: Retrieve instance version
+    - name: Retrieve Chatbot instance version
       k8s_exec:
         namespace: "{{ ansible_operator_meta.namespace }}"
         pod: "{{ chatbot_pod_name }}"
-        container: "chatbot"
+        container: "chatbot-api"
         command: >-
-          bash -c "echo 'import pkg_resources;
-          print(pkg_resources.get_distribution(\"ansible-ai-connect\").version)'
-          | wisdom-manage shell"
+          bash -c "python3.11 runner.py --version"
       register: instance_version
       changed_when: false
 
+    - name: Update Chatbot version status
+      operator_sdk.util.k8s_status:
+        api_version: '{{ api_version }}'
+        kind: "{{ kind }}"
+        name: "{{ ansible_operator_meta.name }}"
+        namespace: "{{ ansible_operator_meta.namespace }}"
+        status:
+          version: "{{ instance_version.stdout | trim }}"
   when: chatbot_pod_name | length
-
-- block:
-    - name: Retrieve route URL
-      k8s_info:
-        api_version: 'route.openshift.io/v1'
-        kind: Route
-        namespace: '{{ ansible_operator_meta.namespace }}'
-        name: '{{ ansible_operator_meta.name }}'
-      register: route_url
-
-  when: ingress_type | lower == 'route'
