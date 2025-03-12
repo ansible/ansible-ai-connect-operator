@@ -4,10 +4,6 @@
 - name: Combine default and custom vars for each component
   include_tasks: combine_defaults.yml
 
-- name: Configure cluster
-  include_role:
-    name: common
-
 - name: Set AnsibleAIConnectChatbot service images
   include_tasks: set_images.yml
 

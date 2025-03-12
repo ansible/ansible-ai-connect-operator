@@ -83,6 +83,7 @@ stringData:
   chatbot_model: <Chatbot model name>
   chatbot_provider: <Chatbot model provide>
   chatbot_url: <Chatbot model url>
+  chatbot_token: <access token>
 type: Opaque
 ```
 

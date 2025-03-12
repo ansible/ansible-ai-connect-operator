@@ -16,7 +16,7 @@ on:
         required: true
         type: string
       chatbot_version:
-        description: "The latest published version of the underlying service"
+        description: "The latest published version of the underlying chatbot service"
         required: true
         type: string
 
