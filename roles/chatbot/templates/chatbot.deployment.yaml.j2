@@ -23,24 +23,17 @@ spec:
 {% endif %}
   selector:
     matchLabels:
-      app.kubernetes.io/name: '{{ ansible_operator_meta.name }}'
-      app.kubernetes.io/managed-by: '{{ deployment_type }}-chatbot-operator'
-      app.kubernetes.io/component: '{{ deployment_type }}-chatbot'
+      app: ansible-chatbot
   template:
     metadata:
       labels:
-        {{ lookup("template", "../common/templates/labels/common.yaml.j2")  | indent(width=8) | trim }}
-        {{ lookup("template", "../common/templates/labels/version.yaml.j2") | indent(width=8) | trim }}
-        app.kubernetes.io/component: '{{ deployment_type }}-chatbot'
-      annotations:
-        kubectl.kubernetes.io/default-container: 'ansible-chatbot'
+        app: ansible-chatbot
 {% for template in [
     "chatbot.configmap",
   ] %}
         checksum-{{ template | replace('/', '-') }}: "{{ lookup('template', template + '.yaml.j2') | sha1 }}"
 {% endfor %}
     spec:
-      serviceAccountName: '{{ ansible_operator_meta.name }}'
 {% if image_pull_secrets | length > 0 %}
       imagePullSecrets:
 {% for secret in image_pull_secrets %}
@@ -104,51 +97,13 @@ spec:
             secretKeyRef:
               name: '{{ chatbot_config_secret_name }}'
               key: chatbot_url
+        - name: RCS_CONFIG_FILE
+          value: /app-root/aapconfig.yaml
+        - name: PROJECT
+          value: aap
         ports:
         - containerPort: 8000
           protocol: TCP
-        startupProbe:
-          exec:
-            command:
-            - venv/bin/uwsgi-is-ready
-            - --stats-socket
-            - /tmp/uwsgi-stats
-            - --queue-threshold
-            - '0.7'
-          failureThreshold: 10
-          successThreshold: 1
-          periodSeconds: 30
-          timeoutSeconds: 1
-        readinessProbe:
-          exec:
-            command:
-            - venv/bin/uwsgi-is-ready
-            - --stats-socket
-            - /tmp/uwsgi-stats
-            - --queue-threshold
-            - '0.7'
-          initialDelaySeconds: 5
-          failureThreshold: 2
-          successThreshold: 1
-          periodSeconds: 5
-          timeoutSeconds: 1
-        livenessProbe:
-          exec:
-            command:
-            - venv/bin/uwsgi-is-ready
-            - --stats-socket
-            - /tmp/uwsgi-stats
-            - --queue-threshold
-            - '0.7'
-          initialDelaySeconds: 5
-          failureThreshold: 2
-          successThreshold: 1
-          periodSeconds: 5
-          timeoutSeconds: 1
-        volumeMounts:
-            - name: mnt
-              mountPath: /etc/wisdom/uwsgi.ini
-              subPath: uwsgi_ini
         securityContext:
           runAsNonRoot: true
           allowPrivilegeEscalation: false
@@ -160,8 +115,8 @@ spec:
 {% if combined_chatbot_api.resource_requirements is defined %}
         resources: {{ combined_chatbot_api.resource_requirements }}
 {% endif %}
-{% if bundle_ca_crt %}
         volumeMounts:
+{% if bundle_ca_crt %}
           - name: "ca-trust-extracted"
             mountPath: "/etc/pki/ca-trust/extracted"
           - name: "{{ ansible_operator_meta.name }}-bundle-cacert"
@@ -169,11 +124,18 @@ spec:
             subPath: bundle-ca.crt
             readOnly: true
 {% endif %}
+volumeMounts:
+          - name: aap-chatbot-config
+            mountPath: /app-root/aapconfig.yaml
+            subPath: aapconfig.yaml
+          - name: granite-8b-token
+            mountPath: /app-root/keys1/
+          - name: granite3-8b-token
+            mountPath: /app-root/keys2/
+          - name: granite31-8b-token
+            mountPath: /app-root/keys3/
       restartPolicy: Always
       volumes:
-        - name: mnt
-          configMap:
-            name: wisdom-service-uwsgi-configmap
 {% if bundle_ca_crt %}
         - name: "ca-trust-extracted"
           emptyDir: {}

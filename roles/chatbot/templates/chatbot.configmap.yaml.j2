@@ -8,21 +8,39 @@ metadata:
   labels:
     {{ lookup("template", "../common/templates/labels/common.yaml.j2") | indent(width=4) | trim }}
 data:
-  # Specific settings for "on prem"
-  COMMERCIAL_DOCUMENTATION_URL: "https://access.redhat.com/documentation/en-us/red_hat_ansible_lightspeed_with_ibm_watsonx_code_assistant/2.x_latest/html/red_hat_ansible_lightspeed_with_ibm_watsonx_code_assistant_user_guide/index"
-  ALLOW_METRICS_FOR_ANONYMOUS_USERS: "false"
-  DEPLOYMENT_MODE: "onprem"
-
-  # Remove 'deployed_region' from the /status/check endpoint
-  # See https://issues.redhat.com/browse/AAP-21787
-  DEPLOYED_REGION: ""
-
-  # Always disabled for "on prem"
-  ENABLE_HEALTHCHECK_ATTRIBUTION: "false"
-  ENABLE_HEALTHCHECK_AUTHORIZATION: "false"
-  ENABLE_HEALTHCHECK_SECRET_MANAGER: "false"
-
-  PYTHONUNBUFFERED: "1"
+  aapconfig.yaml: |
+    llm_provider:
+      - name: ansible_chatbot_provider
+        type: rhoai_vllm
+        url: {{ chatbot_url }}
+        credentials_path: {{ chatbot_token }}
+        models:
+          - name: {{ chatbot_model }}
+            context_window_size: 128000
+    ols_config:
+      reference_content:
+        product_docs_index_path: "./vector_db/aap_product_docs/2.5"
+        product_docs_index_id: aap-product-docs-2_5
+        embeddings_model_path: "./embeddings_model"
+      conversation_cache:
+        type: memory
+        memory:
+          max_entries: 1000
+      logging_config:
+        app_log_level: info
+        lib_log_level: warning
+        uvicorn_log_level: info
+        suppress_metrics_in_log: true
+        suppress_auth_checks_warning_in_log: true
+      default_provider: ansible_chatbot_provider
+      expire_llm_is_ready_persistent_state: 300
+      enable_event_stream_format: true
+      query_validation_method: disabled
+      user_data_collection:
+        feedback_disabled: false
+        feedback_storage: "/tmp/data/feedback"
+        transcripts_disabled: false
+        transcripts_storage: "/tmp/data/transcripts"
 
   # Custom user variables
 {% for item in extra_settings | default([]) %}
