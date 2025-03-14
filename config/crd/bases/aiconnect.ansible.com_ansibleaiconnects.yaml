@@ -1029,8 +1029,14 @@ spec:
               image:
                 description: URL of the image used for the deployed instance
                 type: string
+              version:
+                description: The version of the image used for the deployed instance
+                type: string
               chatbotImage:
                 description: URL of the chatbot image used for the deployed instance
+                type: string
+              chatbotVersion:
+                description: The version of the Chatbot image used for the deployed instance
                 type: string
               URL:
                 description: URL to access the deployed instance

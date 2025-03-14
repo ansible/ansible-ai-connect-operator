@@ -122,8 +122,8 @@ spec:
         path: chatbot_api.node_selector
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:advanced
-      - description: The ChatBot deployment strategy to use to replace existing pods with
-          new ones.
+      - description: The ChatBot deployment strategy to use to replace existing pods
+          with new ones.
         displayName: ChatBot Strategy
         path: chatbot_api.strategy
         x-descriptors:
@@ -384,6 +384,16 @@ spec:
       - description: Version of the instance deployed
         displayName: Version
         path: version
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+      - description: Image of the Chatbot instance deployed
+        displayName: Chatbot Image
+        path: chatbotImage
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+      - description: Version of the Chatbot instance deployed
+        displayName: Chatbot Version
+        path: chatbotVersion
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:text
       - description: Route to access the instance deployed

@@ -5,8 +5,8 @@ metadata:
   labels:
     {{ lookup("template", "../common/templates/labels/common.yaml.j2")  | indent(width=4) | trim }}
     {{ lookup("template", "../common/templates/labels/version.yaml.j2") | indent(width=4) | trim }}
-    app.kubernetes.io/component: '{{ deployment_type }}-api'
-  name: '{{ ansible_operator_meta.name }}-api'
+    app.kubernetes.io/component: '{{ deployment_type }}-chatbot-api'
+  name: '{{ ansible_operator_meta.name }}-chatbot-api'
   namespace: '{{ ansible_operator_meta.namespace }}'
 spec:
   replicas: {{ combined_chatbot_api.replicas }}
@@ -23,17 +23,21 @@ spec:
 {% endif %}
   selector:
     matchLabels:
-      app: ansible-chatbot
+      app.kubernetes.io/name: '{{ ansible_operator_meta.name }}'
+      app.kubernetes.io/managed-by: '{{ deployment_type }}-operator'
+      app.kubernetes.io/component: '{{ deployment_type }}-chatbot-api'
   template:
     metadata:
       labels:
-        app: ansible-chatbot
-{% for template in [
-    "chatbot.configmap",
-  ] %}
-        checksum-{{ template | replace('/', '-') }}: "{{ lookup('template', template + '.yaml.j2') | sha1 }}"
-{% endfor %}
+        {{ lookup("template", "../common/templates/labels/common.yaml.j2")  | indent(width=8) | trim }}
+        {{ lookup("template", "../common/templates/labels/version.yaml.j2") | indent(width=8) | trim }}
+        app.kubernetes.io/component: '{{ deployment_type }}-chatbot-api'
+      annotations:
+        kubectl.kubernetes.io/default-container: 'ansible-chatbot'
+        checksum-chatbot.configmap: "{{ lookup('template', 'chatbot.configmap.yaml.j2') | sha1 }}"
+        checksum-secret-chatbot_config: "{{ lookup('ansible.builtin.vars', 'chatbot_config', default='')["resources"][0]["data"] | default('') | sha1 }}"
     spec:
+      serviceAccountName: '{{ ansible_operator_meta.name }}'
 {% if image_pull_secrets | length > 0 %}
       imagePullSecrets:
 {% for secret in image_pull_secrets %}
@@ -78,31 +82,31 @@ spec:
       - name: ansible-chatbot
         image: {{ _chatbot_image }}
         imagePullPolicy: '{{ image_pull_policy }}'
-        envFrom:
-          - configMapRef:
-              name: '{{ ansible_operator_meta.name }}-{{ deployment_type }}-chatbot-env-properties'
         env:
-        - name: CHATBOT_DEFAULT_MODEL
-          valueFrom:
-            secretKeyRef:
-              name: '{{ chatbot_config_secret_name }}'
-              key: chatbot_model
-        - name: CHATBOT_DEFAULT_PROVIDER
-          valueFrom:
-            secretKeyRef:
-              name: '{{ chatbot_config_secret_name }}'
-              key: chatbot_provider
-        - name: CHATBOT_URL
-          valueFrom:
-            secretKeyRef:
-              name: '{{ chatbot_config_secret_name }}'
-              key: chatbot_url
-        - name: RCS_CONFIG_FILE
-          value: /app-root/aapconfig.yaml
-        - name: PROJECT
-          value: aap
+          - name: RCS_CONFIG_FILE
+            value: /app-root/aapconfig.yaml
+          - name: PROJECT
+            value: aap
+        volumeMounts:
+          - name: aap-chatbot-config
+            mountPath: /app-root/aapconfig.yaml
+            subPath: aapconfig.yaml
+{% if is_openshift %}
+          - name: model-server-tls-certs
+            mountPath: /var/run/secrets/kubernetes.io/serviceaccount/
+{% endif %}
+          - name: chatbot-token
+            mountPath: /app-root/keys1/
+{% if bundle_ca_crt %}
+          - name: "ca-trust-extracted"
+            mountPath: "/etc/pki/ca-trust/extracted"
+          - name: "{{ ansible_operator_meta.name }}-bundle-cacert"
+            mountPath: /etc/pki/ca-trust/source/anchors/bundle-ca.crt
+            subPath: bundle-ca.crt
+            readOnly: true
+{% endif %}
         ports:
-        - containerPort: 8000
+        - containerPort: 8080
           protocol: TCP
         securityContext:
           runAsNonRoot: true
@@ -115,27 +119,25 @@ spec:
 {% if combined_chatbot_api.resource_requirements is defined %}
         resources: {{ combined_chatbot_api.resource_requirements }}
 {% endif %}
-        volumeMounts:
-{% if bundle_ca_crt %}
-          - name: "ca-trust-extracted"
-            mountPath: "/etc/pki/ca-trust/extracted"
-          - name: "{{ ansible_operator_meta.name }}-bundle-cacert"
-            mountPath: /etc/pki/ca-trust/source/anchors/bundle-ca.crt
-            subPath: bundle-ca.crt
-            readOnly: true
-{% endif %}
-volumeMounts:
-          - name: aap-chatbot-config
-            mountPath: /app-root/aapconfig.yaml
-            subPath: aapconfig.yaml
-          - name: granite-8b-token
-            mountPath: /app-root/keys1/
-          - name: granite3-8b-token
-            mountPath: /app-root/keys2/
-          - name: granite31-8b-token
-            mountPath: /app-root/keys3/
       restartPolicy: Always
       volumes:
+        - name: aap-chatbot-config
+          configMap:
+            name: '{{ ansible_operator_meta.name }}-{{ deployment_type }}-chatbot-env-properties'
+{% if is_openshift %}
+        - name: model-server-tls-certs
+          configMap:
+            items:
+              - key: service-ca.crt
+                path: service-ca.crt
+            name: openshift-service-ca.crt
+{% endif %}
+        - name: chatbot-token
+          secret:
+            secretName: {{ chatbot_config_secret_name }}
+            items:
+              - key: chatbot_token
+                path: chatbot-token.txt
 {% if bundle_ca_crt %}
         - name: "ca-trust-extracted"
           emptyDir: {}

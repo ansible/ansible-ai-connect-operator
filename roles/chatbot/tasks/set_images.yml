@@ -1,6 +1,6 @@
 ---
 # Chatbot Image
-- name: Set default AnsibleAIConnect Chatbot container image
+- name: Set default Chatbot container image
   set_fact:
     _default_chatbot_image: "{{ _chatbot_image }}:{{ _chatbot_image_version }}"
 

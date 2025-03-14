@@ -32,8 +32,8 @@
 - name: Read Model secret
   include_tasks: read_model_configuration_secret.yml
 
-- name: Setup Chatbot 
-  include_role: 
+- name: Setup Chatbot
+  include_role:
     name: chatbot
 
 - name: Set Model Pipeline Configuration secret

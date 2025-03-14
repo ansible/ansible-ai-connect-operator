@@ -1,17 +1,25 @@
 ---
-# Tasks file for AnsibleAIConnectChatbot
+- block:
 
-- name: Combine default and custom vars for each component
-  include_tasks: combine_defaults.yml
+  # Tasks file for AnsibleAIConnect's Chatbot
+  - name: Combine default and custom vars for each component
+    include_tasks: combine_defaults.yml
 
-- name: Set AnsibleAIConnectChatbot service images
-  include_tasks: set_images.yml
+  - name: Set AnsibleAIConnect's Chatbot service images
+    include_tasks: set_images.yml
 
-- name: Read Chatbot secret
-  include_tasks: read_chatbot_configuration_secret.yml
+  - name: Read AnsibleAIConnect's Chatbot secret
+    include_tasks: read_chatbot_configuration_secret.yml
 
-- name: Deploy Chatbot service
-  include_tasks: deploy_chatbot_api.yml
+  - name: Deploy AnsibleAIConnect's Chatbot service
+    include_tasks: deploy_chatbot_api.yml
 
-- name: Update status variables
-  include_tasks: update_status.yml
+  when:
+    - chatbot_config_secret_name is defined
+    - chatbot_config_secret_name | length
+
+# Remove AnsibleAIConnect's Chatbot
+- name: Remove AnsibleAIConnect's Chatbot service
+  include_tasks: remove_chatbot_api.yml
+  when:
+    - chatbot_config_secret_name is not defined or chatbot_config_secret_name | length == 0

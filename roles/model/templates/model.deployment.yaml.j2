@@ -43,6 +43,7 @@ spec:
 {% for secret in [
     "auth_config",
     "model_config",
+    "chatbot_config",
     "model_pipeline_config",
     "db_fields_encryption",
   ] %}
@@ -158,6 +159,10 @@ spec:
             secretKeyRef:
               name: "{{ __model_pipeline_secret_name }}"
               key: config
+{% if chatbot_config is defined %}
+        - name: CHATBOT_DEFAULT_PROVIDER
+          value: "default_provider"
+{% endif %}
         ports:
         - containerPort: 8000
           protocol: TCP

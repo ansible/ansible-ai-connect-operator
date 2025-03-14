@@ -5,7 +5,7 @@
     definition: "{{ lookup('template', 'chatbot.configmap.yaml.j2') }}"
     wait: yes
 
-- name: Apply deployment resources
+- name: Apply Chatbot deployment resources
   k8s:
     apply: yes
     definition: "{{ lookup('template', item + '.yaml.j2') }}"
@@ -21,18 +21,18 @@
     namespace: "{{ ansible_operator_meta.namespace }}"
     label_selectors:
       - "app.kubernetes.io/name={{ ansible_operator_meta.name }}"
-      - "app.kubernetes.io/managed-by={{ deployment_type }}-operator-chatbot"
-      - "app.kubernetes.io/component={{ deployment_type }}-chatbot"
+      - "app.kubernetes.io/managed-by={{ deployment_type }}-operator"
+      - "app.kubernetes.io/component={{ deployment_type }}-chatbot-api"
     field_selectors:
       - status.phase=Running
-  register: chatbot_pod
+  register: chatbot_api_pod
   until:
-    - "chatbot_pod['resources'] | length"
-    - "chatbot_pod['resources'][0]['status']['phase'] == 'Running'"
-    - "chatbot_pod['resources'][0]['status']['containerStatuses'][0]['ready'] == true"
+    - "chatbot_api_pod['resources'] | length"
+    - "chatbot_api_pod['resources'][0]['status']['phase'] == 'Running'"
+    - "chatbot_api_pod['resources'][0]['status']['containerStatuses'][0]['ready'] == true"
   retries: 60
   delay: 5
 
-- name: Set the Chatbot Pod name as a variable.
+- name: Set the Chatbot API Pod name as a variable.
   set_fact:
-    chatbot_pod_name: "{{ chatbot_pod['resources'][0]['metadata']['name'] | default('') }}"
+    chatbot_api_pod_name: "{{ chatbot_api_pod['resources'][0]['metadata']['name'] | default('') }}"

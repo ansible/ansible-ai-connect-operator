@@ -1,5 +1,5 @@
 ---
-# defaults file for AnsibleAIConnectChatbot
+# defaults file for AnsibleAIConnect's Chatbot
 
 # ========================================
 # Basic k8s configuration
@@ -10,13 +10,15 @@ deployment_type: 'ansible-ai-connect'
 _chatbot_image: quay.io/ansible/ansible-chatbot-service
 _chatbot_image_version: "{{ lookup('env', 'DEFAULT_CHATBOT_AI_CONNECT_VERSION') or 'latest' }}"
 
+# ========================================
+
 
 # ========================================
-# AnsbileAIConnectChatbot
+# AnsibleAIConnect's Chatbot
 # ----------------------------------------
 # Add a nodeSelector for the AnsibleAIConnectChatbot pods. It must match a node's labels for the pod
 # to be scheduled on that node. Specify as literal block. E.g.:
-# api:
+# chatbot_api:
 #   node_selector: |
 #     disktype: ssd
 #     kubernetes.io/arch: amd64

@@ -3,7 +3,7 @@ name: "[Common] Get chatbot version"
 on:
   workflow_call:
     outputs:
-      service_version:
+      chatbot_version:
         description: "The latest published version of the underlying chatbot service"
         value: ${{ jobs.get_chatbot_version.outputs.chatbot_version }}
 
@@ -29,5 +29,5 @@ jobs:
       - name: Get latest chatbot service version
         id: read_chatbot_version
         run: |
-          echo "chatbot_version=$(jq .ansible_ai_connect_service.imageTag version_info.json)" >> $GITHUB_OUTPUT
+          echo "chatbot_version=$(jq .ansible_chatbot_service.imageTag version_info_chatbot.json)" >> $GITHUB_OUTPUT
       # ===============================

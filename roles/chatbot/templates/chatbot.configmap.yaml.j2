@@ -1,4 +1,4 @@
-# AnsibleAIConnectChatbot ConfigMap.
+# AnsibleAIConnect's Chatbot ConfigMap.
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -7,17 +7,23 @@ metadata:
   namespace: '{{ ansible_operator_meta.namespace }}'
   labels:
     {{ lookup("template", "../common/templates/labels/common.yaml.j2") | indent(width=4) | trim }}
+  annotations:
+    checksum-secret-chatbot_config: "{{ lookup('ansible.builtin.vars', 'chatbot_config', default='')["resources"][0]["data"] | default('') | sha1 }}"
 data:
   aapconfig.yaml: |
-    llm_provider:
-      - name: ansible_chatbot_provider
+    llm_providers:
+      - name: default_provider
         type: rhoai_vllm
         url: {{ chatbot_url }}
-        credentials_path: {{ chatbot_token }}
+        credentials_path: /app-root/keys1/chatbot-token.txt
         models:
           - name: {{ chatbot_model }}
             context_window_size: 128000
     ols_config:
+{% if is_openshift %}
+      extra_ca:
+        - "/var/run/secrets/kubernetes.io/serviceaccount/service-ca.crt"
+{% endif %}
       reference_content:
         product_docs_index_path: "./vector_db/aap_product_docs/2.5"
         product_docs_index_id: aap-product-docs-2_5
@@ -32,7 +38,8 @@ data:
         uvicorn_log_level: info
         suppress_metrics_in_log: true
         suppress_auth_checks_warning_in_log: true
-      default_provider: ansible_chatbot_provider
+      default_provider: default_provider
+      default_model: {{ chatbot_model }}
       expire_llm_is_ready_persistent_state: 300
       enable_event_stream_format: true
       query_validation_method: disabled
@@ -41,7 +48,11 @@ data:
         feedback_storage: "/tmp/data/feedback"
         transcripts_disabled: false
         transcripts_storage: "/tmp/data/transcripts"
-
+    dev_config:
+      # config options specific to dev environment - launching OLS in local
+      enable_dev_ui: false
+      disable_auth: true
+      disable_tls: true
   # Custom user variables
 {% for item in extra_settings | default([]) %}
   {{ item.setting | upper }}: "{{ item.value }}"
