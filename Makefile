@@ -105,7 +105,7 @@ docker-buildx: ## Build and push docker image for the manager for cross-platform
 	docker buildx use project-v3-builder
 	- docker buildx build --push $(BUILD_ARGS) --platform=$(PLATFORMS) --tag ${IMG} -f Dockerfile.cross .
 	- docker buildx rm project-v3-builder
- 	# Delete temporary Dockerfile
+	# Delete temporary Dockerfile
 	rm Dockerfile.cross
 
 ##@ Deployment
