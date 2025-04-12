@@ -361,12 +361,12 @@ spec:
         path: databaseConfigurationSecret
         x-descriptors:
         - urn:alm:descriptor:io.kubernetes:Secret
-      - description: ChatBot Configuration secret name of the deployed instance
-        displayName: ChatBot Configuration
+      - description: Model Configuration secret name of the deployed instance
+        displayName: Model Configuration
         path: modelConfigurationSecret
         x-descriptors:
         - urn:alm:descriptor:io.kubernetes:Secret
-      - description: Model Configuration secret name of the deployed instance
+      - description: Chatbot Configuration secret name of the deployed instance
         displayName: Chatbot Configuration
         path: chatbotConfigurationSecret
         x-descriptors:
