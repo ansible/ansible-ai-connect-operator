@@ -23,6 +23,12 @@ stringData:
         model_id: '<chatbot-model-id>'
         ...
       provider: '<provider>'
+    ModelPipelineStreamingChatBot:
+      config:
+        inference_url: '<chatbot-service-url>'
+        model_id: '<chatbot-model-id>'
+        ...
+      provider: '<provider>'
     ModelPipelineCompletions:
       config:
         inference_url: '<model-service-url>'
