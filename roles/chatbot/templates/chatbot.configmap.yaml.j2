@@ -19,6 +19,22 @@ data:
         models:
           - name: {{ chatbot_model }}
             context_window_size: 128000
+{% if chatbot_include_fake_llms %}
+      - name: fake_llm
+        type: fake_provider
+        models:
+          - name: fake_model
+      - name: fake_streaming_llm
+        type: fake_provider
+        models:
+          - name: fake_model
+        fake_provider_config:
+          url: http://example.com/
+          stream: true
+          response: Hello
+          chunks: {{ chatbot_fake_streaming_chunks | default(50) }}
+          sleep: {{ chatbot_fake_streaming_sleep | default(0.2) }}
+{% endif %}
     ols_config:
 {% if is_openshift %}
       extra_ca:
