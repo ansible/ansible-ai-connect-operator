@@ -19,7 +19,7 @@ data:
         models:
           - name: {{ chatbot_model }}
             context_window_size: 128000
-{% if chatbot_include_fake_llms %}
+ {% if chatbot_fake_streaming_chunks and chatbot_fake_streaming_sleep %}
       - name: fake_llm
         type: fake_provider
         models:
