@@ -1,11 +1,11 @@
 ---
 - ansible.builtin.include_tasks: 0_create_config_secrets.yml
 
-- name: Create an aiconnect.ansible.com/v1alpha1.AnsibleAIConnect instance
+- name: Create an aiconnect.ansible.com/v1alpha1.AnsibleAIConnect instance with optional auth config
   kubernetes.core.k8s:
     state: present
     namespace: '{{ namespace }}'
-    definition: "{{ lookup('template', 'create_instance.yaml.j2') | from_yaml }}"
+    definition: "{{ lookup('template', 'create_instance_optional_auth_config.yaml.j2') | from_yaml }}"
     apply: true
     wait: yes
     wait_timeout: 900

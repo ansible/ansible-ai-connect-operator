@@ -99,6 +99,7 @@ spec:
           - configMapRef:
               name: "{{ ansible_operator_meta.name }}-{{ deployment_type }}-env-properties"
         env:
+{% if auth_config is defined %}
         - name: AAP_API_URL
           valueFrom:
             secretKeyRef:
@@ -124,6 +125,11 @@ spec:
             secretKeyRef:
               name: "{{ auth_config_secret_name }}"
               key: auth_allowed_hosts
+{% endif %}
+{% if not auth_config is defined %}
+        - name: ANSIBLE_WISDOM_DOMAIN
+          value: "*"
+{% endif %}
         - name: SECRET_KEY
           valueFrom:
             secretKeyRef:

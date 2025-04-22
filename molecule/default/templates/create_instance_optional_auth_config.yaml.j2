@@ -1,0 +1,33 @@
+apiVersion: aiconnect.ansible.com/v1alpha1
+kind: AnsibleAIConnect
+metadata:
+  labels:
+    app.kubernetes.io/name: ansibleaiconnect
+    app.kubernetes.io/instance: ansibleaiconnect-sample-optional-auth-config
+    app.kubernetes.io/part-of: ansible-ai-connect-operator
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/created-by: ansible-ai-connect-operator
+  name: ansibleaiconnect-sample-optional-auth-config
+spec:
+  no_log: false
+  ingress_type: Ingress
+  service_type: NodePort
+  image_pull_secrets:
+    - redhat-operators-pull-secret
+{% if wisdom_service_image %}
+  image: {{ wisdom_service_image }}
+{% endif %}
+{% if wisdom_service_version %}
+  image_version: {{ wisdom_service_version }}
+{% endif %}
+  api:
+    resource_requirements:
+      requests:
+        cpu: 100m
+        memory: 200Mi
+  database:
+    postgres_storage_class: standard
+    resource_requirements:
+      requests:
+        cpu: 50m
+        memory: 100Mi

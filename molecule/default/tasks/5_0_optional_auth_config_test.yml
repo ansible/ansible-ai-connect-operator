@@ -1,7 +1,7 @@
 ---
 - ansible.builtin.include_tasks: 0_delete_existing_instance.yml
 
-- ansible.builtin.include_tasks: 4_1_create_instance_optional_model_config.yml
+- ansible.builtin.include_tasks: 5_1_create_instance_optional_auth_config.yml
 
 - block:
     - name: Get API Pod details

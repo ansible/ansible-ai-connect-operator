@@ -1,5 +1,5 @@
 ---
-- ansible.builtin.include_tasks: 1_2_create_config_secrets.yml
+- ansible.builtin.include_tasks: 0_create_config_secrets.yml
 
 - name: Create an aiconnect.ansible.com/v1alpha1.AnsibleAIConnect instance with optional model config
   kubernetes.core.k8s:
