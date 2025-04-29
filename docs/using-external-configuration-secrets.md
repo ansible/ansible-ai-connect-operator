@@ -80,9 +80,11 @@ metadata:
   name: <secret-name>-chatbot-configuration
   namespace: <target-namespace>
 stringData:
+  chatbot_llm_provider_type: <Chatbot LLM provider type>
   chatbot_url: <Chatbot LLM URL>
-  chatbot_model: <Chatbot <model name>
+  chatbot_model: <Chatbot model name>
   chatbot_token: <Chatbot LLM access token>
+  chatbot_context_window_size: <Chatbot LLM context window size>
 type: Opaque
 ```
 

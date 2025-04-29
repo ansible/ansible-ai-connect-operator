@@ -13,12 +13,12 @@ data:
   aapconfig.yaml: |
     llm_providers:
       - name: default_provider
-        type: rhoai_vllm
+        type: {{ chatbot_llm_provider_type | default(rhoai_vllm) }}
         url: {{ chatbot_url }}
         credentials_path: /app-root/keys1/chatbot-token.txt
         models:
           - name: {{ chatbot_model }}
-            context_window_size: 128000
+            context_window_size: {{ chatbot_context_window_size | default(128000) }}
 {% if chatbot_include_fake_llms %}
       - name: fake_llm
         type: fake_provider
