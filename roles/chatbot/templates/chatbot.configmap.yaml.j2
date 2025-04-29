@@ -13,7 +13,7 @@ data:
   aapconfig.yaml: |
     llm_providers:
       - name: default_provider
-        type: {{ chatbot_llm_provider_type | default(rhoai_vllm) }}
+        type: {{ chatbot_llm_provider_type | default('rhoai_vllm') }}
         url: {{ chatbot_url }}
         credentials_path: /app-root/keys1/chatbot-token.txt
         models:
