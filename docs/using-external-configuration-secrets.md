@@ -71,7 +71,8 @@ spec:
 
 ## Chatbot service `Secret`
 
-`chatbot_config_secret_name` should be set to the name of an existing `Secret`. The Operator will use the values set therein to configure the chatbot service integration. The `Secret` must contain the following values:
+`chatbot_config_secret_name` should be set to the name of an existing `Secret`. The Operator will use the values set therein to configure the chatbot service integration.
+The `Secret` would look like this:
 
 ```yaml
 apiVersion: v1
@@ -80,13 +81,26 @@ metadata:
   name: <secret-name>-chatbot-configuration
   namespace: <target-namespace>
 stringData:
-  chatbot_llm_provider_type: <Chatbot LLM provider type>
   chatbot_url: <Chatbot LLM URL>
   chatbot_model: <Chatbot model name>
   chatbot_token: <Chatbot LLM access token>
+  chatbot_llm_provider_type: <Chatbot LLM provider type>
   chatbot_context_window_size: <Chatbot LLM context window size>
 type: Opaque
 ```
+**Required Parameters**
+
+* `chatbot_url`
+* `chatbot_model`
+* `chatbot_token`
+
+**Optional Parameters**
+
+Both `chatbot_llm_provider_type` and `chatbot_context_window_size` are optional. If either is omitted, the
+following default values will be used:
+
+* `chatbot_llm_provider_type`: `rhoai_vllm`
+* `chatbot_context_window_size`: `128000`
 
 ## Troubleshooting
 
