@@ -91,7 +91,6 @@ stringData:
 type: Opaque
 ```
 **Required Parameters**
-
 * `chatbot_url`
 * `chatbot_model`
 * `chatbot_token`
@@ -103,6 +102,16 @@ following default values will be used:
 
 * `chatbot_llm_provider_type`: `rhoai_vllm`
 * `chatbot_context_window_size`: `128000`
+
+**_Azure AI_ Parameters**
+
+In case of using the _Azure AI_ model provider, please also ensure the following required parameters are properly set:
+* `chatbot_llm_provider_type`: `azure_openai`
+* `chatbot_url`: `<<Azure AI project serving URL>>`
+* `chatbot_model`: `<<Azure AI model name>>`
+* `chatbot_token`: `<<Azure AI access token>>`
+* `chatbot_azure_deployment_name`: `<<Azure AI [deployment name](https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/create-resource?pivots=web-portal#deploy-a-model)>>`
+* `chatbot_azure_api_version`: `<<Optional - Azure AI API version>>`
 
 ## Troubleshooting
 
