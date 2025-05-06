@@ -19,6 +19,12 @@ data:
 {% if chatbot_llm_provider_project_id is defined %}
         project_id: {{ chatbot_llm_provider_project_id }}
 {% endif %}
+{% if chatbot_azure_deployment_name is defined %}
+        deployment_name: {{ chatbot_azure_deployment_name }}
+{% endif %}
+{% if chatbot_azure_api_version is defined %}
+        api_version: {{ chatbot_azure_api_version }}
+{% endif %}
         models:
           - name: {{ chatbot_model }}
             context_window_size: {{ chatbot_context_window_size | default(128000) }}

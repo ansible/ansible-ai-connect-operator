@@ -121,6 +121,16 @@ When one of these models is used, set `chatbot_temperature_override` to `null`,
 which disables the default temperature setting.
 
 
+**_Azure AI_ Parameters**
+
+In case of using the _Azure AI_ model provider, please also ensure the following required parameters are properly set:
+* `chatbot_llm_provider_type`: `azure_openai`
+* `chatbot_url`: `<<Azure AI project serving URL>>`
+* `chatbot_model`: `<<Azure AI model name>>`
+* `chatbot_token`: `<<Azure AI access token>>`
+* `chatbot_azure_deployment_name`: `<<Azure AI [deployment name](https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/create-resource?pivots=web-portal#deploy-a-model)>>`
+* `chatbot_azure_api_version`: `<<Optional - Azure AI API version>>`
+
 ## Troubleshooting
 
 ### Base64 encoding
