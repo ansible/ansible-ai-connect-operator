@@ -69,6 +69,10 @@ data:
       enable_dev_ui: false
       disable_auth: true
       disable_tls: true
+{% if chatbot_temperature_override is defined %}
+      llm_params:
+        temperature: {{ chatbot_temperature_override }}
+{% endif %}
   # Custom user variables
 {% for item in extra_settings | default([]) %}
   {{ item.setting | upper }}: "{{ item.value }}"
