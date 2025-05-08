@@ -87,6 +87,7 @@ stringData:
   chatbot_model: <Chatbot model name>
   chatbot_token: <Chatbot LLM access token>
   chatbot_llm_provider_type: <Chatbot LLM provider type>
+  chatbot_llm_provider_project_id: <Chatbot LLM provider project id>
   chatbot_context_window_size: <Chatbot LLM context window size>
   chatbot_temperature_override: <Chatbot LLM temperature parameter>
 type: Opaque
@@ -104,6 +105,9 @@ following default values will be used:
 
 * `chatbot_llm_provider_type`: `rhoai_vllm`
 * `chatbot_context_window_size`: `128000`
+
+When `chatbot_llm_provider_type` is set to `watsonx`,
+`chatbot_llm_provider_project_id` is required to set to your watsonx.ai project ID.
 
 `chatbot_temperature_override` is also optional.  It is provided for 
 following Open AI models that do not support the default temperature setting used for
