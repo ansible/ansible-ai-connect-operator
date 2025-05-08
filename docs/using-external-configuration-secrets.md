@@ -9,7 +9,7 @@ Configuration parameters for the both the authentication backend and model servi
 `spec.auth_config_secret_name` should be set to the name of an existing `Secret`. The Operator will use the values set therein to configure the authentication backend integration. The `Secret` must contain the following values:
 ```yaml
 apiVersion: v1
-[upgrade](upgrade)kind: Secret
+kind: Secret
 metadata:
   name: <secret-name>-auth-configuration
   namespace: <target-namespace>
