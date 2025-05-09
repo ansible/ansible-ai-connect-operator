@@ -113,7 +113,9 @@ other Open AI models:
 * `o3-mini`
 * `o4-mini`
 
-When one of these models is used, set `chatbot_temperature_override` to `null`.
+When one of these models is used, set `chatbot_temperature_override` to `null`,
+which disables the default temperature setting.
+
 
 ## Troubleshooting
 
