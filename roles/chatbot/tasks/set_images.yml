@@ -1,5 +1,7 @@
 ---
-# Chatbot Image
+# =======================================
+# Chatbot image
+# ---------------------------------------
 - name: Set default Chatbot container image
   ansible.builtin.set_fact:
     _default_chatbot_image: "{{ _chatbot_image }}:{{ _chatbot_image_version }}"
@@ -17,3 +19,96 @@
       {{ _custom_chatbot_image |
          default(lookup('env', 'RELATED_IMAGE_ANSIBLE_AI_CONNECT_CHATBOT')) |
          default(_default_chatbot_image, true) }}
+# =======================================
+
+
+# =======================================
+# RAG database image
+# ---------------------------------------
+- name: Set default RAG database container image
+  ansible.builtin.set_fact:
+    _default_chatbot_rag_db_image: "{{ _chatbot_rag_db_image }}:{{ _chatbot_rag_db_image_version }}"
+
+- name: Set user provided image
+  ansible.builtin.set_fact:
+    _custom_chatbot_rag_db_image: "{{ chatbot_rag_db_image }}:{{ chatbot_rag_db_image_version }}"
+  when:
+    - chatbot_rag_db_image | default([]) | length
+    - chatbot_rag_db_image_version is defined or chatbot_rag_db_image_version != ''
+
+- name: Set RAG database container image URL
+  ansible.builtin.set_fact:
+    _chatbot_rag_db_image: >-
+      {{ _custom_chatbot_rag_db_image |
+         default(lookup('env', 'RELATED_IMAGE_ANSIBLE_AI_CONNECT_CHATBOT_RAG_DB')) |
+         default(_default_chatbot_rag_db_image, true) }}
+# =======================================
+
+
+# =======================================
+# Gateway MCP Server image
+# ---------------------------------------
+- name: Set default AAP Gateway MCP container image
+  ansible.builtin.set_fact:
+    _default_chatbot_mcp_gateway_image: "{{ _chatbot_mcp_gateway_image }}:{{ _chatbot_mcp_gateway_image_version }}"
+
+- name: Set user provided image
+  ansible.builtin.set_fact:
+    _custom_chatbot_mcp_gateway_image: "{{ chatbot_mcp_gateway_image }}:{{ chatbot_mcp_gateway_image_version }}"
+  when:
+    - chatbot_mcp_gateway_image | default([]) | length
+    - chatbot_mcp_gateway_image_version is defined or chatbot_mcp_gateway_image_version != ''
+
+- name: Set AAP Gateway MCP container image URL
+  ansible.builtin.set_fact:
+    _chatbot_mcp_gateway_image: >-
+      {{ _custom_chatbot_mcp_gateway_image |
+         default(lookup('env', 'RELATED_IMAGE_ANSIBLE_AI_CONNECT_CHATBOT_MCP_GATEWAY')) |
+         default(_default_chatbot_mcp_gateway_image, true) }}
+# =======================================
+
+
+# =======================================
+# Controller MCP Server image
+# ---------------------------------------
+- name: Set default AAP Controller MCP container image
+  ansible.builtin.set_fact:
+    _default_chatbot_mcp_controller_image: "{{ _chatbot_mcp_controller_image }}:{{ _chatbot_mcp_controller_image_version }}"
+
+- name: Set user provided image
+  ansible.builtin.set_fact:
+    _custom_chatbot_mcp_controller_image: "{{ chatbot_mcp_controller_image }}:{{ chatbot_mcp_controller_image_version }}"
+  when:
+    - chatbot_mcp_controller_image | default([]) | length
+    - chatbot_mcp_controller_image_version is defined or chatbot_mcp_controller_image_version != ''
+
+- name: Set AAP Controller MCP container image URL
+  ansible.builtin.set_fact:
+    _chatbot_mcp_controller_image: >-
+      {{ _custom_chatbot_mcp_controller_image |
+         default(lookup('env', 'RELATED_IMAGE_ANSIBLE_AI_CONNECT_CHATBOT_MCP_CONTROLLER')) |
+         default(_default_chatbot_mcp_controller_image, true) }}
+# =======================================
+
+
+# =======================================
+# Lightspeed MCP Server image
+# ---------------------------------------
+- name: Set default AAP Lightspeed MCP container image
+  ansible.builtin.set_fact:
+    _default_chatbot_mcp_lightspeed_image: "{{ _chatbot_mcp_lightspeed_image }}:{{ _chatbot_mcp_lightspeed_image_version }}"
+
+- name: Set user provided image
+  ansible.builtin.set_fact:
+    _custom_chatbot_mcp_lightspeed_image: "{{ chatbot_mcp_lightspeed_image }}:{{ chatbot_mcp_lightspeed_image_version }}"
+  when:
+    - chatbot_mcp_lightspeed_image | default([]) | length
+    - chatbot_mcp_lightspeed_image_version is defined or chatbot_mcp_lightspeed_image_version != ''
+
+- name: Set AAP Lightspeed MCP container image URL
+  ansible.builtin.set_fact:
+    _chatbot_mcp_lightspeed_image: >-
+      {{ _custom_chatbot_mcp_lightspeed_image |
+         default(lookup('env', 'RELATED_IMAGE_ANSIBLE_AI_CONNECT_CHATBOT_MCP_LIGHTSPEED')) |
+         default(_default_chatbot_mcp_lightspeed_image, true) }}
+# =======================================
