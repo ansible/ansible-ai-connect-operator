@@ -1,0 +1,43 @@
+---
+# Register AAP Gateway MCP server
+- name: Register AAP Gateway MCP server
+  ansible.builtin.uri:
+    url: "{{ _chatbot_stack_url }}/v1/toolgroups"
+    method: POST
+    body_format: json
+    body: '{ "provider_id": "lightspeed", "toolgroup_id": "mcp::aap-gateway", "mcp_endpoint": { "uri": "http://127.0.0.1:8003/sse"}}'
+  register: _result
+  until: _result.status == 200
+  retries: 24 # 24 * 5 seconds = 2 minutes
+  delay: 5
+  when:
+    - _aap_gateway_url is defined
+    - _aap_gateway_token is defined
+
+# Register AAP Controller MCP server
+- name: Register AAP Controller MCP server
+  ansible.builtin.uri:
+    url: "{{ _chatbot_stack_url }}/v1/toolgroups"
+    method: POST
+    body_format: json
+    body: '{ "provider_id": "lightspeed", "toolgroup_id": "mcp::aap-controller", "mcp_endpoint": { "uri": "http://127.0.0.1:8004/sse"}}'
+  register: _result
+  until: _result.status == 200
+  retries: 24 # 24 * 5 seconds = 2 minutes
+  delay: 5
+  when:
+    - _aap_gateway_url is defined
+    - _aap_controller_url is defined
+
+# Register Ansible Lightspeed MCP server
+- name: Register AAP Lightspeed MCP server
+  ansible.builtin.uri:
+    url: "{{ _chatbot_stack_url }}/v1/toolgroups"
+    method: POST
+    body_format: json
+    body: '{ "provider_id": "lightspeed", "toolgroup_id": "mcp::aap-lightspeed", "mcp_endpoint": { "uri": "http://127.0.0.1:8005/sse"}}'
+  register: _result
+  until: _result.status == 200
+  retries: 24 # 24 * 5 seconds = 2 minutes
+  delay: 5
+  when: _aap_gateway_url is defined

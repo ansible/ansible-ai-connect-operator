@@ -88,10 +88,9 @@ stringData:
   chatbot_url: <Chatbot LLM URL>
   chatbot_model: <Chatbot model name>
   chatbot_token: <Chatbot LLM access token>
-  chatbot_llm_provider_type: <Chatbot LLM provider type>
-  chatbot_llm_provider_project_id: <Chatbot LLM provider project id>
-  chatbot_context_window_size: <Chatbot LLM context window size>
-  chatbot_temperature_override: <Chatbot LLM temperature parameter>
+  aap_gateway_url: <AAP Gateway URL>
+  aap_gateway_token: <AAP Gateway Token>
+  aap_controller_url: <AAP Controller URL>
 type: Opaque
 ```
 **Required Parameters**
@@ -100,38 +99,29 @@ type: Opaque
 * `chatbot_model`
 * `chatbot_token`
 
-**Optional Parameters**
+**Parameter combinations**
 
-Both `chatbot_llm_provider_type` and `chatbot_context_window_size` are optional. If either is omitted, the
-following default values will be used:
+Providing `aap_gateway_url`, `aap_gateway_token` and/or `aap_controller_url` affect how the Chatbot is provisioned.
 
-* `chatbot_llm_provider_type`: `rhoai_vllm`
-* `chatbot_context_window_size`: `128000`
+If none of these parameters are provided no MCP servers will be provisioned or registered with the underlying LLM's tool runtime.
 
-When `chatbot_llm_provider_type` is set to `watsonx`,
-`chatbot_llm_provider_project_id` is required to set to your watsonx.ai project ID.
+If only `aap_gateway_url` is set the following MCP server will be provisioned:
+- Ansible Lightspeed Service MCP server.
+  - Authentication will attempt to use the JWT token associated with the User's authenticated context.
 
-`chatbot_temperature_override` is also optional.  It is provided for 
-following Open AI models that do not support the default temperature setting used for
-other Open AI models:
+If `aap_gateway_url` and `aap_gateway_token` are set the following MCP servers will be provisioned:
+- AAP Gateway Service MCP server.
+  - Authentication will attempt to use the `aap_gateway_token`
+- Ansible Lightspeed Service MCP server. 
+  - Authentication will attempt to use either the JWT token associated with the User's authenticated context or `aap_gateway_token`.
 
-* `o1`
-* `o3-mini`
-* `o4-mini`
-
-When one of these models is used, set `chatbot_temperature_override` to `null`,
-which disables the default temperature setting.
-
-
-**_Azure AI_ Parameters**
-
-In case of using the _Azure AI_ model provider, please also ensure the following required parameters are properly set:
-* `chatbot_llm_provider_type`: `azure_openai`
-* `chatbot_url`: `<<Azure AI project serving URL>>`
-* `chatbot_model`: `<<Azure AI model name>>`
-* `chatbot_token`: `<<Azure AI access token>>`
-* `chatbot_azure_deployment_name`: `<<Azure AI [deployment name](https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/create-resource?pivots=web-portal#deploy-a-model)>>`
-* `chatbot_azure_api_version`: `<<Optional - Azure AI API version>>`
+If `aap_gateway_url`, `aap_gateway_token` and `aap_controller_url` are set the following MCP servers will be provisioned:
+- AAP Gateway Service MCP server
+  - Authentication will attempt to use the `aap_gateway_token`
+- AAP Controller Service MCP server
+  - Authentication will attempt to use either the JWT token associated with the User's authenticated context or `aap_gateway_token`.
+- Ansible Lightspeed Service MCP server
+  - Authentication will attempt to use either the JWT token associated with the User's authenticated context or `aap_gateway_token`.
 
 ## Troubleshooting
 
