@@ -51,4 +51,5 @@
         - updated_service_host_response.json.status == 'ok'
         - updated_service_host_response.json.model_id == 'updated__my-ai-model_id'
         - not updated_service_host_response.json.model_verify_ssl|bool
+        - not updated_service_host_response.json.model_enable_anonymization|bool
         fail_msg: /check/status did not return expected model_id. Expected 'updated__my-ai-model_id'.

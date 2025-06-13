@@ -53,11 +53,13 @@ stringData:
   model_id: <WCA Model Id>
   model_type: <WCA type[2]>
   model_verify_ssl: <BOOL [3]>
+  model_enable_anonymization: <BOOL [4]>
 type: Opaque
 ```
 - [1] `username` is only required for `wca-onprem`. The value is discarded for `wca`.
 - [2] `model_type` is either `wca` or `wca-onprem`.
 - [3] `model_verify_ssl` is optional and defaults to True. Changing this value is discouraged.
+- [4] `model_enable_anonymization` is optional and defaults to True. Changing this value to disable the PII anonymization layer.
 
 The `AnsibleAIConnect` configuration would look like this:
 ```yaml
