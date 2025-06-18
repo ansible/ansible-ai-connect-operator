@@ -48,8 +48,8 @@ endif
 
 # Set the Operator SDK version to use. By default, what is installed on the system is used.
 # This is useful for CI or a project to utilize a specific version of the operator-sdk toolkit.
-OPERATOR_SDK_VERSION ?= v1.34.2
-OPERATOR_SDK_ANSIBLE_PLUGIN_VERSION ?= v1.34.2
+OPERATOR_SDK_VERSION ?= v1.36.1
+OPERATOR_SDK_ANSIBLE_PLUGIN_VERSION ?= v1.36.1
 OPERATOR_SDK_OPM_VERSION ?= v1.43.1
 
 # Image URL to use all building/pushing image targets
