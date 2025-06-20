@@ -7,9 +7,21 @@
 api_version: 'aiconnect.ansible.com/v1alpha1'
 deployment_type: 'ansible-ai-connect'
 
-_chatbot_image: quay.io/ansible/ansible-chatbot-service
+# Chatbot container image
+_chatbot_image: quay.io/ansible/ansible-chatbot-stack
 _chatbot_image_version: "{{ lookup('env', 'DEFAULT_CHATBOT_AI_CONNECT_VERSION') or 'latest' }}"
 
+# Chatbot RAG database container images
+_chatbot_rag_db_image: quay.io/ansible/aap-rag-content
+_chatbot_rag_db_image_version: "{{ lookup('env', 'DEFAULT_CHATBOT_RAG_DB_VERSION') or 'latest' }}"
+
+# Chatbot MCP Server container images
+_chatbot_mcp_gateway_image: quay.io/ansible/ansible-mcp-gateway
+_chatbot_mcp_gateway_image_version: "{{ lookup('env', 'DEFAULT_CHATBOT_MCP_GATEWAY_VERSION') or 'latest' }}"
+_chatbot_mcp_controller_image: quay.io/ansible/ansible-mcp-controller
+_chatbot_mcp_controller_image_version: "{{ lookup('env', 'DEFAULT_CHATBOT_MCP_CONTROLLER_VERSION') or 'latest' }}"
+_chatbot_mcp_lightspeed_image: quay.io/ansible/ansible-mcp-lightspeed
+_chatbot_mcp_lightspeed_image_version: "{{ lookup('env', 'DEFAULT_CHATBOT_MCP_LIGHTSPEED_VERSION') or 'latest' }}"
 # ========================================
 
 

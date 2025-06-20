@@ -34,7 +34,6 @@ spec:
         app.kubernetes.io/component: '{{ deployment_type }}-chatbot-api'
       annotations:
         kubectl.kubernetes.io/default-container: 'ansible-chatbot'
-        checksum-chatbot.configmap: "{{ lookup('template', 'chatbot.configmap.yaml.j2') | sha1 }}"
         checksum-secret-chatbot_config: "{{ lookup('ansible.builtin.vars', 'chatbot_config', default='')["resources"][0]["data"] | default('') | sha1 }}"
     spec:
       serviceAccountName: '{{ ansible_operator_meta.name }}'
@@ -78,25 +77,40 @@ spec:
             subPath: bundle-ca.crt
             readOnly: true
 {% endif %}
+      - name: init-rag-vector-db
+        image: {{ _chatbot_rag_db_image }}
+        env:
+          - name: LLAMA_STACK_CONFIG_DIR
+            value: /.llama/data
+        volumeMounts:
+          - name: ansible-chatbot-storage
+            mountPath: /.llama/data
+        command:
+          - /rag/entrypoint.sh
       containers:
       - name: ansible-chatbot
         image: {{ _chatbot_image }}
         imagePullPolicy: '{{ image_pull_policy }}'
         env:
-          - name: RCS_CONFIG_FILE
-            value: /app-root/aapconfig.yaml
-          - name: PROJECT
-            value: aap
+          - name: LLAMA_STACK_CONFIG_DIR
+            value: /.llama/data
+          - name: EMBEDDING_MODEL
+            value: ./embeddings_model
+          - name: VLLM_URL
+            value: {{ chatbot_url }}
+          - name: VLLM_API_TOKEN
+            value: {{ chatbot_token }}
+          - name: INFERENCE_MODEL
+            value: {{ chatbot_model }}
+        ports:
+          - containerPort: 8321
         volumeMounts:
-          - name: aap-chatbot-config
-            mountPath: /app-root/aapconfig.yaml
-            subPath: aapconfig.yaml
+          - name: ansible-chatbot-storage
+            mountPath: /.llama/data
 {% if is_openshift %}
-          - name: model-server-tls-certs
+          - name: server-tls-certs
             mountPath: /var/run/secrets/kubernetes.io/serviceaccount/
 {% endif %}
-          - name: chatbot-token
-            mountPath: /app-root/keys1/
 {% if bundle_ca_crt %}
           - name: "ca-trust-extracted"
             mountPath: "/etc/pki/ca-trust/extracted"
@@ -106,8 +120,9 @@ spec:
             readOnly: true
 {% endif %}
         ports:
-        - containerPort: 8080
+        - containerPort: 8321
           protocol: TCP
+{# - Need to get ansible-chatbot-stack to run as non-root
         securityContext:
           runAsNonRoot: true
           allowPrivilegeEscalation: false
@@ -116,28 +131,151 @@ spec:
               - "ALL"
           seccompProfile:
             type: RuntimeDefault
+#}
 {% if combined_chatbot_api.resource_requirements is defined %}
         resources: {{ combined_chatbot_api.resource_requirements }}
 {% endif %}
+{% if _aap_gateway_url is defined and _aap_gateway_token is defined %}
+      - name: ansible-mcp-gateway
+        image: {{ _chatbot_mcp_gateway_image }}
+        imagePullPolicy: '{{ image_pull_policy }}'
+        env:
+          - name: HOST
+            value: 0.0.0.0
+          - name: PORT
+            value: '8003'
+          - name: AAP_GATEWAY_URL
+            value: {{ _aap_gateway_url }}
+          - name: AAP_GATEWAY_TOKEN
+            value: {{ _aap_gateway_token }}
+        ports:
+          - containerPort: 8003
+            protocol: TCP
+        securityContext:
+          runAsNonRoot: true
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - "ALL"
+          seccompProfile:
+            type: RuntimeDefault
+{% if is_openshift or bundle_ca_crt %}
+        volumeMounts:
+{% if is_openshift %}
+          - name: server-tls-certs
+            mountPath: /var/run/secrets/kubernetes.io/serviceaccount/
+{% endif %}
+{% if bundle_ca_crt %}
+          - name: "ca-trust-extracted"
+            mountPath: "/etc/pki/ca-trust/extracted"
+          - name: "{{ ansible_operator_meta.name }}-bundle-cacert"
+            mountPath: /etc/pki/ca-trust/source/anchors/bundle-ca.crt
+            subPath: bundle-ca.crt
+            readOnly: true
+{% endif %}
+{% endif %}
+{% endif %}
+{% if _aap_gateway_url is defined and _aap_controller_url is defined %}
+      - name: ansible-mcp-controller
+        image: {{ _chatbot_mcp_controller_image }}
+        imagePullPolicy: '{{ image_pull_policy }}'
+        env:
+          - name: HOST
+            value: 0.0.0.0
+          - name: PORT
+            value: '8004'
+          - name: AAP_GATEWAY_URL
+            value: {{ _aap_gateway_url }}
+          - name: AAP_SERVICE_URL
+            value: {{ _aap_controller_url }}
+{% if _aap_gateway_token is defined %}
+          - name: AAP_GATEWAY_TOKEN
+            value: {{ _aap_gateway_token }}
+{% endif %}
+        ports:
+          - containerPort: 8004
+            protocol: TCP
+        securityContext:
+          runAsNonRoot: true
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - "ALL"
+          seccompProfile:
+            type: RuntimeDefault
+{% if is_openshift or bundle_ca_crt %}
+        volumeMounts:
+{% if is_openshift %}
+          - name: server-tls-certs
+            mountPath: /var/run/secrets/kubernetes.io/serviceaccount/
+{% endif %}
+{% if bundle_ca_crt %}
+          - name: "ca-trust-extracted"
+            mountPath: "/etc/pki/ca-trust/extracted"
+          - name: "{{ ansible_operator_meta.name }}-bundle-cacert"
+            mountPath: /etc/pki/ca-trust/source/anchors/bundle-ca.crt
+            subPath: bundle-ca.crt
+            readOnly: true
+{% endif %}
+{% endif %}
+{% endif %}
+{% if _aap_gateway_url is defined %}
+      - name: ansible-mcp-lightspeed
+        image: {{ _chatbot_mcp_lightspeed_image }}
+        imagePullPolicy: '{{ image_pull_policy }}'
+        env:
+          - name: HOST
+            value: 0.0.0.0
+          - name: PORT
+            value: '8005'
+          - name: AAP_GATEWAY_URL
+            value: {{ _aap_gateway_url }}
+          - name: AAP_SERVICE_URL
+            value: {{ _aap_lightspeed_url }}
+{% if _aap_gateway_token is defined %}
+          - name: AAP_GATEWAY_TOKEN
+            value: {{ _aap_gateway_token }}
+{% endif %}
+        ports:
+          - containerPort: 8005
+            protocol: TCP
+        securityContext:
+          runAsNonRoot: true
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - "ALL"
+          seccompProfile:
+            type: RuntimeDefault
+{% if is_openshift or bundle_ca_crt %}
+        volumeMounts:
+{% if is_openshift %}
+          - name: server-tls-certs
+            mountPath: /var/run/secrets/kubernetes.io/serviceaccount/
+{% endif %}
+{% if bundle_ca_crt %}
+          - name: "ca-trust-extracted"
+            mountPath: "/etc/pki/ca-trust/extracted"
+          - name: "{{ ansible_operator_meta.name }}-bundle-cacert"
+            mountPath: /etc/pki/ca-trust/source/anchors/bundle-ca.crt
+            subPath: bundle-ca.crt
+            readOnly: true
+{% endif %}
+{% endif %}
+{% endif %}
       restartPolicy: Always
       volumes:
-        - name: aap-chatbot-config
-          configMap:
-            name: '{{ ansible_operator_meta.name }}-{{ deployment_type }}-chatbot-env-properties'
+        - name: ansible-chatbot-storage
+          persistentVolumeClaim:
+            claimName: "{{ ansible_operator_meta.name }}-chatbot-pvc"
 {% if is_openshift %}
-        - name: model-server-tls-certs
+        - name: server-tls-certs
           configMap:
             items:
               - key: service-ca.crt
                 path: service-ca.crt
             name: openshift-service-ca.crt
 {% endif %}
-        - name: chatbot-token
-          secret:
-            secretName: {{ chatbot_config_secret_name }}
-            items:
-              - key: chatbot_token
-                path: chatbot-token.txt
 {% if bundle_ca_crt %}
         - name: "ca-trust-extracted"
           emptyDir: {}

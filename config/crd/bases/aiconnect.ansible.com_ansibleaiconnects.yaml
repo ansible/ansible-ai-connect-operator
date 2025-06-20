@@ -61,6 +61,30 @@ spec:
               chatbot_image_version:
                 description: Chatbot API container image tag or version to use
                 type: string
+              chatbot_rag_db_image:
+                description: Registry path to Chatbot RAG database container image to use
+                type: string
+              chatbot_rag_db_image_version:
+                description: Chatbot RAG database container image tag or version to use
+                type: string
+              chatbot_mcp_gateway_image:
+                description: Registry path to AAP Gateway MCP server container image to use
+                type: string
+              chatbot_mcp_gateway_image_version:
+                description: AAP Gateway MCP server container image tag or version to use
+                type: string
+              chatbot_mcp_controller_image:
+                description: Registry path to AAP Controller MCP server container image to use
+                type: string
+              chatbot_mcp_controller_image_version:
+                description: AAP Controller MCP server container image tag or version to use
+                type: string
+              chatbot_mcp_lightspeed_image:
+                description: Registry path to AAP Lightspeed MCP server container image to use
+                type: string
+              chatbot_mcp_lightspeed_image_version:
+                description: AAP Lightspeed MCP server container image tag or version to use
+                type: string
               additional_labels:
                 description: Additional labels defined on the resource, which should be propagated to child resources
                 type: array

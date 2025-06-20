@@ -80,17 +80,15 @@
 
 # ============================================
 # Retrieve and update Chatbot status
+# --------------------------------------------
+# There is no mechanism to handle the chatbot version
+# See https://issues.redhat.com/browse/AAP-48026
 # ============================================
 - block:
-    - name: Retrieve Chatbot instance version
-      kubernetes.core.k8s_exec:
-        namespace: "{{ ansible_operator_meta.namespace }}"
-        pod: "{{ chatbot_api_pod_name }}"
-        container: "ansible-chatbot"
-        command: >-
-          bash -c "python3.11 runner.py --version"
-      register: chatbot_instance_version
-      changed_when: false
+    - name: Set Chatbot instance version
+      ansible.builtin.set_fact:
+        chatbot_instance_version: '0.0.1'
+      no_log: "{{ no_log }}"
 
     - name: Update Chatbot version status
       operator_sdk.util.k8s_status:
@@ -100,7 +98,7 @@
         namespace: "{{ ansible_operator_meta.namespace }}"
         status:
           chatbotImage: "{{ _chatbot_image }}"
-          chatbotVersion: "{{ chatbot_instance_version.stdout | trim }}"
+          chatbotVersion: "{{ chatbot_instance_version }}"
           chatbotConfigurationSecret: "{{ chatbot_config_secret_name }}"
   when:
     - chatbot_api_pod_name is defined
