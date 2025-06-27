@@ -1,16 +1,11 @@
 ---
-- name: Apply Chatbot ConfigMap resources
-  kubernetes.core.k8s:
-    apply: yes
-    definition: "{{ lookup('template', 'chatbot.configmap.yaml.j2') }}"
-    wait: yes
-
 - name: Apply Chatbot deployment resources
   kubernetes.core.k8s:
     apply: yes
     definition: "{{ lookup('template', item + '.yaml.j2') }}"
     wait: no
   loop:
+    - 'chatbot.pvc'
     - 'chatbot.service'
     - 'chatbot.deployment'
 
@@ -30,7 +25,7 @@
     - "chatbot_api_pod['resources'] | length"
     - "chatbot_api_pod['resources'][0]['status']['phase'] == 'Running'"
     - "chatbot_api_pod['resources'][0]['status']['containerStatuses'][0]['ready'] == true"
-  retries: 60
+  retries: 30
   delay: 5
 
 - name: Set the Chatbot API Pod name as a variable.
