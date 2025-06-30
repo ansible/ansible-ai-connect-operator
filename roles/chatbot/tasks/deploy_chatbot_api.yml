@@ -7,6 +7,7 @@
   loop:
     - 'chatbot.pvc'
     - 'chatbot.service'
+    - 'chatbot.configmap'
     - 'chatbot.deployment'
 
 - name: Check for Chatbot Pod
