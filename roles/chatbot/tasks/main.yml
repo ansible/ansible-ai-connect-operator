@@ -17,9 +17,6 @@
   - name: Deploy AnsibleAIConnect's Chatbot service
     ansible.builtin.include_tasks: deploy_chatbot_api.yml
 
-  - name: Register MCP servers
-    ansible.builtin.include_tasks: register_mcp_servers.yml
-
   when:
     - chatbot_config_secret_name is defined
     - chatbot_config_secret_name | length

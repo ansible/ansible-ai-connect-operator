@@ -1055,10 +1055,22 @@ spec:
                 description: The version of the image used for the deployed instance
                 type: string
               chatbotImage:
-                description: URL of the chatbot image used for the deployed instance
+                description: URL of the Chatbot image used for the deployed instance
                 type: string
               chatbotVersion:
                 description: The version of the Chatbot image used for the deployed instance
+                type: string
+              chatbotRAGDatabaseImage:
+                description: URL of the Chatbot RAG database image used for the deployed instance
+                type: string
+              chatbotMCPGatewayImage:
+                description: URL of the Chatbot MCP Gateway Server image used for the deployed instance
+                type: string
+              chatbotMCPControllerImage:
+                description: URL of the Chatbot MCP Controller Server image used for the deployed instance
+                type: string
+              chatbotMCPLightspeedImage:
+                description: URL of the Chatbot MCP Lightspeed Server image used for the deployed instance
                 type: string
               URL:
                 description: URL to access the deployed instance
