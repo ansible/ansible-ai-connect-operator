@@ -1,12 +1,4 @@
 ---
-- name: Remove Chatbot ConfigMap resources
-  kubernetes.core.k8s:
-    state: absent
-    kind: ConfigMap
-    name: '{{ ansible_operator_meta.name }}-{{ deployment_type }}-chatbot-env-properties'
-    namespace: '{{ ansible_operator_meta.namespace }}'
-    wait: yes
-
 - name: Remove Chatbot Service resources
   kubernetes.core.k8s:
     state: absent

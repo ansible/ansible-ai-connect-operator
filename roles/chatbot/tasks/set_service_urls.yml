@@ -1,0 +1,12 @@
+---
+- name: Set AnsibleAIConnect and AnsibleAIConnect's Chatbot service URLs (Openshift)
+  ansible.builtin.set_fact:
+    _aap_lightspeed_url: 'http://{{ ansible_operator_meta.name }}-api.{{ ansible_operator_meta.namespace }}.svc.cluster.local:8000'
+    _chatbot_stack_url: 'http://{{ ansible_operator_meta.name }}-chatbot-api.{{ ansible_operator_meta.namespace }}.svc.cluster.local:8321'
+  when: is_openshift
+
+- name: Set AnsibleAIConnect and AnsibleAIConnect's Chatbot service URLs (non-Openshift)
+  ansible.builtin.set_fact:
+    _aap_lightspeed_url: 'http://{{ ansible_operator_meta.name }}-api.{{ ansible_operator_meta.namespace }}:8000'
+    _chatbot_stack_url: 'http://{{ ansible_operator_meta.name }}-chatbot-api.{{ ansible_operator_meta.namespace }}:8321'
+  when: not is_openshift
