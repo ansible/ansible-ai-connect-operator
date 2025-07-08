@@ -18,4 +18,6 @@ Jira Issue: <https://issues.redhat.com/browse/AAP-NNNN>
 ## Production deployment
 <!-- Check the appropriate box. Document any pre-reqs, co-reqs, secrets, configmaps, etc that need to be considered or prepared ahead of a deployment to production. Include links to any related PRs, e.g. in ansible-wisdom-ops. -->
 - [ ] This code change is ready for production on its own
+- [ ] This PR should be released in 2.4 (cherry-pick should be created)
+- [ ] This PR should be released in 2.5 (cherry-pick should be created)
 - [ ] This code change requires the following considerations before going to production:
