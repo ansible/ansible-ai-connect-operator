@@ -15,9 +15,6 @@
       dbFieldsEncryptionSecret: "{{ __db_fields_encryption_secret_name }}"
       image: "{{ _image }}"
       version: ""
-      chatbotImage: ""
-      chatbotVersion: ""
-      chatbotConfigurationSecret: ""
 
 # ============================================
 # Retrieve and update AnsibleAIConnect status
@@ -88,9 +85,10 @@
         pod: "{{ chatbot_api_pod_name }}"
         container: "ansible-chatbot"
         command: >-
-          bash -c "python3.11 runner.py --version"
+          bash -c "cat /.llama/distributions/ansible-chatbot/ansible-chatbot-version-info.json | jq -r .version"
       register: chatbot_instance_version
       changed_when: false
+      no_log: "{{ no_log }}"
 
     - name: Update Chatbot version status
       operator_sdk.util.k8s_status:
@@ -102,6 +100,56 @@
           chatbotImage: "{{ _chatbot_image }}"
           chatbotVersion: "{{ chatbot_instance_version.stdout | trim }}"
           chatbotConfigurationSecret: "{{ chatbot_config_secret_name }}"
+
+    - name: Update Chatbot RAG database image status
+      operator_sdk.util.k8s_status:
+        api_version: '{{ api_version }}'
+        kind: "{{ kind }}"
+        name: "{{ ansible_operator_meta.name }}"
+        namespace: "{{ ansible_operator_meta.namespace }}"
+        status:
+          chatbotRAGDatabaseImage: "{{ _chatbot_rag_db_image }}"
+
+    - name: Update MCP Gateway Server image status
+      operator_sdk.util.k8s_status:
+        api_version: '{{ api_version }}'
+        kind: "{{ kind }}"
+        name: "{{ ansible_operator_meta.name }}"
+        namespace: "{{ ansible_operator_meta.namespace }}"
+        status:
+          chatbotMCPGatewayImage: "{{ _chatbot_mcp_gateway_image }}"
+      when:
+        - _aap_gateway_url is defined
+        - _aap_gateway_url | length
+        - _aap_gateway_token is defined
+        - _aap_gateway_token | length
+
+    - name: Update MCP Controller Server image status
+      operator_sdk.util.k8s_status:
+        api_version: '{{ api_version }}'
+        kind: "{{ kind }}"
+        name: "{{ ansible_operator_meta.name }}"
+        namespace: "{{ ansible_operator_meta.namespace }}"
+        status:
+          chatbotMCPControllerImage: "{{ _chatbot_mcp_controller_image }}"
+      when:
+        - _aap_gateway_url is defined
+        - _aap_gateway_url | length
+        - _aap_controller_url is defined
+        - _aap_controller_url | length
+
+    - name: Update MCP Lightspeed Server image status
+      operator_sdk.util.k8s_status:
+        api_version: '{{ api_version }}'
+        kind: "{{ kind }}"
+        name: "{{ ansible_operator_meta.name }}"
+        namespace: "{{ ansible_operator_meta.namespace }}"
+        status:
+          chatbotMCPLightspeedImage: "{{ _chatbot_mcp_lightspeed_image }}"
+      when:
+        - _aap_gateway_url is defined
+        - _aap_gateway_url | length
+
   when:
     - chatbot_api_pod_name is defined
     - chatbot_api_pod_name | length

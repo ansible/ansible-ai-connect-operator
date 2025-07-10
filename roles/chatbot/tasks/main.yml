@@ -8,6 +8,9 @@
   - name: Set AnsibleAIConnect's Chatbot service images
     ansible.builtin.include_tasks: set_images.yml
 
+  - name: Set AnsibleAIConnect and AnsibleAIConnect's Chatbot service URLs
+    ansible.builtin.include_tasks: set_service_urls.yml
+
   - name: Read AnsibleAIConnect's Chatbot secret
     ansible.builtin.include_tasks: read_chatbot_configuration_secret.yml
 
