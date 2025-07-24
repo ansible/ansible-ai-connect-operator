@@ -53,6 +53,38 @@ spec:
         path: chatbot_image_version
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:advanced
+      - displayName: Chatbot RAG database container image
+        path: chatbot_rag_db_image
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:advanced
+      - displayName: Chatbot RAG database container image Version
+        path: chatbot_rag_db_image_version
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:advanced
+      - displayName: AAP Gateway MCP server container image
+        path: chatbot_mcp_gateway_image
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:advanced
+      - displayName: AAP Gateway MCP server container image Version
+        path: chatbot_mcp_gateway_image_version
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:advanced
+      - displayName: AAP Controller MCP server container image
+        path: chatbot_mcp_controller_image
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:advanced
+      - displayName: AAP Controller MCP server container image Version
+        path: chatbot_mcp_controller_image_version
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:advanced
+      - displayName: AAP Lightspeed MCP server container image
+        path: chatbot_mcp_lightspeed_image
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:advanced
+      - displayName: AAP Lightspeed MCP server container image Version
+        path: chatbot_mcp_lightspeed_image_version
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:advanced
       - displayName: Additional labels defined on the resource, which should be propagated
           to child resources
         path: additional_labels
