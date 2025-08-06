@@ -95,9 +95,6 @@ spec:
       - name: model-api
         image: {{ _image }}
         imagePullPolicy: "{{ image_pull_policy }}"
-        envFrom:
-          - configMapRef:
-              name: "{{ ansible_operator_meta.name }}-{{ deployment_type }}-env-properties"
         env:
 {% if auth_config is defined %}
         - name: AAP_API_URL
@@ -167,8 +164,11 @@ spec:
               key: config
 {% if chatbot_config is defined %}
         - name: CHATBOT_DEFAULT_PROVIDER
-          value: "default_provider"
+          value: "rhoai"
 {% endif %}
+        envFrom:
+          - configMapRef:
+              name: "{{ ansible_operator_meta.name }}-{{ deployment_type }}-env-properties"
         ports:
         - containerPort: 8000
           protocol: TCP
