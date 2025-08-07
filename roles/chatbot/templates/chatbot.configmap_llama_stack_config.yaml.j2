@@ -112,13 +112,13 @@ data:
       - toolgroup_id: mcp::aap-controller
         provider_id: model-context-protocol
         mcp_endpoint:
-          uri: http://localhost:8004/sse
+          uri: http://127.0.0.1:8004/sse
 {% endif %}
 {% if _aap_gateway_url is defined %}
       - toolgroup_id: mcp::aap-lightspeed
         provider_id: model-context-protocol
         mcp_endpoint:
-          uri: http://localhost:8005/sse
+          uri: http://127.0.0.1:8005/sse
 {% endif %}
     logging: null
     server:
