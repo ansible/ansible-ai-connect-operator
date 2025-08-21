@@ -7,16 +7,17 @@ metadata:
   labels:
     {{ lookup("template", "../common/templates/labels/common.yaml.j2")  | indent(width=4) | trim }}
     app.kubernetes.io/component: '{{ deployment_type }}-chatbot-api'
-{% if service_annotations %}
   annotations:
+    service.beta.openshift.io/serving-cert-secret-name: '{{ ansible_operator_meta.name }}-chatbot-api-tls'
+{% if service_annotations %}
     {{ service_annotations | indent(width=4) }}
 {% endif %}
 spec:
   ports:
-  - port: 8080
+  - port: 8443
     protocol: TCP
-    targetPort: 8080
-    name: http
+    targetPort: 8321
+    name: https-api
   clusterIP: None
   selector:
     {{ lookup("template", "../common/templates/labels/common.yaml.j2")  | indent(width=4) | trim }}

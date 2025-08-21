@@ -106,7 +106,7 @@ spec:
           - name: INFERENCE_MODEL
             value: {{ chatbot_model }}
         ports:
-          - containerPort: 8080
+          - containerPort: 8443
             protocol: TCP
         volumeMounts:
           - name: ansible-chatbot-storage
@@ -117,6 +117,12 @@ spec:
             mountPath: /.llama/distributions/llama-stack/config
           - name: ansible-chatbot-system-prompt
             mountPath: /.llama/distributions/ansible-chatbot/system-prompts
+          - name: lm-stack-tls-certs
+            mountPath: /app-root/certs/
+            readOnly: true
+          - name: service-ca-bundle
+            mountPath: /var/run/secrets/kubernetes.io/serviceaccount/
+            readOnly: true
 {% if is_openshift %}
           - name: server-tls-certs
             mountPath: /var/run/secrets/kubernetes.io/serviceaccount/
@@ -245,6 +251,22 @@ spec:
             items:
               - key: DEFAULT_SYSTEM_PROMPT
                 path: default.txt
+        - name: lm-stack-tls-certs
+          secret:
+            secretName: '{{ ansible_operator_meta.name }}-chatbot-api-tls'
+            defaultMode: 0644
+            items:
+              - key: tls.crt
+                path: tls.crt
+              - key: tls.key
+                path: tls.key
+        - name: service-ca-bundle
+          configMap:
+            name: openshift-service-ca.crt
+            defaultMode: 0644
+            items:
+              - key: service-ca.crt
+                path: service-ca.crt
 {% if is_openshift %}
         - name: server-tls-certs
           configMap:
