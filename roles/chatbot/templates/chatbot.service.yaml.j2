@@ -18,7 +18,7 @@ spec:
     protocol: TCP
     targetPort: 8321
     name: https-api
-  clusterIP: None
+  type: ClusterIP
   selector:
     {{ lookup("template", "../common/templates/labels/common.yaml.j2")  | indent(width=4) | trim }}
     app.kubernetes.io/component: '{{ deployment_type }}-chatbot-api'

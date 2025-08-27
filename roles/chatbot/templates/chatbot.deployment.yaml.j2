@@ -120,9 +120,6 @@ spec:
           - name: lm-stack-tls-certs
             mountPath: /app-root/certs/
             readOnly: true
-          - name: service-ca-bundle
-            mountPath: /var/run/secrets/kubernetes.io/serviceaccount/
-            readOnly: true
 {% if is_openshift %}
           - name: server-tls-certs
             mountPath: /var/run/secrets/kubernetes.io/serviceaccount/
@@ -260,13 +257,7 @@ spec:
                 path: tls.crt
               - key: tls.key
                 path: tls.key
-        - name: service-ca-bundle
-          configMap:
-            name: openshift-service-ca.crt
-            defaultMode: 0644
-            items:
-              - key: service-ca.crt
-                path: service-ca.crt
+
 {% if is_openshift %}
         - name: server-tls-certs
           configMap:
