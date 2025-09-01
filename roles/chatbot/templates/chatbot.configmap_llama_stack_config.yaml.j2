@@ -59,6 +59,8 @@ data:
             tools_filter:
               enabled: true
               model_id: ${env.INFERENCE_MODEL_FILTER:=}
+              always_include_tools:
+              - knowledge_search
       datasetio:
         - provider_id: localfs
           provider_type: inline::localfs
