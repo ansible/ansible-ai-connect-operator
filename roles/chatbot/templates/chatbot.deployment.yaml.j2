@@ -106,7 +106,7 @@ spec:
           - name: INFERENCE_MODEL
             value: {{ chatbot_model }}
         ports:
-          - containerPort: 8443
+          - containerPort: 8321
             protocol: TCP
         volumeMounts:
           - name: ansible-chatbot-storage

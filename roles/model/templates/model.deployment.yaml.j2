@@ -96,6 +96,13 @@ spec:
         image: {{ _image }}
         imagePullPolicy: "{{ image_pull_policy }}"
         env:
+{% if is_openshift %}
+        # SSL context approach: Help ssl.create_default_context() find service-ca
+        - name: REQUESTS_CA_BUNDLE
+          value: "/var/run/secrets/kubernetes.io/serviceaccount/service-ca.crt"
+        - name: SSL_CERT_FILE
+          value: "/var/run/secrets/kubernetes.io/serviceaccount/service-ca.crt"
+{% endif %}
 {% if auth_config is defined %}
         - name: AAP_API_URL
           valueFrom:
@@ -214,6 +221,10 @@ spec:
             - name: mnt
               mountPath: /etc/wisdom/uwsgi.ini
               subPath: uwsgi_ini
+{% if is_openshift %}
+            - name: server-tls-certs
+              mountPath: /var/run/secrets/kubernetes.io/serviceaccount/
+{% endif %}
         securityContext:
           runAsNonRoot: true
           allowPrivilegeEscalation: false
@@ -234,6 +245,11 @@ spec:
             subPath: bundle-ca.crt
             readOnly: true
 {% endif %}
+{% if is_openshift %}
+        volumeMounts:
+          - name: server-tls-certs
+            mountPath: /var/run/secrets/kubernetes.io/serviceaccount/
+{% endif %}
       restartPolicy: Always
       volumes:
         - name: mnt
@@ -248,4 +264,12 @@ spec:
             items:
               - key: bundle-ca.crt
                 path: 'bundle-ca.crt'
+{% endif %}
+{% if is_openshift %}
+        - name: server-tls-certs
+          configMap:
+            items:
+              - key: service-ca.crt
+                path: service-ca.crt
+            name: openshift-service-ca.crt
 {% endif %}
