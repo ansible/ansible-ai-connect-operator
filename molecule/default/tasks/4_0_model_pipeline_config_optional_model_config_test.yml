@@ -34,4 +34,8 @@
         that:
           - service_host_response.status == 200
           - service_host_response.json.status == 'good'
+<<<<<<< HEAD
         fail_msg: /check endpoint did not return expected response. Expected HTTP200, OK.
+=======
+        fail_msg: /check endpoint did not return expected response. Expected HTTP200, GOOD.
+>>>>>>> b553347 (fix review)
