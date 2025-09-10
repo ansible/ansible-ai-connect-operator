@@ -28,8 +28,8 @@
     - name: Assert original model_id response
       ansible.builtin.assert:
         that:
-          - service_host_response.status == 200
-          - service_host_response.json.status == 'good'
+        - service_host_response.status == 200
+        - service_host_response.json.status == 'ok'
           - service_host_response.json.model_id== 'my-ai-model_id'
         fail_msg: /check/status did not return expected model_id. Expected 'my-ai-model_id'.
 
@@ -48,7 +48,7 @@
       ansible.builtin.assert:
         that:
         - updated_service_host_response.status == 200
-        - updated_service_host_response.json.status == 'good'
+        - updated_service_host_response.json.status == 'ok'
         - updated_service_host_response.json.model_id == 'updated__my-ai-model_id'
         - not updated_service_host_response.json.model_verify_ssl|bool
         - not updated_service_host_response.json.model_enable_anonymization|bool
