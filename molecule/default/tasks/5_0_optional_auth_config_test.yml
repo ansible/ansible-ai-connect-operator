@@ -33,5 +33,5 @@
       ansible.builtin.assert:
         that:
           - service_host_response.status == 200
-          - service_host_response.json.status == 'ok'
+          - service_host_response.json.status == 'good'
         fail_msg: /check endpoint did not return expected response. Expected HTTP200, OK.
