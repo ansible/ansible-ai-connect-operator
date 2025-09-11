@@ -78,13 +78,16 @@ spec:
           - /bin/sh
           - -c
           - |
+            echo "SSL Manager: Creating combined CA bundle"
             mkdir -p /etc/ssl/combined-ca/
             mkdir -p /etc/pki/ca-trust/extracted/{java,pem,openssl,edk2}
 
-            echo "SSL Manager: Extracting system CA trust files"
+            # First extract the CA trust files so the system CAs are available
+            echo "SSL Manager: Extracting system CA trust files..."
             update-ca-trust extract --output /etc/pki/ca-trust/extracted
 
-            echo "SSL Manager: Adding system CAs from certifi"
+            # Now use the extracted system CAs from certifi/ca-trust
+            echo "SSL Manager: Adding system CAs from certifi..."
             python3 -c "import certifi; print(certifi.where())" | xargs cat > /etc/ssl/combined-ca/ca-bundle.crt
 {% if is_openshift %}
             # Add OpenShift service CA
@@ -95,6 +98,7 @@ spec:
             fi
 {% endif %}
 {% if bundle_ca_crt %}
+            # Add customer CA bundle
             if [ -f /etc/pki/ca-trust/source/anchors/bundle-ca.crt ]; then
               echo "# Customer CA Bundle" >> /etc/ssl/combined-ca/ca-bundle.crt
               cat /etc/pki/ca-trust/source/anchors/bundle-ca.crt >> /etc/ssl/combined-ca/ca-bundle.crt
@@ -115,21 +119,31 @@ spec:
             mountPath: /var/run/secrets/kubernetes.io/serviceaccount/
             readOnly: true
 {% endif %}
+{% if bundle_ca_crt or is_openshift %}
+          - name: combined-ca-bundle
+            mountPath: /etc/ssl/combined-ca/
+          - name: "ca-trust-extracted"
+            mountPath: "/etc/pki/ca-trust/extracted"
+{% endif %}
 {% if bundle_ca_crt %}
           - name: "{{ ansible_operator_meta.name }}-bundle-cacert"
             mountPath: /etc/pki/ca-trust/source/anchors/bundle-ca.crt
             subPath: bundle-ca.crt
             readOnly: true
-          - name: combined-ca-bundle
-            mountPath: /etc/ssl/combined-ca/
-          - name: ca-trust-extracted
-            mountPath: /etc/pki/ca-trust/extracted
+{% endif %}
 {% endif %}
       containers:
       - name: model-api
         image: {{ _image }}
         imagePullPolicy: "{{ image_pull_policy }}"
         env:
+{% if is_openshift %}
+        # SSL context approach: Help ssl.create_default_context() find service-ca
+        - name: REQUESTS_CA_BUNDLE
+          value: "/var/run/secrets/kubernetes.io/serviceaccount/service-ca.crt"
+        - name: SSL_CERT_FILE
+          value: "/var/run/secrets/kubernetes.io/serviceaccount/service-ca.crt"
+{% endif %}
 {% if auth_config is defined %}
         - name: AAP_API_URL
           valueFrom:
@@ -264,10 +278,10 @@ spec:
             - name: combined-ca-bundle
               mountPath: /etc/ssl/combined-ca/
               readOnly: true
-{% endif %}
-{% if bundle_ca_crt %}
             - name: "ca-trust-extracted"
               mountPath: "/etc/pki/ca-trust/extracted"
+{% endif %}
+{% if bundle_ca_crt %}
             - name: "{{ ansible_operator_meta.name }}-bundle-cacert"
               mountPath: /etc/pki/ca-trust/source/anchors/bundle-ca.crt
               subPath: bundle-ca.crt
@@ -297,9 +311,11 @@ spec:
         - name: combined-ca-bundle
           emptyDir: {}
 {% endif %}
-{% if bundle_ca_crt %}
+{% if bundle_ca_crt or is_openshift %}
         - name: "ca-trust-extracted"
           emptyDir: {}
+{% endif %}
+{% if bundle_ca_crt %}
         - name: "{{ ansible_operator_meta.name }}-bundle-cacert"
           secret:
             secretName: "{{ bundle_cacert_secret }}"
