@@ -79,10 +79,12 @@ spec:
       requests:
         storage: 8Gi
     postgres_storage_class: fast-ssd
-    postgres_extra_args:
-      - '-c'
-      - 'max_connections=1000'
+    postgres_extra_settings:
+      - setting: max_connections
+        value: 1000
 ```
+
+> **Note**: The `postgres_extra_args` parameter is deprecated. Use `postgres_extra_settings` instead to configure PostgreSQL parameters through the postgresql.conf file.
 
 **Note**: If `database.postgres_storage_class` is not defined, PostgreSQL will store it's data on a volume using the default storage class for your cluster.
 
