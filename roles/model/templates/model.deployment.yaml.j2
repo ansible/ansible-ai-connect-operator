@@ -137,13 +137,6 @@ spec:
         image: {{ _image }}
         imagePullPolicy: "{{ image_pull_policy }}"
         env:
-{% if is_openshift %}
-        # SSL context approach: Help ssl.create_default_context() find service-ca
-        - name: REQUESTS_CA_BUNDLE
-          value: "/var/run/secrets/kubernetes.io/serviceaccount/service-ca.crt"
-        - name: SSL_CERT_FILE
-          value: "/var/run/secrets/kubernetes.io/serviceaccount/service-ca.crt"
-{% endif %}
 {% if auth_config is defined %}
         - name: AAP_API_URL
           valueFrom:
