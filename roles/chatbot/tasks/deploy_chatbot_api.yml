@@ -4,13 +4,18 @@
     apply: yes
     definition: "{{ lookup('template', item + '.yaml.j2') }}"
     wait: no
-  loop:
-    - 'chatbot.pvc'
-    - 'chatbot.service'
-    - 'chatbot.configmap_lightspeed_stack_config'
-    - 'chatbot.configmap_llama_stack_config'
-    - 'chatbot.configmap_system_prompt'
-    - 'chatbot.deployment'
+  loop: >-
+    {{
+      [
+        'chatbot.pvc',
+        'chatbot.service',
+        'chatbot.configmap_lightspeed_stack_config',
+        'chatbot.configmap_llama_stack_config',
+        'chatbot.configmap_system_prompt'
+      ] +
+      (['chatbot.configmap_nginx_redirect'] if enable_http_backward_compatibility | default(false) else []) +
+      ['chatbot.deployment']
+    }}
 
 - name: Check for Chatbot Pod
   kubernetes.core.k8s_info:

@@ -24,6 +24,12 @@ spec:
     protocol: TCP
     targetPort: 8321
     name: https-api
+{% if enable_http_backward_compatibility | default(false) %}
+  - port: 8080
+    protocol: TCP
+    targetPort: 8080
+    name: http-api
+{% endif %}
 {% else %}
   - port: 8080
     protocol: TCP

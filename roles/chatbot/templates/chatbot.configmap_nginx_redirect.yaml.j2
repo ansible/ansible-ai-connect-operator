@@ -1,0 +1,129 @@
+{% if is_openshift and enable_http_backward_compatibility | default(false) %}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: '{{ ansible_operator_meta.name }}-nginx-redirect-config'
+  namespace: '{{ ansible_operator_meta.namespace }}'
+  labels:
+    {{ lookup("template", "../common/templates/labels/common.yaml.j2") | indent(width=4) | trim }}
+    app.kubernetes.io/component: '{{ deployment_type }}-chatbot-api'
+data:
+  nginx.conf: |
+    # Nginx configuration for OpenShift SCC compliance - Optimized for redirect sidecar
+    user nobody;
+    worker_processes 1;              # Single process sufficient for redirect
+    pid /tmp/nginx.pid;
+    error_log /tmp/error.log warn;   # Less verbose logging
+
+    events {
+        worker_connections 64;        # Optimized for lightweight redirect
+        multi_accept on;             # Efficient connection handling
+        use epoll;                   # Linux-optimized event model
+    }
+
+    http {
+        # All temp paths must be in /tmp for OpenShift SCC compliance
+        client_body_temp_path /tmp/nginx-client;
+        proxy_temp_path /tmp/nginx-proxy;
+        fastcgi_temp_path /tmp/nginx-fastcgi;
+        uwsgi_temp_path /tmp/nginx-uwsgi;
+        scgi_temp_path /tmp/nginx-scgi;
+
+        # Performance optimizations for redirect sidecar
+        sendfile on;
+        tcp_nopush on;
+        tcp_nodelay on;
+        keepalive_timeout 5s;
+        keepalive_requests 10;
+        client_max_body_size 1k;
+        client_body_timeout 5s;
+        client_header_timeout 5s;
+        send_timeout 5s;
+
+        # Rate limiting zone for abuse prevention
+        limit_req_zone $binary_remote_addr zone=redirect_limit:1m rate=10r/s;
+
+        # Enterprise Security Hardening
+        server_tokens off;                    # Hide nginx version from headers
+        client_header_buffer_size 1k;        # Prevent buffer overflow attacks
+        large_client_header_buffers 2 1k;    # Limit header size for security
+
+        # Basic HTTP settings
+        include /etc/nginx/mime.types;
+        default_type application/octet-stream;
+
+        # Structured logging for better observability
+        log_format redirect_log '[$time_local] $remote_addr - $request_method $uri $status ($request_time)';
+        access_log /tmp/access.log redirect_log;
+
+        server {
+            listen 8080;
+
+            # Security: Restrict to expected service hostname only
+            server_name {{ ansible_operator_meta.name }}-chatbot-api.{{ ansible_operator_meta.namespace }}.svc.cluster.local;
+
+            # Drop connections for unexpected hostnames
+            if ($host != "{{ ansible_operator_meta.name }}-chatbot-api.{{ ansible_operator_meta.namespace }}.svc.cluster.local") {
+                return 444;  # Drop connection silently
+            }
+
+            # Apply rate limiting to all locations
+            limit_req zone=redirect_limit burst=5 nodelay;
+
+            # Enterprise Security Headers (Applied to all responses)
+            add_header X-Content-Type-Options nosniff always;
+            add_header X-Frame-Options DENY always;
+            add_header X-XSS-Protection "1; mode=block" always;
+            add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+
+            # HTTPS Security Headers for redirect responses
+            add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always;
+            add_header Content-Security-Policy "default-src 'none'; frame-ancestors 'none';" always;
+            add_header Cache-Control "no-store, no-cache, must-revalidate, proxy-revalidate" always;
+            add_header Pragma "no-cache" always;
+
+            # Nginx health check endpoint (for Kubernetes probes)
+            location = /nginx-health {
+                access_log off;
+                return 200 "healthy\n";
+                add_header Content-Type text/plain;
+                add_header Cache-Control "no-cache, no-store, must-revalidate";
+            }
+
+            # Application health check endpoint redirect
+            location /health {
+                add_header X-Forwarded-Proto $scheme;
+                return 301 https://{{ ansible_operator_meta.name }}-chatbot-api.{{ ansible_operator_meta.namespace }}.svc.cluster.local:8443$request_uri;
+            }
+
+            # Application readiness check endpoint redirect
+            location /readiness {
+                add_header X-Forwarded-Proto $scheme;
+                return 301 https://{{ ansible_operator_meta.name }}-chatbot-api.{{ ansible_operator_meta.namespace }}.svc.cluster.local:8443$request_uri;
+            }
+
+            # All other requests redirect to HTTPS with proper FQDN
+            location / {
+                add_header X-Forwarded-Proto $scheme;
+                return 301 https://{{ ansible_operator_meta.name }}-chatbot-api.{{ ansible_operator_meta.namespace }}.svc.cluster.local:8443$request_uri;
+            }
+
+            # Enhanced error handling
+            error_page 429 /rate_limit.html;
+            location = /rate_limit.html {
+                internal;
+                return 429 "Rate limit exceeded. Please try again later.\n";
+                add_header Content-Type text/plain;
+                add_header Retry-After 60;
+            }
+
+            error_page 500 502 503 504 /50x.html;
+            location = /50x.html {
+                internal;
+                return 500 "Service temporarily unavailable\n";
+                add_header Content-Type text/plain;
+            }
+        }
+    }
+{% endif %}
