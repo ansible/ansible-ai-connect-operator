@@ -65,23 +65,16 @@ data:
 
             # Drop connections for unexpected hostnames
             if ($host != "{{ ansible_operator_meta.name }}-chatbot-api.{{ ansible_operator_meta.namespace }}.svc.cluster.local") {
-                return 444;  # Drop connection silently
+                return 502;  # Drop connection silently
             }
 
             # Apply rate limiting to all locations
             limit_req zone=redirect_limit burst=5 nodelay;
 
-            # Enterprise Security Headers (Applied to all responses)
-            add_header X-Content-Type-Options nosniff always;
-            add_header X-Frame-Options DENY always;
-            add_header X-XSS-Protection "1; mode=block" always;
-            add_header Referrer-Policy "strict-origin-when-cross-origin" always;
-
-            # HTTPS Security Headers for redirect responses
+            # Keep only transport security headers
             add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always;
             add_header Content-Security-Policy "default-src 'none'; frame-ancestors 'none';" always;
             add_header Cache-Control "no-store, no-cache, must-revalidate, proxy-revalidate" always;
-            add_header Pragma "no-cache" always;
 
             # Nginx health check endpoint (for Kubernetes probes)
             location = /nginx-health {
@@ -107,22 +100,6 @@ data:
             location / {
                 add_header X-Forwarded-Proto $scheme;
                 return 301 https://{{ ansible_operator_meta.name }}-chatbot-api.{{ ansible_operator_meta.namespace }}.svc.cluster.local:8443$request_uri;
-            }
-
-            # Enhanced error handling
-            error_page 429 /rate_limit.html;
-            location = /rate_limit.html {
-                internal;
-                return 429 "Rate limit exceeded. Please try again later.\n";
-                add_header Content-Type text/plain;
-                add_header Retry-After 60;
-            }
-
-            error_page 500 502 503 504 /50x.html;
-            location = /50x.html {
-                internal;
-                return 500 "Service temporarily unavailable\n";
-                add_header Content-Type text/plain;
             }
         }
     }

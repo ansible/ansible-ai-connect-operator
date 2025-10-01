@@ -22,6 +22,6 @@ is_k8s: false
 is_openshift: false
 
 # HTTP backward compatibility control
-# When false: HTTPS-only mode for new deployments (recommended)
 # When true: Enable HTTP to HTTPS redirect sidecar for legacy support
-enable_http_backward_compatibility: false
+# When false: HTTPS-only mode for new deployments
+enable_http_backward_compatibility: true
