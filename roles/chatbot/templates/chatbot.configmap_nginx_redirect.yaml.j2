@@ -1,4 +1,4 @@
-{% if is_openshift and enable_http_backward_compatibility | default(false) %}
+{% if is_openshift and enable_http_backward_compatibility %}
 ---
 apiVersion: v1
 kind: ConfigMap

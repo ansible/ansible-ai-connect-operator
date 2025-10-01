@@ -232,7 +232,7 @@ spec:
 {% endif %}
 {% endif %}
 {% endif %}
-{% if is_openshift and enable_http_backward_compatibility | default(false) %}
+{% if is_openshift and enable_http_backward_compatibility %}
       - name: http-redirect
         image:  nginx:1.29.1-alpine-slim
         imagePullPolicy: '{{ image_pull_policy }}'
@@ -298,7 +298,7 @@ spec:
                 path: tls.crt
               - key: tls.key
                 path: tls.key
-{% if enable_http_backward_compatibility | default(false) %}
+{% if enable_http_backward_compatibility %}
         - name: nginx-redirect-config
           configMap:
             name: '{{ ansible_operator_meta.name }}-nginx-redirect-config'

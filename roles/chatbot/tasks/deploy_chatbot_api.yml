@@ -13,7 +13,7 @@
         'chatbot.configmap_llama_stack_config',
         'chatbot.configmap_system_prompt'
       ] +
-      (['chatbot.configmap_nginx_redirect'] if enable_http_backward_compatibility | default(false) else []) +
+      (['chatbot.configmap_nginx_redirect'] if enable_http_backward_compatibility else []) +
       ['chatbot.deployment']
     }}
 
