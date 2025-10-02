@@ -94,6 +94,11 @@ spec:
                 description: Configure no_log for no log tasks
                 type: boolean
                 default: true
+              enable_http_backward_compatibility:
+                description: "Enable HTTP to HTTPS redirect sidecar for backward compatibility. When false, only HTTPS
+                  endpoints are exposed. Recommended: false for new deployments, true for migration scenarios."
+                type: boolean
+                default: true
               auth_config_secret_name:
                 description: "Secret where the authentication configuration can be found"
                 type: string
@@ -108,7 +113,7 @@ spec:
                 properties:
                   database_secret:
                     description:
-                      "Secret where the database configuration can be found. Set this to use your own external PostgreSQL database. 
+                      "Secret where the database configuration can be found. Set this to use your own external PostgreSQL database.
                       If not specified, this secret will be generated and a managed pod will not be created"
                     type: string
                   resource_requirements:

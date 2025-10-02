@@ -13,11 +13,16 @@ data:
     name: Ansible Lightspeed Intelligent Assistant
     service:
       host: 0.0.0.0
-      port: 8080
+      port: 8321
       auth_enabled: false
       workers: 1
       color_log: true
       access_log: true
+{% if is_openshift %}
+      tls_config:
+        tls_certificate_path: /app-root/certs/tls.crt
+        tls_key_path: /app-root/certs/tls.key
+{% endif %}
     llama_stack:
       use_as_library_client: true
       library_client_config_path: /.llama/distributions/llama-stack/config/ansible-chatbot-run.yaml

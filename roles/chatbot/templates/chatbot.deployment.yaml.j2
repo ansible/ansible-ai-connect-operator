@@ -40,6 +40,11 @@ spec:
         checksum-secret-chatbot_config: "{{ lookup('ansible.builtin.vars', 'chatbot_config', default='')["resources"][0]["data"] | default('') | sha1 }}"
     spec:
       serviceAccountName: '{{ ansible_operator_meta.name }}'
+      # Pod-level security context (OpenShift SCC compatible)
+      securityContext:
+        runAsNonRoot: true              # Enforce non-root execution
+        seccompProfile:
+          type: RuntimeDefault          # Secure computing mode
 {% if image_pull_secrets | length > 0 %}
       imagePullSecrets:
 {% for secret in image_pull_secrets %}
@@ -106,7 +111,7 @@ spec:
           - name: INFERENCE_MODEL
             value: {{ chatbot_model }}
         ports:
-          - containerPort: 8080
+          - containerPort: 8321
             protocol: TCP
         volumeMounts:
           - name: ansible-chatbot-storage
@@ -117,6 +122,11 @@ spec:
             mountPath: /.llama/distributions/llama-stack/config
           - name: ansible-chatbot-system-prompt
             mountPath: /.llama/distributions/ansible-chatbot/system-prompts
+{% if is_openshift %}
+          - name: lm-stack-tls-certs
+            mountPath: /app-root/certs/
+            readOnly: true
+{% endif %}
 {% if is_openshift %}
           - name: server-tls-certs
             mountPath: /var/run/secrets/kubernetes.io/serviceaccount/
@@ -222,6 +232,39 @@ spec:
 {% endif %}
 {% endif %}
 {% endif %}
+{% if is_openshift and enable_http_backward_compatibility %}
+      - name: http-redirect
+        image:  nginx:1.29.1-alpine-slim
+        imagePullPolicy: '{{ image_pull_policy }}'
+        ports:
+          - containerPort: 8080
+            protocol: TCP
+        volumeMounts:
+          - name: nginx-redirect-config
+            mountPath: /etc/nginx/nginx.conf
+            subPath: nginx.conf
+            readOnly: true
+          - name: nginx-temp
+            mountPath: /tmp
+        securityContext:
+          runAsNonRoot: true
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - "ALL"
+          seccompProfile:
+            type: RuntimeDefault
+          procMount: "Default"           # Restrict /proc filesystem access
+        command: ["nginx", "-g", "daemon off;"]
+        # Optimized resource allocation for redirect sidecar
+        resources:
+          requests:
+            memory: "16Mi"
+            cpu: "10m"
+          limits:
+            memory: "32Mi"
+            cpu: "50m"
+{% endif %}
       restartPolicy: Always
       volumes:
         - name: ansible-chatbot-storage
@@ -245,6 +288,27 @@ spec:
             items:
               - key: DEFAULT_SYSTEM_PROMPT
                 path: default.txt
+{% if is_openshift %}
+        - name: lm-stack-tls-certs
+          secret:
+            secretName: '{{ ansible_operator_meta.name }}-chatbot-api-tls'
+            defaultMode: 0644
+            items:
+              - key: tls.crt
+                path: tls.crt
+              - key: tls.key
+                path: tls.key
+{% if enable_http_backward_compatibility %}
+        - name: nginx-redirect-config
+          configMap:
+            name: '{{ ansible_operator_meta.name }}-nginx-redirect-config'
+            items:
+              - key: nginx.conf
+                path: nginx.conf
+        - name: nginx-temp
+          emptyDir: {}
+{% endif %}
+{% endif %}
 {% if is_openshift %}
         - name: server-tls-certs
           configMap:
