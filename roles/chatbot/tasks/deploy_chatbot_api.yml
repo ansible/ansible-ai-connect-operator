@@ -7,7 +7,6 @@
   loop: >-
     {{
       [
-        'chatbot.pvc',
         'chatbot.service',
         'chatbot.configmap_lightspeed_stack_config',
         'chatbot.configmap_llama_stack_config',

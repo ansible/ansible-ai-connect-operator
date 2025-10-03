@@ -267,9 +267,6 @@ spec:
 {% endif %}
       restartPolicy: Always
       volumes:
-        - name: ansible-chatbot-storage
-          persistentVolumeClaim:
-            claimName: "{{ ansible_operator_meta.name }}-chatbot-pvc"
         - name: ansible-chatbot-lightspeed-stack-config
           configMap:
             name: '{{ ansible_operator_meta.name }}-{{ deployment_type }}-lightspeed-stack-config'
