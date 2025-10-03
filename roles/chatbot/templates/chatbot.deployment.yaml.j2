@@ -268,8 +268,8 @@ spec:
       restartPolicy: Always
       volumes:
         - name: ansible-chatbot-storage
-          persistentVolumeClaim:
-            claimName: "{{ ansible_operator_meta.name }}-chatbot-pvc"
+          emptyDir:
+            sizeLimit: 1000Mi
         - name: ansible-chatbot-lightspeed-stack-config
           configMap:
             name: '{{ ansible_operator_meta.name }}-{{ deployment_type }}-lightspeed-stack-config'
