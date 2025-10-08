@@ -232,39 +232,6 @@ spec:
 {% endif %}
 {% endif %}
 {% endif %}
-{% if is_openshift and enable_http_backward_compatibility %}
-      - name: http-redirect
-        image:  nginx:1.29.1-alpine-slim
-        imagePullPolicy: '{{ image_pull_policy }}'
-        ports:
-          - containerPort: 8080
-            protocol: TCP
-        volumeMounts:
-          - name: nginx-redirect-config
-            mountPath: /etc/nginx/nginx.conf
-            subPath: nginx.conf
-            readOnly: true
-          - name: nginx-temp
-            mountPath: /tmp
-        securityContext:
-          runAsNonRoot: true
-          allowPrivilegeEscalation: false
-          capabilities:
-            drop:
-              - "ALL"
-          seccompProfile:
-            type: RuntimeDefault
-          procMount: "Default"           # Restrict /proc filesystem access
-        command: ["nginx", "-g", "daemon off;"]
-        # Optimized resource allocation for redirect sidecar
-        resources:
-          requests:
-            memory: "16Mi"
-            cpu: "10m"
-          limits:
-            memory: "32Mi"
-            cpu: "50m"
-{% endif %}
       restartPolicy: Always
       volumes:
         - name: ansible-chatbot-storage
@@ -298,16 +265,6 @@ spec:
                 path: tls.crt
               - key: tls.key
                 path: tls.key
-{% if enable_http_backward_compatibility %}
-        - name: nginx-redirect-config
-          configMap:
-            name: '{{ ansible_operator_meta.name }}-nginx-redirect-config'
-            items:
-              - key: nginx.conf
-                path: nginx.conf
-        - name: nginx-temp
-          emptyDir: {}
-{% endif %}
 {% endif %}
 {% if is_openshift %}
         - name: server-tls-certs
