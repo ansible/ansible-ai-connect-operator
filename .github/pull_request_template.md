@@ -20,4 +20,5 @@ Jira Issue: <https://issues.redhat.com/browse/AAP-NNNN>
 - [ ] This code change is ready for production on its own
 - [ ] This PR should be released in 2.4 (cherry-pick should be created)
 - [ ] This PR should be released in 2.5 (cherry-pick should be created)
+- [ ] This PR should be released in 2.6 (cherry-pick should be created)
 - [ ] This code change requires the following considerations before going to production:
