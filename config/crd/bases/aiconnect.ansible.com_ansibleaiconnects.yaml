@@ -94,11 +94,6 @@ spec:
                 description: Configure no_log for no log tasks
                 type: boolean
                 default: true
-              enable_http_backward_compatibility:
-                description: "Enable HTTP to HTTPS redirect sidecar for backward compatibility. When false, only HTTPS
-                  endpoints are exposed. Recommended: false for new deployments, true for migration scenarios."
-                type: boolean
-                default: true
               auth_config_secret_name:
                 description: "Secret where the authentication configuration can be found"
                 type: string

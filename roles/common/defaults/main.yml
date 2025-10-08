@@ -20,8 +20,3 @@ set_self_labels: true
 # Used to determine some cluster specific logic
 is_k8s: false
 is_openshift: false
-
-# HTTP backward compatibility control
-# When true: Enable HTTP to HTTPS redirect sidecar for legacy support
-# When false: HTTPS-only mode for new deployments
-enable_http_backward_compatibility: true

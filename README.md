@@ -1,7 +1,7 @@
 # Ansible AI Connect Operator
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![Code of Conduct](https://img.shields.io/badge/code%20of%20conduct-Ansible-yellow.svg)](https://docs.ansible.com/ansible/latest/community/code_of_conduct.html) 
+[![Code of Conduct](https://img.shields.io/badge/code%20of%20conduct-Ansible-yellow.svg)](https://docs.ansible.com/ansible/latest/community/code_of_conduct.html)
 
 A Kubernetes operator for Kubernetes built with [Operator SDK](https://github.com/operator-framework/operator-sdk) and Ansible for deploying and maintaining the lifecycle of your [Ansible AI Connect](https://github.com/ansible/ansible-wisdom-service) application.
 
@@ -21,6 +21,7 @@ A Kubernetes operator for Kubernetes built with [Operator SDK](https://github.co
     - [Deploying Ansible AI Connect Operator using OLM](#deploying-ansible-ai-connect-operator-using-olm)
     - [Admin user account configuration](#admin-user-account-configuration)
     - [Database Fields Encryption Configuration](#database-fields-encryption-configuration)
+    - [TLS Communication (OpenShift)](#tls-communication-openshift)
     - [Additional Advanced Configuration](#additional-advanced-configuration)
   - [Programmatic usage of the API](docs/user-guide/programmatic-api-use.md)
   - [Maintainers Docs](#maintainers-docs)
@@ -178,6 +179,57 @@ spec:
   ...
   db_fields_encryption_secret: custom-aiconnect-db-encryption-secret
 ```
+
+### TLS Communication (OpenShift)
+
+On **OpenShift** platforms, the operator automatically enables secure TLS communication between the Ansible AI Connect service (wisdom-service) and the Chatbot API using **OpenShift Service CA**.
+
+**Key Features:**
+- **Automatic TLS Certificate Management**: OpenShift Service CA automatically issues and rotates certificates
+- **Zero Configuration Required**: TLS is enabled by default on OpenShift (no manual setup needed)
+- **Automatic Certificate Rotation**: Certificates rotate ~13 months before expiry (2-year validity)
+- **Operator-Managed Secrets**: The operator automatically updates the `model-pipeline-configuration` secret with HTTPS endpoints
+
+**How It Works:**
+
+```yaml
+# On OpenShift, the operator automatically:
+# 1. Annotates the chatbot service for Service CA
+# 2. Service CA creates TLS secret: <resourcename>-chatbot-api-tls
+# 3. Chatbot pod mounts TLS certificates
+# 4. Chatbot serves HTTPS on port 8443
+# 5. Operator updates model-pipeline-configuration secret:
+#    inference_url: https://<resourcename>-chatbot-api:8443
+#    verify_ssl: true
+```
+
+**Certificate Details:**
+- **Validity**: 2 years
+- **Rotation**: Automatic (~13 months before expiry)
+- **Algorithm**: RSA 2048-bit
+- **Issuer**: OpenShift Service CA
+- **Trust Chain**: Automatically configured via Service CA
+
+**Verification:**
+
+```bash
+# Check TLS secret exists
+oc get secret <resourcename>-chatbot-api-tls
+
+# Verify HTTPS communication
+oc exec deployment/<resourcename>-api -- \
+  curl https://<resourcename>-chatbot-api:8443/readiness
+
+# Check certificate expiry
+oc get secret <resourcename>-chatbot-api-tls \
+  -o jsonpath='{.metadata.annotations.service\.beta\.openshift\.io/expiry}'
+```
+
+**Platform Support:**
+- **OpenShift**: TLS enabled by default (Phase 1 - Current)
+- **Kubernetes**: HTTP communication (Phase 2 - Future)
+
+> **Note**: TLS is currently enabled **only for OpenShift** deployments. Vanilla Kubernetes deployments continue using HTTP communication on port 8080. Kubernetes TLS support will be added in a future phase.
 
 ### Additional Advanced Configuration
 - [No Log](./docs/user-guide/advanced-configuration/no-log.md)
