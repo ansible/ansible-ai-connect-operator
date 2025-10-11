@@ -1,0 +1,33 @@
+name: "[Common] Get MCP Server version"
+
+on:
+  workflow_call:
+    outputs:
+      mcpserver_version:
+        description: "The latest published version of the underlying mcpserver service"
+        value: ${{ jobs.get_mcpserver_version.outputs.mcpserver_version }}
+
+jobs:
+  get_mcpserver_version:
+    runs-on: ubuntu-24.04
+
+    outputs:
+      mcpserver_version: ${{ steps.read_mcpserver_version.outputs.mcpserver_version }}
+
+    steps:
+      # ===============================
+      # Checkout code
+      # -------------------------------
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      # ===============================
+
+      # ===============================
+      # Read the latest MCP Server service version
+      # -------------------------------
+      - name: Get latest MCP Server service version
+        id: read_mcpserver_version
+        run: |
+          echo "mcpserver_version=$(jq .ansible_mcpserver_service.imageTag version_info_mcpserver.json)" >> $GITHUB_OUTPUT
+      # ===============================

@@ -4,4 +4,8 @@
   group: aiconnect.ansible.com
   kind: AnsibleAIConnect
   playbook: playbooks/ansibleaiconnect.yml
+- version: v1alpha1
+  group: mcpserver.ansible.com
+  kind: AnsibleMCPServer
+  playbook: playbooks/ansiblemcpserver.yml
 #+kubebuilder:scaffold:watch

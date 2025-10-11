@@ -1,0 +1,18 @@
+# AnsibleAIConnect ConfigMap.
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: '{{ ansible_operator_meta.name }}-{{ deployment_type }}-env-properties'
+  namespace: '{{ ansible_operator_meta.namespace }}'
+  labels:
+    {{ lookup("template", "../common/templates/labels/common.yaml.j2") | indent(width=4) | trim }}
+data:
+  # Specific settings for "on prem"
+  COMMERCIAL_DOCUMENTATION_URL: "https://access.redhat.com/documentation/en-us/red_hat_ansible_lightspeed_with_ibm_watsonx_code_assistant/2.x_latest/html/red_hat_ansible_lightspeed_with_ibm_watsonx_code_assistant_user_guide/index"
+  DEPLOYMENT_MODE: "onprem"
+
+  # Custom user variables
+{% for item in extra_settings | default([]) %}
+  {{ item.setting | upper }}: "{{ item.value }}"
+{% endfor %}

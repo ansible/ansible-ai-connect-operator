@@ -1,0 +1,39 @@
+---
+- name: Apply Model ConfigMap resources
+  kubernetes.core.k8s:
+    apply: yes
+    definition: "{{ lookup('template', 'model.configmap.yaml.j2') }}"
+    wait: yes
+
+- name: Apply deployment resources
+  kubernetes.core.k8s:
+    apply: yes
+    definition: "{{ lookup('template', item + '.yaml.j2') }}"
+    wait: no
+  loop:
+    - 'model.service'
+    - 'model.deployment'
+    - 'model.ingress'
+
+- name: Check for Model API Pod
+  kubernetes.core.k8s_info:
+    kind: Pod
+    api_version: v1
+    namespace: "{{ ansible_operator_meta.namespace }}"
+    label_selectors:
+      - "app.kubernetes.io/name={{ ansible_operator_meta.name }}"
+      - "app.kubernetes.io/managed-by={{ deployment_type }}-operator"
+      - "app.kubernetes.io/component={{ deployment_type }}-api"
+    field_selectors:
+      - status.phase=Running
+  register: model_api_pod
+  until:
+    - "model_api_pod['resources'] | length"
+    - "model_api_pod['resources'][0]['status']['phase'] == 'Running'"
+    - "model_api_pod['resources'][0]['status']['containerStatuses'][0]['ready'] == true"
+  retries: 60
+  delay: 5
+
+- name: Set the Model API Pod name as a variable.
+  ansible.builtin.set_fact:
+    model_api_pod_name: "{{ model_api_pod['resources'][0]['metadata']['name'] | default('') }}"

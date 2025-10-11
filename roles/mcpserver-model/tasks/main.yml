@@ -1,0 +1,35 @@
+---
+# Tasks file for AnsibleMCPServer
+
+- name: Combine default and custom vars for each component
+  ansible.builtin.include_tasks: combine_defaults.yml
+
+- name: Configure cluster
+  ansible.builtin.include_role:
+    name: common
+  vars:
+    kind: 'AnsibleMCPServer'
+    api_version: 'mcpserver.ansible.com/v1alpha1'
+
+- name: Set AnsibleMCPServer service images
+  ansible.builtin.include_tasks: set_images.yml
+
+- name: Set Bundle Certificate Authority
+  ansible.builtin.include_tasks: set_bundle_cacert.yml
+  when:
+  - bundle_cacert_secret | length
+
+- name: Load Route TLS certificate
+  ansible.builtin.include_tasks: load_route_tls_secret.yml
+  when:
+    - ingress_type | lower == 'route'
+    - route_tls_secret | length
+
+- name: Deploy Model API service
+  ansible.builtin.include_tasks: deploy_model_api.yml
+
+- name: Setup HorizontalPodAutoscaler for Model API deployment
+  ansible.builtin.include_tasks: setup_hpa.yml
+
+- name: Update status variables
+  ansible.builtin.include_tasks: update_status.yml

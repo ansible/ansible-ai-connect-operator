@@ -1,0 +1,6 @@
+---
+- name: Setup HorizontalPodAutoscaler for Model API deployment
+  kubernetes.core.k8s:
+    apply: yes
+    definition: "{{ lookup('template', 'model.hpa.yaml.j2') }}"
+    wait: yes

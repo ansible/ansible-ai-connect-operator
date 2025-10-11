@@ -3,4 +3,5 @@
 # It should be run by config/default
 resources:
 - bases/aiconnect.ansible.com_ansibleaiconnects.yaml
+- bases/mcpserver.ansible.com_ansiblemcpservers.yaml
 #+kubebuilder:scaffold:crdkustomizeresource

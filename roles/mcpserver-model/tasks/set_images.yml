@@ -1,0 +1,19 @@
+---
+# API Image
+- name: Set default AnsibleMCPServer API container image
+  ansible.builtin.set_fact:
+    _default_image: "{{ _image }}:{{ _image_version }}"
+
+- name: Set user provided image
+  ansible.builtin.set_fact:
+    _custom_image: "{{ image }}:{{ image_version }}"
+  when:
+    - image | default([]) | length
+    - image_version is defined or image_version != ''
+
+- name: Set image URL
+  ansible.builtin.set_fact:
+    _image: >-
+      {{ _custom_image |
+         default(lookup('env', 'RELATED_IMAGE_ANSIBLE_MCP_SERVER')) |
+         default(_default_image, true) }}

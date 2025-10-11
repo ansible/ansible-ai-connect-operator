@@ -1,0 +1,26 @@
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  labels:
+    {{ lookup("template", "../common/templates/labels/common.yaml.j2")  | indent(width=4) | trim }}
+    {{ lookup("template", "../common/templates/labels/version.yaml.j2") | indent(width=4) | trim }}
+    app.kubernetes.io/component: '{{ deployment_type }}-api'
+  name: '{{ ansible_operator_meta.name }}-hpa'
+  namespace: '{{ ansible_operator_meta.namespace }}'
+spec:
+  maxReplicas: 20
+  minReplicas: {{ combined_api.replicas }}
+  metrics:
+  - resource:
+      name: cpu
+      target:
+        averageUtilization: 75
+        type: Utilization
+    type: Resource
+  behavior:
+    scaleUp:
+      stabilizationWindowSeconds: 120
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: '{{ ansible_operator_meta.name }}-api'
