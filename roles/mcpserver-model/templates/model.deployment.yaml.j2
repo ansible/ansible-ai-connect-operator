@@ -1,0 +1,215 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    {{ lookup("template", "../common/templates/labels/common.yaml.j2")  | indent(width=4) | trim }}
+    {{ lookup("template", "../common/templates/labels/version.yaml.j2") | indent(width=4) | trim }}
+    app.kubernetes.io/component: '{{ deployment_type }}-api'
+  name: '{{ ansible_operator_meta.name }}-api'
+  namespace: '{{ ansible_operator_meta.namespace }}'
+spec:
+  replicas: {{ combined_api.replicas }}
+{% if combined_api.strategy is defined %}
+  strategy:
+    type: {{ combined_api.strategy.type }}
+{% if combined_api.strategy.type == "Recreate" %}
+    rollingUpdate: null
+{% elif combined_api.strategy.type == "RollingUpdate" %}
+    rollingUpdate:
+      maxSurge:  {{ combined_api.strategy.rollingUpdate.maxSurge | default("25%")}}
+      maxUnavailable: {{ combined_api.strategy.rollingUpdate.maxUnavailable | default("25%")}}
+{% endif %}
+{% endif %}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: '{{ ansible_operator_meta.name }}'
+      app.kubernetes.io/managed-by: '{{ deployment_type }}-operator'
+      app.kubernetes.io/component: '{{ deployment_type }}-api'
+  template:
+    metadata:
+      labels:
+        {{ lookup("template", "../common/templates/labels/common.yaml.j2")  | indent(width=8) | trim }}
+        {{ lookup("template", "../common/templates/labels/version.yaml.j2") | indent(width=8) | trim }}
+        app.kubernetes.io/component: '{{ deployment_type }}-api'
+      annotations:
+        kubectl.kubernetes.io/default-container: 'model-api'
+{% for template in [
+    "model.configmap",
+  ] %}
+        checksum-{{ template | replace('/', '-') }}: "{{ lookup('template', template + '.yaml.j2') | sha1 }}"
+{% endfor %}
+    spec:
+      serviceAccountName: '{{ ansible_operator_meta.name }}'
+{% if image_pull_secrets | length > 0 %}
+      imagePullSecrets:
+{% for secret in image_pull_secrets %}
+        - name: {{ secret }}
+{% endfor %}
+{% endif %}
+{% if combined_api.node_selector is defined %}
+      nodeSelector:
+        {{ combined_api.node_selector | indent(width=8) }}
+{% endif %}
+{% if combined_api.tolerations is defined %}
+      tolerations:
+        {{ combined_api.tolerations | indent(width=8) }}
+{% endif %}
+{% if combined_api.topology_spread_constraints is defined %}
+      topologySpreadConstraints:
+        {{ combined_api.topology_spread_constraints | indent(width=8) }}
+{% endif %}
+      initContainers:
+{% if bundle_ca_crt or is_openshift %}
+      - name: configure-combined-ca-bundle
+        image: {{ _image }}
+        imagePullPolicy: '{{ image_pull_policy }}'
+        command:
+          - /bin/sh
+          - -c
+          - |
+            echo "SSL Manager: Creating combined CA bundle"
+            mkdir -p /etc/ssl/combined-ca/
+            mkdir -p /etc/pki/ca-trust/extracted/{java,pem,openssl,edk2}
+
+            # First extract the CA trust files so the system CAs are available
+            echo "SSL Manager: Extracting system CA trust files..."
+            update-ca-trust extract --output /etc/pki/ca-trust/extracted
+
+            # Now use the extracted system CAs from certifi/ca-trust
+            echo "SSL Manager: Adding system CAs from certifi..."
+            python3 -c "import certifi; print(certifi.where())" | xargs cat > /etc/ssl/combined-ca/ca-bundle.crt
+{% if is_openshift %}
+            # Add OpenShift service CA
+            if [ -f /var/run/secrets/kubernetes.io/serviceaccount/service-ca.crt ]; then
+              echo "# OpenShift Service CA" >> /etc/ssl/combined-ca/ca-bundle.crt
+              cat /var/run/secrets/kubernetes.io/serviceaccount/service-ca.crt >> /etc/ssl/combined-ca/ca-bundle.crt
+              echo "SSL Manager: Added OpenShift service CA"
+            fi
+{% endif %}
+{% if bundle_ca_crt %}
+            # Add customer CA bundle
+            if [ -f /etc/pki/ca-trust/source/anchors/bundle-ca.crt ]; then
+              echo "# Customer CA Bundle" >> /etc/ssl/combined-ca/ca-bundle.crt
+              cat /etc/pki/ca-trust/source/anchors/bundle-ca.crt >> /etc/ssl/combined-ca/ca-bundle.crt
+              echo "SSL Manager: Added customer CA bundle"
+            fi
+{% endif %}
+            chmod 644 /etc/ssl/combined-ca/ca-bundle.crt
+            echo "SSL Manager: Combined CA bundle created successfully"
+
+            # Verify the bundle contains both system and OpenShift CAs
+            echo "SSL Manager: CA bundle contains $(grep -c 'BEGIN CERTIFICATE' /etc/ssl/combined-ca/ca-bundle.crt) certificates"
+{% if combined_api.resource_requirements is defined %}
+        resources: {{ combined_api.resource_requirements }}
+{% endif %}
+        volumeMounts:
+{% if is_openshift %}
+          - name: server-tls-certs
+            mountPath: /var/run/secrets/kubernetes.io/serviceaccount/
+            readOnly: true
+{% endif %}
+{% if bundle_ca_crt or is_openshift %}
+          - name: combined-ca-bundle
+            mountPath: /etc/ssl/combined-ca/
+          - name: "ca-trust-extracted"
+            mountPath: "/etc/pki/ca-trust/extracted"
+{% endif %}
+{% if bundle_ca_crt %}
+          - name: "{{ ansible_operator_meta.name }}-bundle-cacert"
+            mountPath: /etc/pki/ca-trust/source/anchors/bundle-ca.crt
+            subPath: bundle-ca.crt
+            readOnly: true
+{% endif %}
+{% endif %}
+      containers:
+      - name: model-api
+        image: {{ _image }}
+        imagePullPolicy: "{{ image_pull_policy }}"
+        env:
+{% if bundle_ca_crt or is_openshift %}
+        - name: COMBINED_CA_BUNDLE_PATH
+          value: "/etc/ssl/combined-ca/ca-bundle.crt"
+        - name: REQUESTS_CA_BUNDLE
+          value: "/etc/ssl/combined-ca/ca-bundle.crt"
+        - name: SSL_CERT_FILE
+          value: "/etc/ssl/combined-ca/ca-bundle.crt"
+{% endif %}
+{% if is_openshift %}
+        - name: SERVICE_CA_PATH
+          value: "/var/run/secrets/kubernetes.io/serviceaccount/service-ca.crt"
+{% endif %}
+        envFrom:
+          - configMapRef:
+              name: "{{ ansible_operator_meta.name }}-{{ deployment_type }}-env-properties"
+        ports:
+        - containerPort: 8000
+          protocol: TCP
+        readinessProbe:
+          tcpSocket:
+            port: 8000
+          initialDelaySeconds: 15
+          periodSeconds: 10
+        livenessProbe:
+          tcpSocket:
+            port: 8000
+          initialDelaySeconds: 15
+          periodSeconds: 10
+        volumeMounts:
+{% if bundle_ca_crt or is_openshift %}
+            - name: combined-ca-bundle
+              mountPath: /etc/ssl/combined-ca/
+              readOnly: true
+            - name: "ca-trust-extracted"
+              mountPath: "/etc/pki/ca-trust/extracted"
+{% endif %}
+{% if bundle_ca_crt %}
+            - name: "{{ ansible_operator_meta.name }}-bundle-cacert"
+              mountPath: /etc/pki/ca-trust/source/anchors/bundle-ca.crt
+              subPath: bundle-ca.crt
+              readOnly: true
+{% endif %}
+{% if is_openshift %}
+            - name: server-tls-certs
+              mountPath: /var/run/secrets/kubernetes.io/serviceaccount/
+{% endif %}
+        securityContext:
+          runAsNonRoot: true
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - "ALL"
+          seccompProfile:
+            type: RuntimeDefault
+{% if combined_api.resource_requirements is defined %}
+        resources: {{ combined_api.resource_requirements }}
+{% endif %}
+      restartPolicy: Always
+      volumes:
+        - name: mnt
+          configMap:
+            name: wisdom-service-uwsgi-configmap
+{% if bundle_ca_crt or is_openshift %}
+        - name: combined-ca-bundle
+          emptyDir: {}
+{% endif %}
+{% if bundle_ca_crt or is_openshift %}
+        - name: "ca-trust-extracted"
+          emptyDir: {}
+{% endif %}
+{% if bundle_ca_crt %}
+        - name: "{{ ansible_operator_meta.name }}-bundle-cacert"
+          secret:
+            secretName: "{{ bundle_cacert_secret }}"
+            items:
+              - key: bundle-ca.crt
+                path: 'bundle-ca.crt'
+{% endif %}
+{% if is_openshift %}
+        - name: server-tls-certs
+          configMap:
+            items:
+              - key: service-ca.crt
+                path: service-ca.crt
+            name: openshift-service-ca.crt
+{% endif %}

@@ -160,4 +160,22 @@ rules:
       - patch
       - update
       - watch
+
+  ##
+  ## Rules for mcpserver.ansible.com/v1alpha1, Kind: AnsibleMCPServer
+  ##
+  - apiGroups:
+      - mcpserver.ansible.com
+    resources:
+      - ansiblemcpservers
+      - ansiblemcpservers/status
+      - ansiblemcpservers/finalizers
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
 #+kubebuilder:scaffold:rules

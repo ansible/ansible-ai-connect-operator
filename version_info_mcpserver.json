@@ -1,0 +1,6 @@
+{
+  "ansible_mcpserver_service": {
+    "imageTag": "0.9.202510071304"
+  }
+}
+

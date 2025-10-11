@@ -50,12 +50,17 @@ jobs:
     uses: ./.github/workflows/common-get-chatbot-version.yaml
     secrets: inherit
 
+  get_mcpserver_version:
+    uses: ./.github/workflows/common-get-mcpserver-version.yaml
+    secrets: inherit
+
   build:
     uses: ./.github/workflows/common-build-and-publish-artifacts.yaml
-    needs: [verify, get_operator_versions, get_service_version, get_chatbot_version]
+    needs: [verify, get_operator_versions, get_service_version, get_chatbot_version, get_mcpserver_version]
     with:
       operator_version_latest: ${{ needs.get_operator_versions.outputs.operator_version_latest }}
       operator_version_next: ${{ github.event.inputs.version }}
       service_version: ${{ needs.get_service_version.outputs.service_version }}
       chatbot_version: ${{ needs.get_chatbot_version.outputs.chatbot_version }}
+      mcpserver_version: ${{ needs.get_mcpserver_version.outputs.mcpserver_version }}
     secrets: inherit

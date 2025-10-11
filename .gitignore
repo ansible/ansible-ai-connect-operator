@@ -37,3 +37,6 @@ kustomization.yaml
 # Python Virtual Environments (required for Molecule)
 venv/
 .venv/
+
+# Local environment variable definitions
+.env

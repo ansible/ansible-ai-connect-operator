@@ -1,4 +1,5 @@
 ## Append samples of your project ##
 resources:
 - aiconnect_v1alpha1_ansibleaiconnect.yaml
+- mcpserver_v1alpha1_ansiblemcpserver.yaml
 #+kubebuilder:scaffold:manifestskustomizesamples

@@ -1,0 +1,45 @@
+---
+- name: Update custom resource status
+  operator_sdk.util.k8s_status:
+    api_version: '{{ api_version }}'
+    kind: "{{ kind }}"
+    name: "{{ ansible_operator_meta.name }}"
+    namespace: "{{ ansible_operator_meta.namespace }}"
+    status:
+      image: "{{ _image }}"
+      version: ""
+
+# ============================================
+# Retrieve and update AnsibleMCPServer status
+# ============================================
+- block:
+    - name: Update version status
+      operator_sdk.util.k8s_status:
+        api_version: '{{ api_version }}'
+        kind: "{{ kind }}"
+        name: "{{ ansible_operator_meta.name }}"
+        namespace: "{{ ansible_operator_meta.namespace }}"
+        status:
+          version: "0.1.0"
+  when:
+    - model_api_pod_name is defined
+    - model_api_pod_name | length
+
+- block:
+    - name: Retrieve route URL
+      kubernetes.core.k8s_info:
+        api_version: 'route.openshift.io/v1'
+        kind: Route
+        namespace: '{{ ansible_operator_meta.namespace }}'
+        name: '{{ ansible_operator_meta.name }}'
+      register: route_url
+
+    - name: Update URL status
+      operator_sdk.util.k8s_status:
+        api_version: '{{ api_version }}'
+        kind: "{{ kind }}"
+        name: "{{ ansible_operator_meta.name }}"
+        namespace: "{{ ansible_operator_meta.namespace }}"
+        status:
+          URL: "https://{{ route_url['resources'][0]['status']['ingress'][0]['host'] }}"
+  when: ingress_type | lower == 'route'

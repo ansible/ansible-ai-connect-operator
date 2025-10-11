@@ -1,0 +1,18 @@
+# AnsibleMCPServer ConfigMap.
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: '{{ ansible_operator_meta.name }}-{{ deployment_type }}-env-properties'
+  namespace: '{{ ansible_operator_meta.namespace }}'
+  labels:
+    {{ lookup("template", "../common/templates/labels/common.yaml.j2") | indent(width=4) | trim }}
+data:
+  PORT: "8000"
+  AAP_GATEWAY_URL: "{{ aap_gateway_url }}"
+  AAP_SERVICE_URL: "{{ aap_gateway_url }}/api/controller"
+  OPENAPI_SPEC_URL: file://./aap-controller-api.json
+  # Custom user variables
+{% for item in extra_settings | default([]) %}
+  {{ item.setting | upper }}: "{{ item.value }}"
+{% endfor %}

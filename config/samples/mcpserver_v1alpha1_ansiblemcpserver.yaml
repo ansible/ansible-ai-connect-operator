@@ -1,0 +1,15 @@
+apiVersion: mcpserver.ansible.com/v1alpha1
+kind: AnsibleMCPServer
+metadata:
+  labels:
+    app.kubernetes.io/name: ansiblemcpserver
+    app.kubernetes.io/instance: ansiblemcpserver-sample
+    app.kubernetes.io/part-of: ansible-ai-connect-operator
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/created-by: ansible-ai-connect-operator
+  name: ansiblemcpserver-sample
+spec:
+  no_log: false
+  service_type: ClusterIP
+  ingress_type: Route
+
