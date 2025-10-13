@@ -88,7 +88,8 @@ spec:
 
             # Now use the extracted system CAs from certifi/ca-trust
             echo "SSL Manager: Adding system CAs from certifi..."
-            python3 -c "import certifi; print(certifi.where())" | xargs cat > /etc/ssl/combined-ca/ca-bundle.crt
+            CERTIFI_PATH=$(python3 -c "import certifi; print(certifi.where())")
+            cat "$CERTIFI_PATH" > /etc/ssl/combined-ca/ca-bundle.crt
 {% if is_openshift %}
             # Add OpenShift service CA
             if [ -f /var/run/secrets/kubernetes.io/serviceaccount/service-ca.crt ]; then
