@@ -22,7 +22,6 @@ spec:
 {% if is_openshift %}
   - port: 8443
     protocol: TCP
-    targetPort: 8321
     name: https-api
 {% else %}
   - port: 8080
@@ -30,7 +29,7 @@ spec:
     targetPort: 8080
     name: http-api
 {% endif %}
-  type: ClusterIP
+  clusterIP: None
   selector:
     {{ lookup("template", "../common/templates/labels/common.yaml.j2")  | indent(width=4) | trim }}
     app.kubernetes.io/component: '{{ deployment_type }}-chatbot-api'
