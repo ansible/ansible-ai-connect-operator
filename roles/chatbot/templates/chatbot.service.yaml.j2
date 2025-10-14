@@ -22,6 +22,7 @@ spec:
 {% if is_openshift %}
   - port: 8443
     protocol: TCP
+    targetPort: 8443
     name: https-api
 {% else %}
   - port: 8080
