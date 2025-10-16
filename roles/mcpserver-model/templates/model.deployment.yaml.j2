@@ -186,9 +186,6 @@ spec:
 {% endif %}
       restartPolicy: Always
       volumes:
-        - name: mnt
-          configMap:
-            name: wisdom-service-uwsgi-configmap
 {% if bundle_ca_crt or is_openshift %}
         - name: combined-ca-bundle
           emptyDir: {}

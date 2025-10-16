@@ -28,7 +28,7 @@ jobs:
 
   build:
     uses: ./.github/workflows/common-build-and-publish-artifacts.yaml
-    needs: [get_operator_versions, get_service_version, get_chatbot_version]
+    needs: [get_operator_versions, get_service_version, get_chatbot_version, get_mcpserver_version]
     with:
       operator_version_latest: ${{ needs.get_operator_versions.outputs.operator_version_latest }}
       operator_version_next: ${{ needs.get_operator_versions.outputs.operator_version_next }}

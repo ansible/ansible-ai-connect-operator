@@ -13,7 +13,7 @@ image_pull_secrets: []
 
 # !!!TODO!!! Use Python MCP server container image for now
 _image: quay.io/ansible/ansible-mcp-controller
-_image_version: "{{ lookup('env', 'DEFAULT_AI_CONNECT_VERSION') or 'latest' }}"
+_image_version: "{{ lookup('env', 'DEFAULT_MCP_SERVER_VERSION') or 'latest' }}"
 
 # Labels defined on the resource, which should be propagated to child resources
 additional_labels: []
