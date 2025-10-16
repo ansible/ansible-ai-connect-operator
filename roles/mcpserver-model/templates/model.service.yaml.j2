@@ -14,21 +14,21 @@ metadata:
 spec:
   ports:
 {% if service_type | lower == "nodeport" %}
-    - port: 8000
+    - port: {{ default_http_port }}
       protocol: TCP
-      targetPort: 8000
+      targetPort: {{ default_target_port }}
       name: http
 {% if nodeport_port is defined %}
       nodePort: {{ nodeport_port }}
 {% endif %}
 {% elif service_type | lower != 'loadbalancer' and loadbalancer_protocol | lower != 'https' %}
-    - port: 8000
+    - port: {{ default_http_port }}
       protocol: TCP
-      targetPort: 8000
+      targetPort: {{ default_target_port }}
       name: http
 {% endif %}
 {% if ingress_type | lower == 'route' and route_tls_termination_mechanism | lower == 'passthrough' %}
-    - port: 443
+    - port: {{ default_https_port }}
       protocol: TCP
       targetPort: 8853 # TODO: Use something like 8053 and update nginx.con
       name: https
@@ -36,12 +36,12 @@ spec:
 {% if service_type | lower == 'loadbalancer' and loadbalancer_protocol | lower == 'https' %}
     - port: {{ loadbalancer_port }}
       protocol: TCP
-      targetPort: 8000
+      targetPort: {{ default_target_port }}
       name: https
 {% elif service_type | lower == 'loadbalancer' and loadbalancer_protocol | lower != 'https' %}
     - port: {{ loadbalancer_port }}
       protocol: TCP
-      targetPort: 8000
+      targetPort: {{ default_target_port }}
       name: http
 {% endif %}
   selector:

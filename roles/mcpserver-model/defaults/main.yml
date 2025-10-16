@@ -60,6 +60,9 @@ _api:
 # ========================================
 # Service type and related configuration
 # ----------------------------------------
+default_http_port: 8000
+default_https_port: 443
+default_target_port: 8000
 service_type: 'ClusterIP'
 loadbalancer_protocol: ''
 loadbalancer_port: ''

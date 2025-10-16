@@ -33,7 +33,7 @@ spec:
         {{ lookup("template", "../common/templates/labels/version.yaml.j2") | indent(width=8) | trim }}
         app.kubernetes.io/component: '{{ deployment_type }}-api'
       annotations:
-        kubectl.kubernetes.io/default-container: 'model-api'
+        kubectl.kubernetes.io/default-container: 'mcpserver-api'
 {% for template in [
     "model.configmap",
   ] %}
@@ -123,7 +123,7 @@ spec:
 {% endif %}
 {% endif %}
       containers:
-      - name: model-api
+      - name: mcpserver-api
         image: {{ _image }}
         imagePullPolicy: "{{ image_pull_policy }}"
         env:
