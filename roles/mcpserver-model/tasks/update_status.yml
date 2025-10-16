@@ -42,4 +42,8 @@
         namespace: "{{ ansible_operator_meta.namespace }}"
         status:
           URL: "https://{{ route_url['resources'][0]['status']['ingress'][0]['host'] }}"
+      when:
+        - route_url['resources'] | length > 0
+        - route_url['resources'][0]['status']['ingress'] | length > 0
+        - route_url['resources'][0]['status']['ingress'][0]['host'] is defined
   when: ingress_type | lower == 'route'

@@ -28,8 +28,9 @@
       - status.phase=Running
   register: model_api_pod
   until:
-    - "model_api_pod['resources'] | length"
+    - "model_api_pod['resources'] | length > 0"
     - "model_api_pod['resources'][0]['status']['phase'] == 'Running'"
+    - "model_api_pod['resources'][0]['status']['containerStatuses'] | length > 0"
     - "model_api_pod['resources'][0]['status']['containerStatuses'][0]['ready'] == true"
   retries: 60
   delay: 5
