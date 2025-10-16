@@ -30,7 +30,7 @@ spec:
           metadata:
             type: object
           spec:
-            description: Spec defines the desired state of AnsibleAIConnect
+            description: Spec defines the desired state of AnsibleMCPServer
             type: object
             properties:
               image_pull_policy:
@@ -491,7 +491,7 @@ spec:
                   type: object
                 type: array
           status:
-            description: Status defines the observed state of AnsibleAIConnect
+            description: Status defines the observed state of AnsibleMCPServer
             x-kubernetes-preserve-unknown-fields: true
             properties:
               image:
