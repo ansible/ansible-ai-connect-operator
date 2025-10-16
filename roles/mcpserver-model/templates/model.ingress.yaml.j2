@@ -26,7 +26,7 @@ spec:
             pathType: '{{ ingress_path_type }}'
             backend:
               service:
-                name: '{{ ansible_operator_meta.name }}-api'
+                name: '{{ ansible_operator_meta.name }}'
                 port:
                   number: 8000
 {% if hostname %}      
@@ -77,7 +77,7 @@ spec:
 {% endif %}
   to:
     kind: Service
-    name: {{ ansible_operator_meta.name }}-api
+    name: {{ ansible_operator_meta.name }}
     weight: 100
   wildcardPolicy: None
 {% endif %}

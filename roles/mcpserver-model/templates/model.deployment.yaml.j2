@@ -5,8 +5,8 @@ metadata:
   labels:
     {{ lookup("template", "../common/templates/labels/common.yaml.j2")  | indent(width=4) | trim }}
     {{ lookup("template", "../common/templates/labels/version.yaml.j2") | indent(width=4) | trim }}
-    app.kubernetes.io/component: '{{ deployment_type }}-api'
-  name: '{{ ansible_operator_meta.name }}-api'
+    app.kubernetes.io/component: '{{ deployment_type }}'
+  name: '{{ ansible_operator_meta.name }}'
   namespace: '{{ ansible_operator_meta.namespace }}'
 spec:
   replicas: {{ combined_api.replicas }}
@@ -25,15 +25,15 @@ spec:
     matchLabels:
       app.kubernetes.io/name: '{{ ansible_operator_meta.name }}'
       app.kubernetes.io/managed-by: '{{ deployment_type }}-operator'
-      app.kubernetes.io/component: '{{ deployment_type }}-api'
+      app.kubernetes.io/component: '{{ deployment_type }}'
   template:
     metadata:
       labels:
         {{ lookup("template", "../common/templates/labels/common.yaml.j2")  | indent(width=8) | trim }}
         {{ lookup("template", "../common/templates/labels/version.yaml.j2") | indent(width=8) | trim }}
-        app.kubernetes.io/component: '{{ deployment_type }}-api'
+        app.kubernetes.io/component: '{{ deployment_type }}'
       annotations:
-        kubectl.kubernetes.io/default-container: 'mcpserver-api'
+        kubectl.kubernetes.io/default-container: 'ansible-mcp-server'
 {% for template in [
     "model.configmap",
   ] %}
@@ -123,7 +123,7 @@ spec:
 {% endif %}
 {% endif %}
       containers:
-      - name: mcpserver-api
+      - name: ansible-mcp-server
         image: {{ _image }}
         imagePullPolicy: "{{ image_pull_policy }}"
         env:
