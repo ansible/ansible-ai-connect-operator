@@ -34,6 +34,8 @@ provisioner:
       localhost:
         wisdom_service_image: ${WISDOM_SERVICE_TEST_IMAGE:-""}
         wisdom_service_version: ${WISDOM_SERVICE_TEST_VERSION:-""}
+        mcpserver_image: ${MCP_SERVER_TEST_IMAGE:-""}
+        mcpserver_version: ${MCP_SERVER_TEST_VERSION:-""}
         docker_config_json: ${DOCKER_CONFIG_JSON:-""}
         ansible_python_interpreter: '{{ ansible_playbook_python }}'
         config_dir: ${MOLECULE_PROJECT_DIRECTORY}/config
@@ -43,6 +45,7 @@ provisioner:
         operator_pull_policy: ${OPERATOR_PULL_POLICY:-"Never"}
         kubeconfig: "{{ lookup('env', 'KUBECONFIG') }}"
         kustomize: ${KUSTOMIZE_PATH:-kustomize}
+        aap_gateway_url: ${AAP_GATEWAY_URL:-"http://localhost"}
   env:
     K8S_AUTH_KUBECONFIG: ${MOLECULE_EPHEMERAL_DIRECTORY}/kubeconfig
     KUBECONFIG: ${MOLECULE_EPHEMERAL_DIRECTORY}/kubeconfig

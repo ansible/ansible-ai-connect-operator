@@ -1,11 +1,11 @@
 ---
 - ansible.builtin.include_tasks: 0_create_config_secrets.yml
 
-- name: Create an aiconnect.ansible.com/v1alpha1.AnsibleAIConnect instance
+- name: Create AnsibleAIConnect and AnsibleMCPServer instances
   kubernetes.core.k8s:
     state: present
     namespace: '{{ namespace }}'
-    definition: "{{ lookup('template', 'create_instance.yaml.j2') | from_yaml }}"
+    definition: "{{ lookup('template', template_item) | from_yaml }}"
     apply: true
     wait: yes
     wait_timeout: 900
@@ -13,3 +13,8 @@
       type: Running
       reason: Successful
       status: "True"
+  loop:
+    - create_instance.yaml.j2
+    - create_mcpserver_instance.yaml.j2
+  loop_control:
+    loop_var: template_item
