@@ -21,6 +21,7 @@
             # See https://issues.redhat.com/browse/AAP-41996
             # - tasks/4_0_model_pipeline_config_optional_model_config_test.yml
             # - tasks/5_0_optional_auth_config_test.yml
+            - tasks/6_0_mcpserver_config_test.yml
           tags:
             - always
       rescue:
