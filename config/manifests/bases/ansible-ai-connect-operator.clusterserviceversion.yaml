@@ -439,8 +439,223 @@ spec:
         x-descriptors:
         - urn:alm:descriptor:org.w3:link
       version: v1alpha1
+    - description: Deploy a new instance of Ansible MCP Server.
+      displayName: AnsibleMCPServer
+      kind: AnsibleMCPServer
+      name: ansiblemcpservers.mcpserver.ansible.com
+      specDescriptors:
+      - displayName: Image Pull Policy
+        path: image_pull_policy
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:advanced
+        - urn:alm:descriptor:com.tectonic.ui:imagePullPolicy
+      - displayName: Image Pull Secrets
+        path: image_pull_secrets
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:advanced
+        - urn:alm:descriptor:io.kubernetes:Secret
+      - displayName: API container image
+        path: image
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:advanced
+      - displayName: API container image Version
+        path: image_version
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:advanced
+      - displayName: Additional labels defined on the resource, which should be propagated
+          to child resources
+        path: additional_labels
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:advanced
+        - urn:alm:descriptor:com.tectonic.ui:hidden
+      - displayName: No Log Configuration
+        path: no_log
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:advanced
+        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+      - description: Defines desired state of API deployment resources
+        displayName: API deployment configuration
+        path: api
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:advanced
+      - description: The number of API replicas
+        displayName: Replicas
+        path: api.replicas
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:podCount
+      - displayName: API server resource requirements
+        path: api.resource_requirements
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:resourceRequirements
+      - displayName: Node Selector
+        path: api.node_selector
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:advanced
+      - description: The deployment strategy to use to replace existing pods with
+          new ones.
+        displayName: Strategy
+        path: api.strategy
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:updateStrategy
+        - urn:alm:descriptor:com.tectonic.ui:advanced
+      - description: Node tolerations for the pods
+        displayName: Tolerations
+        path: api.tolerations
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:advanced
+      - description: Topology rule(s) for the pods
+        displayName: Topology Spread Constraints
+        path: api.topology_spread_constraints
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:advanced
+      - displayName: Service Type
+        path: service_type
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:advanced
+        - urn:alm:descriptor:com.tectonic.ui:select:ClusterIP
+        - urn:alm:descriptor:com.tectonic.ui:select:LoadBalancer
+        - urn:alm:descriptor:com.tectonic.ui:select:NodePort
+      - displayName: LoadBalancer Protocol
+        path: loadbalancer_protocol
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:advanced
+        - urn:alm:descriptor:com.tectonic.ui:select:http
+        - urn:alm:descriptor:com.tectonic.ui:select:https
+        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:service_type:LoadBalancer
+      - displayName: LoadBalancer Port
+        path: loadbalancer_port
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:advanced
+        - urn:alm:descriptor:com.tectonic.ui:number
+        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:service_type:LoadBalancer
+      - displayName: Nodeport Port
+        path: nodeport_port
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:advanced
+        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:service_type:NodePort
+      - displayName: Ingress Type
+        path: ingress_type
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:advanced
+        - urn:alm:descriptor:com.tectonic.ui:select:none
+        - urn:alm:descriptor:com.tectonic.ui:select:Ingress
+        - urn:alm:descriptor:com.tectonic.ui:select:Route
+      - displayName: Ingress Class Name
+        path: ingress_class_name
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:advanced
+        - urn:alm:descriptor:com.tectonic.ui:text
+        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:ingress_type:Ingress
+      - displayName: Ingress Path
+        path: ingress_path
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:advanced
+        - urn:alm:descriptor:com.tectonic.ui:text
+        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:ingress_type:Ingress
+      - displayName: Ingress Path Type
+        path: ingress_path_type
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:advanced
+        - urn:alm:descriptor:com.tectonic.ui:text
+        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:ingress_type:Ingress
+      - displayName: Ingress API Version
+        path: ingress_api_version
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:advanced
+        - urn:alm:descriptor:com.tectonic.ui:hidden
+        - urn:alm:descriptor:com.tectonic.ui:text
+      - displayName: Hostname
+        path: hostname
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:advanced
+        - urn:alm:descriptor:com.tectonic.ui:text
+      - displayName: Ingress Annotations
+        path: ingress_annotations
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:advanced
+        - urn:alm:descriptor:com.tectonic.ui:text
+        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:ingress_type:Ingress
+      - displayName: Ingress TLS Secret
+        path: ingress_tls_secret
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:advanced
+        - urn:alm:descriptor:io.kubernetes:Secret
+        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:ingress_type:Ingress
+      - displayName: Route TLS Termination Mechanism
+        path: route_tls_termination_mechanism
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:advanced
+        - urn:alm:descriptor:com.tectonic.ui:select:Edge
+        - urn:alm:descriptor:com.tectonic.ui:select:Passthrough
+        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:ingress_type:Route
+      - displayName: Route TLS Credential Secret
+        path: route_tls_secret
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:advanced
+        - urn:alm:descriptor:io.kubernetes:Secret
+        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:ingress_type:Route
+      - displayName: Route API Version
+        path: route_api_version
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:advanced
+        - urn:alm:descriptor:com.tectonic.ui:hidden
+        - urn:alm:descriptor:com.tectonic.ui:text
+      - displayName: Route DNS host
+        path: route_host
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:advanced
+        - urn:alm:descriptor:com.tectonic.ui:text
+        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:ingress_type:Route
+      - displayName: Service Account Annotations
+        path: service_account_annotations
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:advanced
+        - urn:alm:descriptor:com.tectonic.ui:text
+      - displayName: Service Annotations
+        path: service_annotations
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:advanced
+        - urn:alm:descriptor:com.tectonic.ui:text
+      - description: Secret where the trusted Certificate Authority Bundle is stored
+        displayName: Bundle CA Certificate Secret
+        path: bundle_cacert_secret
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:advanced
+        - urn:alm:descriptor:io.kubernetes:Secret
+      - displayName: AAP Gateway URL
+        path: aap_gateway_url
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+      - displayName: API Extra Settings
+        path: extra_settings
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:advanced
+        - urn:alm:descriptor:com.tectonic.ui:hidden
+      - displayName: Set default labels on AI resource
+        path: set_self_labels
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:advanced
+        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+        - urn:alm:descriptor:com.tectonic.ui:hidden
+      statusDescriptors:
+      - description: Image of the instance deployed
+        displayName: Image
+        path: image
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+      - description: Version of the instance deployed
+        displayName: Version
+        path: version
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+      - description: Route to access the instance deployed
+        displayName: URL
+        path: URL
+        x-descriptors:
+        - urn:alm:descriptor:org.w3:link
+      version: v1alpha1
   description: |
-    An Ansible operator for managing the lifecycle of an Ansible AI Connect instance.
+    An operator for managing the lifecycle of Ansible AI Connect and Ansible MCP Server instances.
   displayName: Ansible AI Connect
   icon:
   - base64data: PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGlkPSJ1dWlkLTNhNTAyZTQ2LWM3ZDYtNDFkMC05YWYzLWRjNDkxNzhkNDZkYiIgdmlld0JveD0iMCAwIDM4IDM4Ij48ZGVmcz48c3R5bGU+LnV1aWQtMTk4YTE0YjgtNWE3NC00OGMxLTg5NDItNDRhZmZlZTQyNDkwe2ZpbGw6I2UwMH08L3N0eWxlPjwvZGVmcz48ZyBpZD0idXVpZC1mMmU0YmIxOC0wY2ZiLTQ4M2ItODEwNC0yNzAzOTUwMTAzZjQiPjxwYXRoIGQ9Ik0yNy43IDEuNTk4SDEwLjNBOC43IDguNyAwIDAgMCAxLjU5NyAxMC4zdjE3LjQwMmE4LjcgOC43IDAgMCAwIDguNzAxIDguN2gxNy40MDJhOC43IDguNyAwIDAgMCA4LjctOC43VjEwLjI5OWE4LjcgOC43IDAgMCAwLTguNy04LjdaIiBzdHlsZT0iZmlsbDojZmZmIi8+PHBhdGggZD0iTTI4IDIuMjVjNC4yNzMgMCA3Ljc1IDMuNDc3IDcuNzUgNy43NXYxOGMwIDQuMjczLTMuNDc3IDcuNzUtNy43NSA3Ljc1SDEwYy00LjI3MyAwLTcuNzUtMy40NzctNy43NS03Ljc1VjEwYzAtNC4yNzMgMy40NzctNy43NSA3Ljc1LTcuNzVoMThNMjggMUgxMGE5IDkgMCAwIDAtOSA5djE4YTkgOSAwIDAgMCA5IDloMThhOSA5IDAgMCAwIDktOVYxMGE5IDkgMCAwIDAtOS05WiIvPjwvZz48cGF0aCBkPSJNMjAgNy4zNzVhLjYyNS42MjUgMCAwIDAtLjYyNS42MjV2N2EuNjI1LjYyNSAwIDAgMCAxLjI1IDBWOEEuNjI1LjYyNSAwIDAgMCAyMCA3LjM3NVpNMTYuNjI1IDE5YS42MjUuNjI1IDAgMCAwLS42MjUtLjYyNUg5YS42MjUuNjI1IDAgMCAwIDAgMS4yNWg3Yy4zNDUgMCAuNjI1LS4yOC42MjUtLjYyNVpNMjAgMjIuMzc1YS42MjUuNjI1IDAgMCAwLS42MjUuNjI1djdhLjYyNS42MjUgMCAwIDAgMS4yNSAwdi03YS42MjUuNjI1IDAgMCAwLS42MjUtLjYyNVpNMTcuNjExIDEwLjg3YS42MjUuNjI1IDAgMCAwLTEuMjIyLjI2bC40MjUgMmEuNjI1LjYyNSAwIDAgMCAxLjIyMi0uMjZsLS40MjUtMlpNMTEuODcgMTYuNjExbDIgLjQyNmEuNjI1LjYyNSAwIDAgMCAuMjYtMS4yMjNsLTItLjQyNWEuNjI1LjYyNSAwIDEgMC0uMjYgMS4yMjJaTTE3LjU1NSAyNC4zODlhLjYyNC42MjQgMCAwIDAtLjc0MS40ODFsLS40MjUgMmEuNjI1LjYyNSAwIDAgMCAxLjIyMi4yNmwuNDI1LTJhLjYyNS42MjUgMCAwIDAtLjQ4MS0uNzQxWk0xMy44NyAyMC45NjNsLTIgLjQyNmEuNjI0LjYyNCAwIDEgMCAuMjYgMS4yMjJsMi0uNDI1YS42MjQuNjI0IDAgMSAwLS4yNi0xLjIyM1oiIGNsYXNzPSJ1dWlkLTE5OGExNGI4LTVhNzQtNDhjMS04OTQyLTQ0YWZmZWU0MjQ5MCIvPjxwYXRoIGQ9Ik0zMC42MiAxOC45N2EuNjIyLjYyMiAwIDAgMC0uMDQzLS4yMDkuNjE3LjYxNyAwIDAgMC0uMTA2LS4xNmMtLjAxMS0uMDEzLS4wMTYtLjAzLS4wMjktLjA0M2wtMi0yYS42MjYuNjI2IDAgMCAwLS44ODQuODg0bC45MzMuOTMzSDE5YS42MjUuNjI1IDAgMCAwIDAgMS4yNWg5LjQ5MWwtLjkzMy45MzNhLjYyNi42MjYgMCAwIDAgLjg4NC44ODRsMi0yYy4wMTMtLjAxMy4wMTgtLjAzLjAyOS0uMDQzYS42Mi42MiAwIDAgMCAuMTA2LS4xNi42MjQuNjI0IDAgMCAwIC4wNDItLjIxYzAtLjAxLjAwNi0uMDE5LjAwNi0uMDMgMC0uMDEtLjAwNS0uMDE4LS4wMDYtLjAyOFpNMTMuNDQyIDExLjU1OGEuNjI2LjYyNiAwIDAgMC0uODg0Ljg4NGw0IDRhLjYyNC42MjQgMCAwIDAgLjg4NCAwIC42MjYuNjI2IDAgMCAwIDAtLjg4NGwtNC00Wk0xNi41NTggMjEuNTU4bC00IDRhLjYyNi42MjYgMCAwIDAgLjg4NC44ODRsNC00YS42MjYuNjI2IDAgMCAwLS44ODQtLjg4NFpNOS40NCAxNC41NmEuNjM3LjYzNyAwIDAgMC0xLjAyLjJjLS4wMy4wOC0uMDUuMTYtLjA1LjI0IDAgLjE2LjA3LjMyLjE5LjQ0cy4yOC4xOS40NC4xOWMuMTcgMCAuMzMtLjA3LjQ0LS4xOS4xMi0uMTEuMTktLjI4LjE5LS40NCAwLS4wOC0uMDItLjE2LS4wNS0uMjRhLjY1Ni42NTYgMCAwIDAtLjE0LS4yWk04LjU2IDIyLjU2Yy0uMTIuMTItLjE5LjI4LS4xOS40NCAwIC4xNi4wNy4zMy4xOS40NC4xMi4xMi4yOC4xOS40NC4xOS4xNyAwIC4zMy0uMDcuNDQtLjE5LjEyLS4xMS4xOS0uMjguMTktLjQ0YS42My42MyAwIDAgMC0uMTktLjQ0Yy0uMjMtLjIzLS42NC0uMjMtLjg4IDBaIi8+PC9zdmc+
