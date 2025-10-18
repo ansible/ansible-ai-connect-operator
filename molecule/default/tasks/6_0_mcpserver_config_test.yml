@@ -1,0 +1,28 @@
+---
+- block:
+    - name: Get API Pod details
+      kubernetes.core.k8s_info:
+        namespace: '{{ namespace }}'
+        kind: Pod
+        label_selectors:
+          - app.kubernetes.io/name = ansiblemcpserver-sample
+      register: mcpserver_pod
+
+    - name: Get API Service details
+      kubernetes.core.k8s_info:
+        namespace: '{{ namespace }}'
+        kind: Service
+        label_selectors:
+          - app.kubernetes.io/name = ansiblemcpserver-sample
+      register: mcpserver_service
+
+    - name: Make sure that the service port is open
+      ansible.builtin.wait_for:
+        host: '{{ service_host_ip }}'
+        port: '{{ service_host_port | int }}'
+        state: started
+        timeout: 30
+      vars:
+        service_host_ip: '{{ mcpserver_pod.resources[0].status.hostIP }}'
+        service_host_port: '{{ mcpserver_service.resources[0].spec.ports[0].nodePort }}'
+      register: service_host_response
