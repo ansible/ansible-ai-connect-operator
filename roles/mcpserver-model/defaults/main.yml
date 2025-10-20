@@ -11,8 +11,8 @@ deployment_type: 'ansible-mcp-server'
 image_pull_policy: IfNotPresent
 image_pull_secrets: []
 
-# !!!TODO!!! Use Python MCP server container image for now
-_image: quay.io/ansible/ansible-mcp-controller
+# !!!TODO!!!
+_image: quay.io/ttakamiy/aap-mcp-server
 _image_version: "{{ lookup('env', 'DEFAULT_MCP_SERVER_VERSION') or 'latest' }}"
 
 # Labels defined on the resource, which should be propagated to child resources
