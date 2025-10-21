@@ -8,7 +8,6 @@ metadata:
   labels:
     {{ lookup("template", "../common/templates/labels/common.yaml.j2") | indent(width=4) | trim }}
 data:
-  MCP_PORT: "{{ default_http_port }}"
   BASE_URL: "{{ aap_gateway_url }}"
   # Custom user variables
 {% for item in extra_settings | default([]) %}

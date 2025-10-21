@@ -28,7 +28,7 @@ spec:
               service:
                 name: '{{ ansible_operator_meta.name }}'
                 port:
-                  number: 8000
+                  number: {{ default_http_port }}
 {% if hostname %}      
       host: {{ hostname }}
 {% endif %}      

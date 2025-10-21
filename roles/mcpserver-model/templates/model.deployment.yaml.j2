@@ -143,16 +143,16 @@ spec:
           - configMapRef:
               name: "{{ ansible_operator_meta.name }}-{{ deployment_type }}-env-properties"
         ports:
-        - containerPort: 8000
+        - containerPort: {{ default_http_port }}
           protocol: TCP
         readinessProbe:
           tcpSocket:
-            port: 8000
+            port: {{ default_http_port }}
           initialDelaySeconds: 15
           periodSeconds: 10
         livenessProbe:
           tcpSocket:
-            port: 8000
+            port: {{ default_http_port }}
           initialDelaySeconds: 15
           periodSeconds: 10
         volumeMounts:
