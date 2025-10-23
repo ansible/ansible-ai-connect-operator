@@ -12,7 +12,7 @@ image_pull_policy: IfNotPresent
 image_pull_secrets: []
 
 # !!!TODO!!!
-_image: quay.io/goneri/aap-mcp-downstream
+_image: quay.io/ttakamiy/aap-mcp-server
 _image_version: "{{ lookup('env', 'DEFAULT_MCP_SERVER_VERSION') or 'latest' }}"
 
 # Labels defined on the resource, which should be propagated to child resources
