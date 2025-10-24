@@ -1,0 +1,33 @@
+---
+- block:
+    - name: Get API Pod details
+      kubernetes.core.k8s_info:
+        namespace: '{{ namespace }}'
+        kind: Pod
+        label_selectors:
+          - app.kubernetes.io/name = ansiblemcpserver-sample
+      register: mcpserver_pod
+
+    - name: Get API Service details
+      kubernetes.core.k8s_info:
+        namespace: '{{ namespace }}'
+        kind: Service
+        label_selectors:
+          - app.kubernetes.io/name = ansiblemcpserver-sample
+      register: mcpserver_service
+
+    - name: Get Health Check
+      ansible.builtin.uri:
+        url: 'http://{{ service_host_ip }}:{{ service_host_port }}/api/v1/health'
+        return_content: true
+      vars:
+        service_host_ip: '{{ mcpserver_pod.resources[0].status.hostIP }}'
+        service_host_port: '{{ mcpserver_service.resources[0].spec.ports[0].nodePort }}'
+      register: service_host_response
+
+    - name: Assert Health Check response
+      ansible.builtin.assert:
+        that:
+        - service_host_response.status == 200
+        - service_host_response.json.status == 'ok'
+        fail_msg: /check endpoint did not return expected response. Expected HTTP200, OK.

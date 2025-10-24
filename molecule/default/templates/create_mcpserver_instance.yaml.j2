@@ -1,0 +1,29 @@
+apiVersion: mcpserver.ansible.com/v1alpha1
+kind: AnsibleMCPServer
+metadata:
+  labels:
+    app.kubernetes.io/name: ansiblemcpserver
+    app.kubernetes.io/instance: ansiblemcpserver-sample
+    app.kubernetes.io/part-of: ansible-ai-connect-operator
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/created-by: ansible-ai-connect-operator
+  name: ansiblemcpserver-sample
+spec:
+  aap_gateway_url: {{ aap_gateway_url }}
+  no_log: false
+  ingress_type: Ingress
+  ingress_path: /mcp
+  service_type: NodePort
+  image_pull_secrets:
+    - redhat-operators-pull-secret
+{% if mcpserver_image %}
+  image: {{ mcpserver_image }}
+{% endif %}
+{% if mcpserver_version %}
+  image_version: {{ mcpserver_version }}
+{% endif %}
+  api:
+    resource_requirements:
+      requests:
+        cpu: 100m
+        memory: 200Mi

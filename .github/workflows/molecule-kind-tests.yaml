@@ -33,7 +33,7 @@ jobs:
 
       - uses: actions/setup-python@v4
         with:
-          python-version: '3.10'
+          python-version: '3.12'
 
       - name: Install Dependencies
         run: |
@@ -46,7 +46,7 @@ jobs:
 
       - name: Run Molecule
         env:
-          MOLECULE_VERBOSITY: 3
+          MOLECULE_VERBOSITY: 0
           PY_COLORS: '1'
           ANSIBLE_FORCE_COLOR: '1'
         run: |
