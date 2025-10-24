@@ -11,8 +11,9 @@ A Kubernetes operator for Kubernetes built with [Operator SDK](https://github.co
     - [Prerequisites](#prerequisites)
   - [Install the Ansible AI Connect Operator](#install-the-ansible-ai-connect-operator)
   - [Deploy an `AnsibleAIConnect` instance](#deploy-an-ansibleaiconnect-instance)
-    - [Deploying on OpenShift `ROSA`](#deploying-on-openshift-rosa)
+    - [Deploying on OpenShift](#deploying-on-openshift)
     - [Deploying on `minikube`](#deploying-on-minikube)
+  - [Deploy an `AnsibleMCPServer` instance](#deploy-an-ansiblemcpserver-instance)
   - [Upgrades](#upgrades)
   - [Integrating with Ansible Automation Platform and IBM watsonx Code Assistant](#integrating-with-ansible-automation-platform-and-ibm-watsonx-code-assistant)
   - [Advanced Configuration](#advanced-configuration)
@@ -28,7 +29,13 @@ A Kubernetes operator for Kubernetes built with [Operator SDK](https://github.co
 
 ## Overview
 
-This operator is meant to provide a more Kubernetes-native installation method for Ansible AI Connect via an `AnsibleAIConnect` Custom Resource Definition (CRD). In the future, this operator will grow to be able to maintain the full life-cycle of an Ansible AI Connect deployment. Currently, it can handle fresh installs and upgrades.
+This operator is meant to provide a more Kubernetes-native installation method for 
+
+- Ansible AI Connect via an `AnsibleAIConnect` Custom Resource Definition (CRD) and
+- Ansible MCP Server via an `AnsibleMCPServer` CRD.
+
+In the future, this operator will grow to be able to maintain the full life-cycle of deployments. 
+Currently, it can handle fresh installs and upgrades.
 
 ## Contributing
 
@@ -84,13 +91,19 @@ $ kubectl get pods
 
 ## Deploy an `AnsibleAIConnect` instance
 
-### Deploying on OpenShift `ROSA`
+### Deploying on OpenShift
 
-Full instructions for using an OpenShift `ROSA` cluster are [here](./docs/running-on-openshift-rosa-cluster.md).
+Full instructions for using an OpenShift cluster are [here](./docs/running-on-openshift-cluster.md).
 
 ### Deploying on `minikube`
 
 Full instructions for using a `minikube` cluster are [here](./docs/running-on-minikube-cluster.md).
+
+## Deploy an `AnsibleMCPServer` instance
+
+Full instructions for deploying an `AnsibleMCPServer` using an OpenShift cluster are [here](./docs/running-on-openshift-cluster.md).
+
+Note: Deployment of an `AnsibleMCPServer` is not tested yet.
 
 ## Integrating with Ansible Automation Platform and IBM watsonx Code Assistant
 
@@ -112,7 +125,7 @@ Ansible AI Connect can be configured to use an existing database. Here is an [ex
 
 ### Deploying Ansible AI Connect Operator using OLM
 
-You can take advantage of the Operator Lifecycle Manager to deploy the operator.  Here is an [example](/docs/running-on-openshift-rosa-cluster.md)
+You can take advantage of the Operator Lifecycle Manager to deploy the operator.  Here is an [example](/docs/running-on-openshift-cluster.md)
 
 
 ### Admin user account configuration
