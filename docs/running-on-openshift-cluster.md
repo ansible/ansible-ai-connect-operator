@@ -2,13 +2,8 @@
 
 ## Overview
 
-This guide shows you how to deploy AnsibleAIConnect or AnsibleMCPServer on
+This guide shows you how to deploy `AnsibleAIConnect` or `AnsibleMCPServer` on
 an OpenShift cluster.
-
-These instructions assume you're using 
-[a Red Hat OpenShift Service on AWS (ROSA) cluster](https://docs.openshift.com/rosa/welcome/index.html)), 
-but any steps not specific to ROSA should also work on other OpenShift clusters.
-
 
 ## Permissions
 
@@ -148,7 +143,11 @@ kubectl apply -f aiconnect.yaml
 $ oc get route -n <target-namespace> my-aiconnect
 ```
 
-### A note on `PersistentVolume`'s
+### A note on `PersistentVolume`'s (ROSA only)
+
+**NOTE:** These instructions apply only to
+[Red Hat OpenShift Service on AWS (ROSA) clusters](https://docs.openshift.com/rosa/welcome/index.html).
+
 The Operator supports the provisioning of a _managed_ Postgres instance.
 
 The instance requires persistent storage which should be configured to use one of the `StorageClass`'es provisioned by OpenShift `ROSA`.
@@ -177,7 +176,7 @@ These are [provisioned](https://docs.openshift.com/rosa/storage/persistent_stora
 
 ## Create an `AnsibleMCPServer` instance
 
-The Ansible MCP (Model Context Protocol) Server can be deployed alongside the AnsibleAIConnect instance to provide MCP functionality.
+The Ansible MCP (Model Context Protocol) Server can be deployed alongside the `AnsibleAIConnect` instance to provide MCP functionality.
 
 ### Using Operator Lifecycle Management
 
