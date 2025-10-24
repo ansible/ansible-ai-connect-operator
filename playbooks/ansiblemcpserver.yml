@@ -28,4 +28,4 @@
       when:
         - (_rh_ops_secret is not defined) or not (_rh_ops_secret['resources'] | length)
   roles:
-    - mcpserver-model
+    - mcpserver

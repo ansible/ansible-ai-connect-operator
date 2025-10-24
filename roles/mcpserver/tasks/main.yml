@@ -25,10 +25,10 @@
     - ingress_type | lower == 'route'
     - route_tls_secret | length
 
-- name: Deploy Model API service
-  ansible.builtin.include_tasks: deploy_model_api.yml
+- name: Deploy MCP Server API service
+  ansible.builtin.include_tasks: deploy_mcpserver_api.yml
 
-- name: Setup HorizontalPodAutoscaler for Model API deployment
+- name: Setup HorizontalPodAutoscaler for MCP Server deployment
   ansible.builtin.include_tasks: setup_hpa.yml
 
 - name: Update status variables
