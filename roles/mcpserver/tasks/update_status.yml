@@ -22,8 +22,8 @@
         status:
           version: "0.1.0"
   when:
-    - model_api_pod_name is defined
-    - model_api_pod_name | length
+    - mcpserver_pod_name is defined
+    - mcpserver_pod_name | length
 
 - block:
     - name: Retrieve route URL
