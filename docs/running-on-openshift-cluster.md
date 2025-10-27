@@ -1,12 +1,9 @@
-# Running on an OpenShift `ROSA` cluster
+# Running on an OpenShift cluster
 
 ## Overview
 
-This document covers running an instance of `AnsibleAIConnect` on OpenShift `ROSA`. 
-
-It assumes you have an OpenShift `ROSA` cluster running.
-
-See https://docs.openshift.com/rosa/welcome/index.html
+This guide shows you how to deploy `AnsibleAIConnect` or `AnsibleMCPServer` on
+an OpenShift cluster.
 
 ## Permissions
 
@@ -146,7 +143,11 @@ kubectl apply -f aiconnect.yaml
 $ oc get route -n <target-namespace> my-aiconnect
 ```
 
-### A note on `PersistentVolume`'s
+### A note on `PersistentVolume`'s (ROSA only)
+
+**NOTE:** These instructions apply only to
+[Red Hat OpenShift Service on AWS (ROSA) clusters](https://docs.openshift.com/rosa/welcome/index.html).
+
 The Operator supports the provisioning of a _managed_ Postgres instance.
 
 The instance requires persistent storage which should be configured to use one of the `StorageClass`'es provisioned by OpenShift `ROSA`.
@@ -172,3 +173,57 @@ gp3-customer-kms (default)   ebs.csi.aws.com
 ```
 
 These are [provisioned](https://docs.openshift.com/rosa/storage/persistent_storage/persistent-storage-aws.html) by OpenShift ROSA.
+
+## Create an `AnsibleMCPServer` instance
+
+The Ansible MCP (Model Context Protocol) Server can be deployed alongside the `AnsibleAIConnect` instance to provide MCP functionality.
+
+### Using Operator Lifecycle Management
+
+If the Operator was installed using the Operator Lifecycle Manager's `Catalog`, you can create an `AnsibleMCPServer` instance through the OpenShift console using the Operator's UI components.
+
+### Using the CLI
+
+To create an `AnsibleMCPServer` instance using the CLI:
+
+1. Create a file `mcpserver.yaml` with the following content:
+
+```yaml
+apiVersion: mcpserver.ansible.com/v1alpha1
+kind: AnsibleMCPServer
+metadata:
+  name: my-mcpserver
+  namespace: <target-namespace>
+spec:
+  no_log: false
+  service_type: ClusterIP
+  ingress_type: Route
+  aap_gateway_url: https://your-aap-gateway-url.example.com
+  image_pull_secrets:
+    - redhat-operators-pull-secret
+```
+
+2. Apply the YAML file:
+
+```bash
+kubectl apply -f mcpserver.yaml
+```
+
+3. Once deployed, the `AnsibleMCPServer` instance will be accessible by running:
+
+```bash
+oc get route -n <target-namespace> my-mcpserver
+```
+
+### Configuration Options
+
+Key configuration options for the `AnsibleMCPServer` include:
+
+- `aap_gateway_url`: **Required.** The URL of your Ansible Automation Platform Gateway
+- `service_type`: Service type (default: `ClusterIP`). Options: `ClusterIP`, `NodePort`, `LoadBalancer`
+- `ingress_type`: Ingress type (default: `Route`). Use `Route` for OpenShift or `Ingress` for standard Kubernetes
+- `image_pull_secrets`: List of secrets for pulling container images from private registries
+- `api.replicas`: Number of pod replicas (default: 1)
+- `api.resource_requirements`: CPU and memory limits/requests
+
+For a complete list of configuration options, see the [mcpserver role documentation](../roles/mcpserver/README.md).

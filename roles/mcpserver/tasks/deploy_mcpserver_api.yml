@@ -2,7 +2,7 @@
 - name: Apply Model ConfigMap resources
   kubernetes.core.k8s:
     apply: yes
-    definition: "{{ lookup('template', 'model.configmap.yaml.j2') }}"
+    definition: "{{ lookup('template', 'mcpserver.configmap.yaml.j2') }}"
     wait: yes
 
 - name: Apply deployment resources
@@ -11,11 +11,11 @@
     definition: "{{ lookup('template', item + '.yaml.j2') }}"
     wait: no
   loop:
-    - 'model.service'
-    - 'model.deployment'
-    - 'model.ingress'
+    - 'mcpserver.service'
+    - 'mcpserver.deployment'
+    - 'mcpserver.ingress'
 
-- name: Check for Model API Pod
+- name: Check for MCP Server Pod
   kubernetes.core.k8s_info:
     kind: Pod
     api_version: v1
@@ -26,15 +26,15 @@
       - "app.kubernetes.io/component={{ deployment_type }}"
     field_selectors:
       - status.phase=Running
-  register: model_api_pod
+  register: mcpserver_pod
   until:
-    - "model_api_pod['resources'] | length > 0"
-    - "model_api_pod['resources'][0]['status']['phase'] == 'Running'"
-    - "model_api_pod['resources'][0]['status']['containerStatuses'] | length > 0"
-    - "model_api_pod['resources'][0]['status']['containerStatuses'][0]['ready'] == true"
+    - "mcpserver_pod['resources'] | length > 0"
+    - "mcpserver_pod['resources'][0]['status']['phase'] == 'Running'"
+    - "mcpserver_pod['resources'][0]['status']['containerStatuses'] | length > 0"
+    - "mcpserver_pod['resources'][0]['status']['containerStatuses'][0]['ready'] == true"
   retries: 60
   delay: 5
 
-- name: Set the Model API Pod name as a variable.
+- name: Set the MCP Server Pod name as a variable.
   ansible.builtin.set_fact:
-    model_api_pod_name: "{{ model_api_pod['resources'][0]['metadata']['name'] | default('') }}"
+    mcpserver_pod_name: "{{ mcpserver_pod['resources'][0]['metadata']['name'] | default('') }}"

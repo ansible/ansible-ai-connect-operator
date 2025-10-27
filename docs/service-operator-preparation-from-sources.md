@@ -57,8 +57,8 @@ In case operator, bundle or catalog images must be generated, please follow:
 ### Install and run the operator in Openshift
 
 - Checkout a branch or tag from [ansible-wisdom-ai-connect-operator](https://github.com/ansible/ansible-ai-connect-operator)
-- [Install the operator](running-on-openshift-rosa-cluster.md)
-- [Create an AnsibleAIConnect instance](running-on-openshift-rosa-cluster.md#create-an-ansibleaiconnect-instance)
+- [Install the operator](running-on-openshift-cluster.md)
+- [Create an AnsibleAIConnect instance](running-on-openshift-cluster.md#create-an-ansibleaiconnect-instance)
 
 ### AAP and WCA Integration
 
