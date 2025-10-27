@@ -16,7 +16,7 @@ A Kubernetes operator for Kubernetes built with [Operator SDK](https://github.co
   - [Deploy an `AnsibleMCPServer` instance](#deploy-an-ansiblemcpserver-instance)
   - [Upgrades](#upgrades)
   - [Integrating with Ansible Automation Platform and IBM watsonx Code Assistant](#integrating-with-ansible-automation-platform-and-ibm-watsonx-code-assistant)
-  - [Advanced Configuration](#advanced-configuration)
+  - [Advanced Configuration for `AnsibleAIConnect`](#advanced-configuration-for-ansibleaiconnect)
     - [Use external database](#use-external-database)
     - [Use existing `Secret`'s](#use-existing-secrets)
     - [Deploying Ansible AI Connect Operator using OLM](#deploying-ansible-ai-connect-operator-using-olm)
@@ -24,6 +24,8 @@ A Kubernetes operator for Kubernetes built with [Operator SDK](https://github.co
     - [Database Fields Encryption Configuration](#database-fields-encryption-configuration)
     - [TLS Communication (OpenShift)](#tls-communication-openshift)
     - [Additional Advanced Configuration](#additional-advanced-configuration)
+  - [Advanced Configuration for `AnsibleMCPServer`](#advanced-configuration-for-ansiblemcpserver)
+    - [Ignore certificate errors](#ignore-certificate-errors)
   - [Programmatic usage of the API](docs/user-guide/programmatic-api-use.md)
   - [Maintainers Docs](#maintainers-docs)
 
@@ -113,7 +115,7 @@ Go [here](docs/aap-wca-integrations.md)
 
 For information on how to upgrade, please see the [upgrading](./docs/upgrade/upgrading.md) document.
 
-## Advanced Configuration
+## Advanced Configuration for `AnsibleAIConnect`
 
 ### Use external database
 
@@ -248,6 +250,22 @@ oc get secret <resourcename>-chatbot-api-tls \
 - [No Log](./docs/user-guide/advanced-configuration/no-log.md)
 - [Deploy a Specific Version of `AnsibleAIConnect`](./docs/user-guide/advanced-configuration/deploying-a-specific-version.md)
 - [Trusting a Custom Certificate Authority](./docs/user-guide/advanced-configuration/trusting-a-custom-certificate-authority.md)
+
+## Advanced Configuration for `AnsibleMCPServer`
+
+### Ignore certificate errors
+If your AAP setup uses a self-signed certificate, configure the `AnsibleMCPServer` 
+to ignore certificate errors by setting `IGNORE_CERTIFICATE_ERRORS: true`
+within the `extra_settings` of the `AnsibleMCPServer` CRD.
+
+```yaml
+---
+spec:
+  ...
+  extra_settings:
+    - setting: IGNORE_CERTIFICATE_ERRORS
+      value: true
+```
 
 ## Maintainers Docs
 
