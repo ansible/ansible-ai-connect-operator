@@ -477,7 +477,7 @@ spec:
                 type: boolean
                 default: true
               public_base_url:
-                description: AAP Public Base (Gateway) URL
+                description: The URL of your Ansible Automation Platform
                 type: string
                 default: https://your_aap_public_base_url_here
               extra_settings:
