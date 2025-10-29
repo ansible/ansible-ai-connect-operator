@@ -198,7 +198,7 @@ spec:
   no_log: false
   service_type: ClusterIP
   ingress_type: Route
-  aap_gateway_url: https://your-aap-gateway-url.example.com
+  public_base_url: https://your-aap-public-base-url.example.com
   image_pull_secrets:
     - redhat-operators-pull-secret
 ```
@@ -219,7 +219,7 @@ oc get route -n <target-namespace> my-mcpserver
 
 Key configuration options for the `AnsibleMCPServer` include:
 
-- `aap_gateway_url`: **Required.** The URL of your Ansible Automation Platform Gateway
+- `public_base_url`: **Required.** The URL of your Ansible Automation Platform
 - `service_type`: Service type (default: `ClusterIP`). Options: `ClusterIP`, `NodePort`, `LoadBalancer`
 - `ingress_type`: Ingress type (default: `Route`). Use `Route` for OpenShift or `Ingress` for standard Kubernetes
 - `image_pull_secrets`: List of secrets for pulling container images from private registries

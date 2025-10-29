@@ -476,10 +476,10 @@ spec:
                 description: Maintain some of the recommended `app.kubernetes.io/*` labels on the resource (self)
                 type: boolean
                 default: true
-              aap_gateway_url:
-                description: AAP Gateway URL
+              public_base_url:
+                description: The URL of your Ansible Automation Platform
                 type: string
-                default: https://your_aap_gateway_url_here
+                default: https://your_aap_public_base_url_here
               extra_settings:
                 description: Environment variables to configure the application-level settings
                 items:
