@@ -41,7 +41,7 @@ provisioner:
         operator_image: ${OPERATOR_IMAGE:-"latest"}
         operator_pull_policy: ${OPERATOR_PULL_POLICY:-"Never"}
         kustomize: ${KUSTOMIZE_PATH:-kustomize}
-        aap_gateway_url: ${AAP_GATEWAY_URL:-"http://localhost"}
+        public_base_url: ${BASE_URL:-"http://localhost"}
   env:
     K8S_AUTH_KUBECONFIG: ${KUBECONFIG:-"~/.kube/config"}
 verifier:

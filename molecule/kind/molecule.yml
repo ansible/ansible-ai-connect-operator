@@ -45,7 +45,7 @@ provisioner:
         operator_pull_policy: ${OPERATOR_PULL_POLICY:-"Never"}
         kubeconfig: "{{ lookup('env', 'KUBECONFIG') }}"
         kustomize: ${KUSTOMIZE_PATH:-kustomize}
-        aap_gateway_url: ${AAP_GATEWAY_URL:-"http://localhost"}
+        public_base_url: ${BASE_URL:-"http://localhost"}
   env:
     K8S_AUTH_KUBECONFIG: ${MOLECULE_EPHEMERAL_DIRECTORY}/kubeconfig
     KUBECONFIG: ${MOLECULE_EPHEMERAL_DIRECTORY}/kubeconfig
