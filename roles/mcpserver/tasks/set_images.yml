@@ -1,6 +1,6 @@
 ---
 # API Image
-- name: Set default AnsibleMCPServer API container image
+- name: Set default AnsibleMCPConnect API container image
   ansible.builtin.set_fact:
     _default_image: "{{ _image }}:{{ _image_version }}"
 

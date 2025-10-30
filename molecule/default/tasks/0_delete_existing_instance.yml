@@ -1,5 +1,5 @@
 ---
-- name: Delete existing AnsibleAIConnect and AnsibleMCPServer instances
+- name: Delete existing AnsibleAIConnect and AnsibleMCPConnect instances
   kubernetes.core.k8s:
     state: absent
     namespace: '{{ namespace }}'
