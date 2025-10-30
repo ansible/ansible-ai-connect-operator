@@ -32,6 +32,8 @@ spec:
           spec:
             description: Spec defines the desired state of AnsibleMCPServer
             type: object
+            required:
+              - public_base_url
             properties:
               image_pull_policy:
                 description: The image pull policy
@@ -479,7 +481,6 @@ spec:
               public_base_url:
                 description: The URL of your Ansible Automation Platform
                 type: string
-                default: https://your_aap_public_base_url_here
               extra_settings:
                 description: Environment variables to configure the application-level settings
                 items:
