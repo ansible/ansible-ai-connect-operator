@@ -1,7 +1,7 @@
 ---
 - ansible.builtin.include_tasks: 0_create_config_secrets.yml
 
-- name: Create AnsibleAIConnect and AnsibleMCPServer instances
+- name: Create AnsibleAIConnect and AnsibleMCPConnect instances
   kubernetes.core.k8s:
     state: present
     namespace: '{{ namespace }}'
