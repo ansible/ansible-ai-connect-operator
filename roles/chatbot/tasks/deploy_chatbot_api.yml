@@ -24,7 +24,7 @@
       - status.phase=Running
   register: chatbot_api_pod
   until:
-    - "chatbot_api_pod['resources'] | length"
+    - "chatbot_api_pod['resources'] | length > 0"
     - "chatbot_api_pod['resources'][0]['status']['phase'] == 'Running'"
     - "chatbot_api_pod['resources'][0]['status']['containerStatuses'][0]['ready'] == true"
   retries: 30

@@ -31,4 +31,4 @@
            | list
         }}
     when: this_ansibleaiconnect['resources'][0]['metadata']['labels']
-  when: additional_labels | length
+  when: additional_labels | length > 0

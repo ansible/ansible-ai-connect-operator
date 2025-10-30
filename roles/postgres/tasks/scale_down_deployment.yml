@@ -16,4 +16,4 @@
     namespace: "{{ ansible_operator_meta.namespace }}"
     replicas: 0
     wait: yes
-  when: this_deployment['resources'] | length
+  when: this_deployment['resources'] | length > 0

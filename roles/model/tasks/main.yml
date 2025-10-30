@@ -18,7 +18,7 @@
 - name: Set Bundle Certificate Authority
   ansible.builtin.include_tasks: set_bundle_cacert.yml
   when:
-  - bundle_cacert_secret | length
+  - bundle_cacert_secret | length > 0
 
 - name: Create DB fields encryption
   ansible.builtin.include_tasks: db_fields_encryption_configuration.yml
@@ -43,7 +43,7 @@
   ansible.builtin.include_tasks: load_route_tls_secret.yml
   when:
     - ingress_type | lower == 'route'
-    - route_tls_secret | length
+    - route_tls_secret | length > 0
 
 - name: Deploy Model API service
   ansible.builtin.include_tasks: deploy_model_api.yml
@@ -53,7 +53,7 @@
 
 - name: Create admin user
   ansible.builtin.include_tasks: create_admin_user.yml
-  when: model_api_pod_name | length
+  when: model_api_pod_name | length > 0
 
 - name: Update status variables
   ansible.builtin.include_tasks: update_status.yml

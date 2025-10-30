@@ -23,7 +23,7 @@
           version: "0.1.0"
   when:
     - mcpserver_pod_name is defined
-    - mcpserver_pod_name | length
+    - mcpserver_pod_name | length > 0
 
 - block:
     - name: Retrieve route URL

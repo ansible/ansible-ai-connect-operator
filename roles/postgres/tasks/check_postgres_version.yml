@@ -24,13 +24,13 @@
         sorted_old_postgres_pods: "{{ filtered_old_postgres_pods |
         sort(attribute='metadata.name') |
         reverse | list }}"
-      when: filtered_old_postgres_pods | length
+      when: filtered_old_postgres_pods | length > 0
 
     - name: Set info for previous Postgres Pod
       ansible.builtin.set_fact:
         old_postgres_pod: "{{ sorted_old_postgres_pods | first }}"
-      when: filtered_old_postgres_pods | length
-  when: _running_pods.resources | length
+      when: filtered_old_postgres_pods | length > 0
+  when: _running_pods.resources | length > 0
 
 - name: Look up details for this Deployment
   kubernetes.core.k8s_info:
@@ -73,4 +73,4 @@
   when:
     - managed_database
     - (_previous_upgraded_pg_version | default(false)) | ternary(_previous_upgraded_pg_version | int < supported_pg_version, true)
-    - old_postgres_pod | length  # If empty, then old Postgres Pod has been removed, and we can assume the upgrade is complete
+    - old_postgres_pod | length > 0  # If empty, then old Postgres Pod has been removed, and we can assume the upgrade is complete

@@ -12,7 +12,7 @@
   ansible.builtin.set_fact:
     _custom_postgres_image: "{{ postgres_image }}:{{ postgres_image_version }}"
   when:
-    - postgres_image | default([]) | length
+    - postgres_image | default([]) | length > 0
     - postgres_image_version is defined and postgres_image_version != ''
 
 - name: Set Postgres image URL

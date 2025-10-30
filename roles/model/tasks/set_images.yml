@@ -8,7 +8,7 @@
   ansible.builtin.set_fact:
     _custom_image: "{{ image }}:{{ image_version }}"
   when:
-    - image | default([]) | length
+    - image | default([]) | length > 0
     - image_version is defined or image_version != ''
 
 - name: Set image URL

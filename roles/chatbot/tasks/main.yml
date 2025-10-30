@@ -22,7 +22,7 @@
 
   when:
     - chatbot_config_secret_name is defined
-    - chatbot_config_secret_name | length
+    - chatbot_config_secret_name | length > 0
 
 # Remove AnsibleAIConnect's Chatbot
 - name: Remove AnsibleAIConnect's Chatbot service

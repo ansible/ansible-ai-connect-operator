@@ -17,13 +17,13 @@
 - name: Set Bundle Certificate Authority
   ansible.builtin.include_tasks: set_bundle_cacert.yml
   when:
-  - bundle_cacert_secret | length
+  - bundle_cacert_secret | length > 0
 
 - name: Load Route TLS certificate
   ansible.builtin.include_tasks: load_route_tls_secret.yml
   when:
     - ingress_type | lower == 'route'
-    - route_tls_secret | length
+    - route_tls_secret | length > 0
 
 - name: Deploy MCP Server API service
   ansible.builtin.include_tasks: deploy_mcpserver_api.yml

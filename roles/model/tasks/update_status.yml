@@ -45,7 +45,7 @@
           version: "{{ instance_version.stdout | trim }}"
   when:
     - model_api_pod_name is defined
-    - model_api_pod_name | length
+    - model_api_pod_name | length > 0
 
 - name: Update Model Configuration Secret status
   operator_sdk.util.k8s_status:
@@ -57,7 +57,7 @@
       modelConfigurationSecret: "{{ model_config_secret_name }}"
   when:
   - model_config_secret_name is defined
-  - model_config_secret_name | length
+  - model_config_secret_name | length > 0
 
 - block:
     - name: Retrieve route URL
@@ -104,7 +104,7 @@
           chatbotConfigurationSecret: "{{ chatbot_config_secret_name }}"
   when:
     - chatbot_api_pod_name is defined
-    - chatbot_api_pod_name | length
+    - chatbot_api_pod_name | length > 0
 
 # ============================================
 # Retrieve and update Postgres status

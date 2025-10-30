@@ -6,7 +6,7 @@
     name: '{{ db_fields_encryption_secret }}'
   register: _custom_db_fields_encryption
   no_log: "{{ no_log }}"
-  when: db_fields_encryption_secret | length
+  when: db_fields_encryption_secret | length > 0
 
 - name: Check for existing DB fields encryption configuration
   kubernetes.core.k8s_info:
@@ -18,7 +18,7 @@
 
 - name: Set DB fields encryption secret
   ansible.builtin.set_fact:
-    _db_fields_encryption_secret: '{{ _custom_db_fields_encryption["resources"] | default([]) | length | ternary(_custom_db_fields_encryption, _existing_db_fields_encryption) }}'
+    _db_fields_encryption_secret: '{{ (_custom_db_fields_encryption["resources"] | default([]) | length > 0) | ternary(_custom_db_fields_encryption, _existing_db_fields_encryption) }}'
   no_log: "{{ no_log }}"
 
 - block:
@@ -35,11 +35,11 @@
         name: '{{ ansible_operator_meta.name }}-db-fields-encryption-secret'
       register: _generated_db_fields_encryption
       no_log: "{{ no_log }}"
-  when: not _db_fields_encryption_secret['resources'] | default([]) | length
+  when: not _db_fields_encryption_secret['resources'] | default([]) | length > 0
 
 - name: Set DB fields encryption secret
   ansible.builtin.set_fact:
-    db_fields_encryption: '{{ _generated_db_fields_encryption["resources"] | default([]) | length | ternary(_generated_db_fields_encryption, _db_fields_encryption_secret)  }}'
+    db_fields_encryption: '{{ (_generated_db_fields_encryption["resources"] | default([]) | length > 0) | ternary(_generated_db_fields_encryption, _db_fields_encryption_secret)  }}'
   no_log: "{{ no_log }}"
 
 - name: Store DB fields encryption secret name
