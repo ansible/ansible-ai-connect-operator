@@ -206,7 +206,7 @@ spec:
               key: config
 {% if chatbot_config is defined %}
         - name: CHATBOT_DEFAULT_PROVIDER
-          value: "rhoai"
+          value: {{ chatbot_llm_provider_type }}
 {% endif %}
 {% if bundle_ca_crt or is_openshift %}
         - name: COMBINED_CA_BUNDLE_PATH

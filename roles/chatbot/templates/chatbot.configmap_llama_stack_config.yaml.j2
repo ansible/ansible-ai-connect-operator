@@ -21,6 +21,13 @@ data:
       - tool_runtime
     providers:
       inference:
+{% if chatbot_llm_provider_type == "openai" %}
+        - provider_id: openai
+          provider_type: remote::openai
+          config:
+            api_key: ${env.OPENAI_API_KEY}
+            url: ${env.OPENAI_URL:=https://api.openai.com/v1}
+{% elif chatbot_llm_provider_type == "rhoai" %}
         - provider_id: rhoai
           provider_type: remote::vllm
           config:
@@ -28,6 +35,7 @@ data:
             max_tokens: ${env.VLLM_MAX_TOKENS:=4096}
             api_token: ${env.VLLM_API_TOKEN:=fake}
             tls_verify: ${env.VLLM_TLS_VERIFY:=true}
+{% endif %}
         - provider_id: inline_sentence-transformer
           provider_type: inline::sentence-transformers
           config: {}
@@ -90,7 +98,7 @@ data:
     models:
       - metadata: {}
         model_id: ${env.INFERENCE_MODEL}
-        provider_id: rhoai
+        provider_id: {{ chatbot_llm_provider_type }}
         provider_model_id: null
       - metadata:
           embedding_dimension: 768

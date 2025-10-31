@@ -85,9 +85,10 @@ metadata:
   name: <secret-name>-chatbot-configuration
   namespace: <target-namespace>
 stringData:
+  chatbot_llm_provider_type: <LLM provider type (rhoai or openai)>
   chatbot_url: <Chatbot LLM URL>
   chatbot_model: <Chatbot model name>
-  chatbot_token: <Chatbot LLM access token>
+  chatbot_token: <Chatbot LLM access token or API key>
   aap_gateway_url: <AAP Gateway URL>
   aap_controller_url: <AAP Controller URL>
 type: Opaque
@@ -97,6 +98,14 @@ type: Opaque
 * `chatbot_url`
 * `chatbot_model`
 * `chatbot_token`
+
+**Optional Parameters**
+
+* `chatbot_llm_provider_type` - The LLM provider type to use. Valid values are:
+  - `rhoai` (default) - Red Hat OpenShift AI with vLLM
+  - `openai` - OpenAI API compatible endpoint
+* `aap_gateway_url` - AAP Gateway URL for MCP server integration
+* `aap_controller_url` - AAP Controller URL for MCP server integration
 
 **Parameter combinations**
 
@@ -162,6 +171,36 @@ stringData:
   model_api_key: <WCA API Key>
   model_id: <WCA Model Id>
   model_type: <WCA type>
+type: Opaque
+```
+
+### Create the chatbot `Secret` (RHOAI/vLLM)
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: my-secret-chatbot-configuration
+  namespace: mynamespace
+stringData:
+  chatbot_llm_provider_type: rhoai
+  chatbot_url: https://my-vllm-endpoint.example.com
+  chatbot_model: granite3-3-8b
+  chatbot_token: <vLLM API Token>
+type: Opaque
+```
+
+### Create the chatbot `Secret` (OpenAI)
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: my-secret-chatbot-configuration-openai
+  namespace: mynamespace
+stringData:
+  chatbot_llm_provider_type: openai
+  chatbot_url: https://api.openai.com/v1
+  chatbot_model: gpt-4o-mini
+  chatbot_token: <OpenAI API Key>
 type: Opaque
 ```
 

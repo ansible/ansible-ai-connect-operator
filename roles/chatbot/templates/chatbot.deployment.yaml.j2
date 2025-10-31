@@ -104,10 +104,17 @@ spec:
             value: /.llama/data
           - name: EMBEDDING_MODEL
             value: ./embeddings_model
+{% if chatbot_llm_provider_type == "openai" %}
+          - name: OPENAI_API_KEY
+            value: {{ chatbot_token }}
+          - name: OPENAI_URL
+            value: {{ chatbot_url }}
+{% elif chatbot_llm_provider_type == "rhoai" %}
           - name: VLLM_URL
             value: {{ chatbot_url }}
           - name: VLLM_API_TOKEN
             value: {{ chatbot_token }}
+{% endif %}
           - name: INFERENCE_MODEL
             value: {{ chatbot_model }}
         ports:
