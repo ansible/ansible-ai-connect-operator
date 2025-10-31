@@ -76,9 +76,8 @@ spec:
             echo "SSL Manager: Extracting system CA trust files..."
             update-ca-trust extract --output /etc/pki/ca-trust/extracted
 
-            # Now use the extracted system CAs from certifi/ca-trust
-            echo "SSL Manager: Adding system CAs from certifi..."
-            python3 -c "import certifi; print(certifi.where())" | xargs cat > /etc/ssl/combined-ca/ca-bundle.crt
+            # Now use the extracted system CAs from ca-trust
+            cp -v /etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem /etc/ssl/combined-ca/ca-bundle.crt
 {% if is_openshift %}
             # Add OpenShift service CA
             if [ -f /var/run/secrets/kubernetes.io/serviceaccount/service-ca.crt ]; then

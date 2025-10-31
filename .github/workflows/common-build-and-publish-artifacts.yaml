@@ -19,6 +19,10 @@ on:
         description: "The latest published version of the underlying chatbot service"
         required: true
         type: string
+      mcpserver_version:
+        description: "The latest published version of the underlying MCP server"
+        required: true
+        type: string
 
 jobs:
 
@@ -80,7 +84,7 @@ jobs:
       # -------------------------------
       - name: Build and store Operator image in @ghcr
         run: |
-          BUILD_ARGS="--build-arg DEFAULT_AI_CONNECT_VERSION=${{ inputs.service_version }} --build-arg DEFAULT_CHATBOT_AI_CONNECT_VERSION=${{ inputs.chatbot_version }} --build-arg OPERATOR_VERSION=${IMAGE_SEMVER_VERSION}" \
+          BUILD_ARGS="--build-arg DEFAULT_AI_CONNECT_VERSION=${{ inputs.service_version }} --build-arg DEFAULT_CHATBOT_AI_CONNECT_VERSION=${{ inputs.chatbot_version }} --build-arg DEFAULT_MCP_SERVER_VERSION=${{ inputs.mcpserver_version }} --build-arg OPERATOR_VERSION=${IMAGE_SEMVER_VERSION}" \
           IMG=ghcr.io/${{ github.repository_owner }}/ansible-ai-connect-operator:${{ github.sha }} \
           make docker-buildx
 
