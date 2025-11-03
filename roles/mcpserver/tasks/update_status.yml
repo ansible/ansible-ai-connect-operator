@@ -13,6 +13,15 @@
 # Retrieve and update AnsibleMCPServer status
 # ============================================
 - block:
+    - name: Set MCP server instance version
+      kubernetes.core.k8s_exec:
+        namespace: "{{ ansible_operator_meta.namespace }}"
+        pod: "{{ mcpserver_pod_name }}"
+        command: >-
+          bash -c "npm pkg get version | tr -d '\"'"
+      register: mcpserver_instance_version
+      changed_when: false
+
     - name: Update version status
       operator_sdk.util.k8s_status:
         api_version: '{{ api_version }}'
@@ -20,7 +29,7 @@
         name: "{{ ansible_operator_meta.name }}"
         namespace: "{{ ansible_operator_meta.namespace }}"
         status:
-          version: "0.1.0"
+          version: "{{ mcpserver_instance_version.stdout | trim }}"
   when:
     - mcpserver_pod_name is defined
     - mcpserver_pod_name | length
