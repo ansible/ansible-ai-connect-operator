@@ -78,6 +78,7 @@ spec:
 
             # Now use the extracted system CAs from ca-trust
             cp -v /etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem /etc/ssl/combined-ca/ca-bundle.crt
+            chmod 644 /etc/ssl/combined-ca/ca-bundle.crt
 {% if is_openshift %}
             # Add OpenShift service CA
             if [ -f /var/run/secrets/kubernetes.io/serviceaccount/service-ca.crt ]; then
@@ -94,7 +95,6 @@ spec:
               echo "SSL Manager: Added customer CA bundle"
             fi
 {% endif %}
-            chmod 644 /etc/ssl/combined-ca/ca-bundle.crt
             echo "SSL Manager: Combined CA bundle created successfully"
 
             # Verify the bundle contains both system and OpenShift CAs
