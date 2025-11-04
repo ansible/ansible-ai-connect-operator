@@ -13,3 +13,4 @@ spec:
   service_type: ClusterIP
   ingress_type: Route
   public_base_url: https://your_aap_public_base_url_here
+  allow_write_operations: false
