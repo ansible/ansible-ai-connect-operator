@@ -481,6 +481,10 @@ spec:
               public_base_url:
                 description: The URL of your Ansible Automation Platform
                 type: string
+              allow_write_operations:
+                description: Enable tools that support modification and data changes (using POST, DELETE, and PATCH methods).
+                type: boolean
+                default: false
               extra_settings:
                 description: Environment variables to configure the application-level settings
                 items:

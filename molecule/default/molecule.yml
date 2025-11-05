@@ -42,6 +42,7 @@ provisioner:
         operator_pull_policy: ${OPERATOR_PULL_POLICY:-"Never"}
         kustomize: ${KUSTOMIZE_PATH:-kustomize}
         public_base_url: ${BASE_URL:-"http://localhost"}
+        allow_write_operations: ${ALLOW_WRITE_OPERATIONS:-false}
   env:
     K8S_AUTH_KUBECONFIG: ${KUBECONFIG:-"~/.kube/config"}
 verifier:

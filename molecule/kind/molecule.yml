@@ -46,6 +46,7 @@ provisioner:
         kubeconfig: "{{ lookup('env', 'KUBECONFIG') }}"
         kustomize: ${KUSTOMIZE_PATH:-kustomize}
         public_base_url: ${BASE_URL:-"http://localhost"}
+        allow_write_operations: ${ALLOW_WRITE_OPERATIONS:-false}
   env:
     K8S_AUTH_KUBECONFIG: ${MOLECULE_EPHEMERAL_DIRECTORY}/kubeconfig
     KUBECONFIG: ${MOLECULE_EPHEMERAL_DIRECTORY}/kubeconfig
