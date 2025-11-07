@@ -1,13 +1,13 @@
 apiVersion: mcpserver.ansible.com/v1alpha1
-kind: AnsibleMCPServer
+kind: AnsibleMCPConnect
 metadata:
   labels:
-    app.kubernetes.io/name: ansiblemcpserver
-    app.kubernetes.io/instance: ansiblemcpserver-sample
+    app.kubernetes.io/name: ansiblemcpconnect
+    app.kubernetes.io/instance: ansiblemcpconnect-sample
     app.kubernetes.io/part-of: ansible-ai-connect-operator
     app.kubernetes.io/managed-by: kustomize
     app.kubernetes.io/created-by: ansible-ai-connect-operator
-  name: ansiblemcpserver-sample
+  name: ansiblemcpconnect-sample
 spec:
   public_base_url: {{ public_base_url }}
   allow_write_operations: {{ allow_write_operations }}

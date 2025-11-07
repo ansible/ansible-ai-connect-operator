@@ -13,7 +13,7 @@ A Kubernetes operator for Kubernetes built with [Operator SDK](https://github.co
   - [Deploy an `AnsibleAIConnect` instance](#deploy-an-ansibleaiconnect-instance)
     - [Deploying on OpenShift](#deploying-on-openshift)
     - [Deploying on `minikube`](#deploying-on-minikube)
-  - [Deploy an `AnsibleMCPServer` instance](#deploy-an-ansiblemcpserver-instance)
+  - [Deploy an `AnsibleMCPConnect` instance](#deploy-an-ansiblemcpconnect-instance)
   - [Upgrades](#upgrades)
   - [Integrating with Ansible Automation Platform and IBM watsonx Code Assistant](#integrating-with-ansible-automation-platform-and-ibm-watsonx-code-assistant)
   - [Advanced Configuration for `AnsibleAIConnect`](#advanced-configuration-for-ansibleaiconnect)
@@ -24,7 +24,7 @@ A Kubernetes operator for Kubernetes built with [Operator SDK](https://github.co
     - [Database Fields Encryption Configuration](#database-fields-encryption-configuration)
     - [TLS Communication (OpenShift)](#tls-communication-openshift)
     - [Additional Advanced Configuration](#additional-advanced-configuration)
-  - [Advanced Configuration for `AnsibleMCPServer`](#advanced-configuration-for-ansiblemcpserver)
+  - [Advanced Configuration for `AnsibleMCPConnect`](#advanced-configuration-for-ansiblemcpconnect)
     - [Ignore certificate errors](#ignore-certificate-errors)
   - [Programmatic usage of the API](docs/user-guide/programmatic-api-use.md)
   - [Maintainers Docs](#maintainers-docs)
@@ -34,7 +34,7 @@ A Kubernetes operator for Kubernetes built with [Operator SDK](https://github.co
 This operator is meant to provide a more Kubernetes-native installation method for 
 
 - Ansible AI Connect via an `AnsibleAIConnect` Custom Resource Definition (CRD) and
-- Ansible MCP Server via an `AnsibleMCPServer` CRD.
+- Ansible MCP Server via an `AnsibleMCPConnect` CRD.
 
 In the future, this operator will grow to be able to maintain the full life-cycle of deployments. 
 Currently, it can handle fresh installs and upgrades.
@@ -101,11 +101,11 @@ Full instructions for using an OpenShift cluster are [here](./docs/running-on-op
 
 Full instructions for using a `minikube` cluster are [here](./docs/running-on-minikube-cluster.md).
 
-## Deploy an `AnsibleMCPServer` instance
+## Deploy an `AnsibleMCPConnect` instance
 
-Full instructions for deploying an `AnsibleMCPServer` using an OpenShift cluster are [here](./docs/running-on-openshift-cluster.md).
+Full instructions for deploying an `AnsibleMCPConnect` using an OpenShift cluster are [here](./docs/running-on-openshift-cluster.md).
 
-Note: Deployment of an `AnsibleMCPServer` is not tested yet.
+Note: Deployment of an `AnsibleMCPConnect` is not tested yet.
 
 ## Integrating with Ansible Automation Platform and IBM watsonx Code Assistant
 
@@ -251,12 +251,12 @@ oc get secret <resourcename>-chatbot-api-tls \
 - [Deploy a Specific Version of `AnsibleAIConnect`](./docs/user-guide/advanced-configuration/deploying-a-specific-version.md)
 - [Trusting a Custom Certificate Authority](./docs/user-guide/advanced-configuration/trusting-a-custom-certificate-authority.md)
 
-## Advanced Configuration for `AnsibleMCPServer`
+## Advanced Configuration for `AnsibleMCPConnect`
 
 ### Ignore certificate errors
-If your AAP setup uses a self-signed certificate, configure the `AnsibleMCPServer` 
+If your AAP setup uses a self-signed certificate, configure the `AnsibleMCPConnect` 
 to ignore certificate errors by setting `IGNORE_CERTIFICATE_ERRORS: true`
-within the `extra_settings` of the `AnsibleMCPServer` CRD.
+within the `extra_settings` of the `AnsibleMCPConnect` CRD.
 
 ```yaml
 ---

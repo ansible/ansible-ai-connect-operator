@@ -1,10 +1,10 @@
 ---
-# defaults file for AnsibleMCPServer
+# defaults file for AnsibleMCPConnect
 
 # ========================================
 # Basic k8s configuration
 # ----------------------------------------
-kind: 'AnsibleMCPServer'
+kind: 'AnsibleMCPConnect'
 api_version: 'mcpserver.ansible.com/v1alpha1'
 deployment_type: 'ansible-mcp-server'
 
@@ -30,7 +30,7 @@ no_log: false
 # ========================================
 # AnsbileMCPServer
 # ----------------------------------------
-# Add a nodeSelector for the AnsibleMCPServer pods. It must match a node's labels for the pod
+# Add a nodeSelector for the AnsibleMCPConnect pods. It must match a node's labels for the pod
 # to be scheduled on that node. Specify as literal block. E.g.:
 # api:
 #   node_selector: |
@@ -133,7 +133,7 @@ bundle_cacert_secret: ''
 # ----------------------------------------
 
 # ========================================
-# Unused by AnsibleMCPServer
+# Unused by AnsibleMCPConnect
 # ----------------------------------------
 # ipv6_disabled: false
 # websocket_ssl_verify: false

@@ -440,9 +440,9 @@ spec:
         - urn:alm:descriptor:org.w3:link
       version: v1alpha1
     - description: Deploy a new instance of Ansible MCP Server.
-      displayName: AnsibleMCPServer
-      kind: AnsibleMCPServer
-      name: ansiblemcpservers.mcpserver.ansible.com
+      displayName: AnsibleMCPConnect
+      kind: AnsibleMCPConnect
+      name: ansiblemcpconnects.mcpserver.ansible.com
       specDescriptors:
       - displayName: Image Pull Policy
         path: image_pull_policy

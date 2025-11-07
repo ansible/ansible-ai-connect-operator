@@ -10,7 +10,7 @@
       version: ""
 
 # ============================================
-# Retrieve and update AnsibleMCPServer status
+# Retrieve and update AnsibleMCPConnect status
 # ============================================
 - block:
     - name: Set MCP server instance version
