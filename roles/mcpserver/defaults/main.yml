@@ -5,7 +5,7 @@
 # Basic k8s configuration
 # ----------------------------------------
 kind: 'AnsibleMCPConnect'
-api_version: 'mcpserver.ansible.com/v1alpha1'
+api_version: 'mcpconnect.ansible.com/v1alpha1'
 deployment_type: 'ansible-mcp-server'
 
 image_pull_policy: IfNotPresent

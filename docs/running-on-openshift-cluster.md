@@ -189,7 +189,7 @@ To create an `AnsibleMCPConnect` instance using the CLI:
 1. Create a file `mcpserver.yaml` with the following content:
 
 ```yaml
-apiVersion: mcpserver.ansible.com/v1alpha1
+apiVersion: mcpconnect.ansible.com/v1alpha1
 kind: AnsibleMCPConnect
 metadata:
   name: my-mcpserver

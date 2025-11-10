@@ -9,7 +9,7 @@
     name: common
   vars:
     kind: 'AnsibleMCPConnect'
-    api_version: 'mcpserver.ansible.com/v1alpha1'
+    api_version: 'mcpconnect.ansible.com/v1alpha1'
 
 - name: Set AnsibleMCPConnect service images
   ansible.builtin.include_tasks: set_images.yml
