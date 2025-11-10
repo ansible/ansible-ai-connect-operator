@@ -6,7 +6,7 @@
 # ----------------------------------------
 kind: 'AnsibleMCPConnect'
 api_version: 'mcpconnect.ansible.com/v1alpha1'
-deployment_type: 'ansible-mcp-server'
+deployment_type: 'ansible-mcp-connect'
 
 image_pull_policy: IfNotPresent
 image_pull_secrets: []

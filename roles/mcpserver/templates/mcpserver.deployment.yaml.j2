@@ -33,7 +33,7 @@ spec:
         {{ lookup("template", "../common/templates/labels/version.yaml.j2") | indent(width=8) | trim }}
         app.kubernetes.io/component: '{{ deployment_type }}'
       annotations:
-        kubectl.kubernetes.io/default-container: 'ansible-mcp-server'
+        kubectl.kubernetes.io/default-container: 'ansible-mcp-connect'
 {% for template in [
     "mcpserver.configmap",
   ] %}
@@ -122,7 +122,7 @@ spec:
 {% endif %}
 {% endif %}
       containers:
-      - name: ansible-mcp-server
+      - name: ansible-mcp-connect
         image: {{ _image }}
         imagePullPolicy: "{{ image_pull_policy }}"
         env:

@@ -10,6 +10,7 @@
   vars:
     kind: 'AnsibleMCPConnect'
     api_version: 'mcpconnect.ansible.com/v1alpha1'
+    deployment_type: 'ansible-mcp-connect'
 
 - name: Set AnsibleMCPConnect service images
   ansible.builtin.include_tasks: set_images.yml

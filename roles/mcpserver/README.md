@@ -18,7 +18,7 @@ Role Variables
 
 - `kind`: Resource kind (default: `'AnsibleMCPConnect'`)
 - `api_version`: API version (default: `'mcpconnect.ansible.com/v1alpha1'`)
-- `deployment_type`: Deployment type identifier (default: `'ansible-mcp-server'`)
+- `deployment_type`: Deployment type identifier (default: `'ansible-mcp-connect'`)
 - `image_pull_policy`: Image pull policy (default: `IfNotPresent`)
 - `image_pull_secrets`: List of image pull secrets (default: `[]`)
 - `_image`: Container image for MCP Server (default: `quay.io/ttakamiy/aap-mcp-server`) <!-- !!TODO!! -->
