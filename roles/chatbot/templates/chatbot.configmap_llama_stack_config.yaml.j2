@@ -19,6 +19,7 @@ data:
       - datasetio
       - telemetry
       - tool_runtime
+      - files
     providers:
       inference:
         - provider_id: rhoai
@@ -69,6 +70,15 @@ data:
               type: sqlite
               namespace: null
               db_path: ${env.PROVIDERS_DB_DIR:=/.llama/data/distributions/ansible-chatbot}/localfs_datasetio.db
+      files:
+        - provider_id: localfs
+          provider_type: inline::localfs
+          config:
+            storage_dir: ${env.PROVIDERS_DB_DIR:=/.llama/data/distributions/ansible-chatbot}/files
+            metadata_store:
+              type: sqlite
+              namespace: null
+              db_path: ${env.PROVIDERS_DB_DIR:=/.llama/data/distributions/ansible-chatbot}/files_store.db
       telemetry:
         - provider_id: meta-reference
           provider_type: inline::meta-reference
@@ -101,6 +111,7 @@ data:
     vector_dbs:
       - metadata: {}
         vector_db_id: "aap-product-docs-2_6"
+        provider_vector_db_id: ${env.PROVIDER_VECTOR_DB_ID:=}
         embedding_model: ${env.EMBEDDINGS_MODEL:=/.llama/data/distributions/ansible-chatbot/embeddings_model}
         embedding_dimension: 768
         provider_id: "aap_faiss"
