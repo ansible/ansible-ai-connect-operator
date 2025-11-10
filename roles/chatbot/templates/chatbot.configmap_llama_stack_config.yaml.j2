@@ -22,13 +22,29 @@ data:
       - files
     providers:
       inference:
-        - provider_id: rhoai
+        - provider_id: {{ chatbot_llm_provider_type }}
+{% if chatbot_llm_provider_type == "openai" %}
+          provider_type: remote::openai
+          config:
+            api_key: ${env.PROVIDER_TOKEN}
+            base_url: ${env.PROVIDER_URL:=https://api.openai.com/v1}
+{% elif chatbot_llm_provider_type == "azure_openai" %}
+          provider_type: remote::azure
+          config:
+            api_key: ${env.PROVIDER_TOKEN}
+            api_base: ${env.PROVIDER_URL}
+            api_type: null
+{% elif chatbot_llm_provider_type == "rhoai_vllm" %}
           provider_type: remote::vllm
           config:
-            url: ${env.VLLM_URL}
+            url: ${env.PROVIDER_URL}
             max_tokens: ${env.VLLM_MAX_TOKENS:=4096}
-            api_token: ${env.VLLM_API_TOKEN:=fake}
+            api_token: ${env.PROVIDER_TOKEN:=fake}
             tls_verify: ${env.VLLM_TLS_VERIFY:=true}
+{% endif %}
+{% for key, value in chatbot_model_config_extras.items() %}
+            {{ key }}: {{ value }}
+{% endfor %}
         - provider_id: inline_sentence-transformer
           provider_type: inline::sentence-transformers
           config: {}
@@ -100,8 +116,8 @@ data:
     models:
       - metadata: {}
         model_id: ${env.INFERENCE_MODEL}
-        provider_id: rhoai
-        provider_model_id: null
+        provider_id: {{ chatbot_llm_provider_type }}
+        provider_model_id: ${env.INFERENCE_MODEL}
       - metadata:
           embedding_dimension: 768
         model_id: ${env.EMBEDDINGS_MODEL:=/.llama/data/distributions/ansible-chatbot/embeddings_model}

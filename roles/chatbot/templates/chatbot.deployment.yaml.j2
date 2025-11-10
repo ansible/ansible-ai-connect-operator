@@ -118,11 +118,13 @@ spec:
             value: /.llama/data
           - name: EMBEDDING_MODEL
             value: ./embeddings_model
-          - name: VLLM_URL
-            value: {{ chatbot_url }}
-          - name: VLLM_API_TOKEN
+          - name: PROVIDER_TOKEN
             value: {{ chatbot_token }}
+          - name: PROVIDER_URL
+            value: {{ chatbot_url }}
           - name: INFERENCE_MODEL
+            value: {{ chatbot_model }}
+          - name: INFERENCE_MODEL_FILTER
             value: {{ chatbot_model }}
         ports:
           - containerPort: 8443
