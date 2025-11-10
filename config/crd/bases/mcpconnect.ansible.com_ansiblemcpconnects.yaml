@@ -2,9 +2,9 @@
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
-  name: ansiblemcpconnects.mcpserver.ansible.com
+  name: ansiblemcpconnects.mcpconnect.ansible.com
 spec:
-  group: mcpserver.ansible.com
+  group: mcpconnect.ansible.com
   names:
     kind: AnsibleMCPConnect
     listKind: AnsibleMCPConnectList

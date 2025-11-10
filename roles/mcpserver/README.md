@@ -17,7 +17,7 @@ Role Variables
 ### Basic Kubernetes Configuration
 
 - `kind`: Resource kind (default: `'AnsibleMCPConnect'`)
-- `api_version`: API version (default: `'mcpserver.ansible.com/v1alpha1'`)
+- `api_version`: API version (default: `'mcpconnect.ansible.com/v1alpha1'`)
 - `deployment_type`: Deployment type identifier (default: `'ansible-mcp-server'`)
 - `image_pull_policy`: Image pull policy (default: `IfNotPresent`)
 - `image_pull_secrets`: List of image pull secrets (default: `[]`)

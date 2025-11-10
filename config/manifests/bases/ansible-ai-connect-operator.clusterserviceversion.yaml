@@ -442,7 +442,7 @@ spec:
     - description: Deploy a new instance of Ansible MCP Server.
       displayName: AnsibleMCPConnect
       kind: AnsibleMCPConnect
-      name: ansiblemcpconnects.mcpserver.ansible.com
+      name: ansiblemcpconnects.mcpconnect.ansible.com
       specDescriptors:
       - displayName: Image Pull Policy
         path: image_pull_policy
