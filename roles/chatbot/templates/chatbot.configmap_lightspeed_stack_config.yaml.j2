@@ -27,8 +27,8 @@ data:
       use_as_library_client: true
       library_client_config_path: /.llama/distributions/llama-stack/config/ansible-chatbot-run.yaml
     user_data_collection:
-      feedback_disabled: true
-      transcripts_disabled: true
+      feedback_enabled: false
+      transcripts_enabled: false
     customization:
       system_prompt_path: /.llama/distributions/ansible-chatbot/system-prompts/default.txt
 {% if _aap_gateway_url is defined or _aap_controller_url is defined %}
