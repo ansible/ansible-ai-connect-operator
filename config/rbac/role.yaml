@@ -162,14 +162,14 @@ rules:
       - watch
 
   ##
-  ## Rules for mcpserver.ansible.com/v1alpha1, Kind: AnsibleMCPServer
+  ## Rules for mcpconnect.ansible.com/v1alpha1, Kind: AnsibleMCPConnectmv
   ##
   - apiGroups:
-      - mcpserver.ansible.com
+      - mcpconnect.ansible.com
     resources:
-      - ansiblemcpservers
-      - ansiblemcpservers/status
-      - ansiblemcpservers/finalizers
+      - ansiblemcpconnects
+      - ansiblemcpconnects/status
+      - ansiblemcpconnects/finalizers
     verbs:
       - create
       - delete

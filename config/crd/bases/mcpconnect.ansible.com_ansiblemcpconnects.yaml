@@ -2,20 +2,20 @@
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
-  name: ansiblemcpservers.mcpserver.ansible.com
+  name: ansiblemcpconnects.mcpconnect.ansible.com
 spec:
-  group: mcpserver.ansible.com
+  group: mcpconnect.ansible.com
   names:
-    kind: AnsibleMCPServer
-    listKind: AnsibleMCPServerList
-    plural: ansiblemcpservers
-    singular: ansiblemcpserver
+    kind: AnsibleMCPConnect
+    listKind: AnsibleMCPConnectList
+    plural: ansiblemcpconnects
+    singular: ansiblemcpconnect
   scope: Namespaced
   versions:
   - name: v1alpha1
     schema:
       openAPIV3Schema:
-        description: AnsibleMCPServer is the Schema for the ansiblemcpserver API
+        description: AnsibleMCPConnect is the Schema for the ansiblemcpconnect API
         properties:
           apiVersion:
             description: 'APIVersion defines the versioned schema of this representation
@@ -30,7 +30,7 @@ spec:
           metadata:
             type: object
           spec:
-            description: Spec defines the desired state of AnsibleMCPServer
+            description: Spec defines the desired state of AnsibleMCPConnect
             type: object
             required:
               - public_base_url
@@ -496,7 +496,7 @@ spec:
                   type: object
                 type: array
           status:
-            description: Status defines the observed state of AnsibleMCPServer
+            description: Status defines the observed state of AnsibleMCPConnect
             x-kubernetes-preserve-unknown-fields: true
             properties:
               image:

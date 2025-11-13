@@ -2,7 +2,7 @@
 
 ## Overview
 
-This guide shows you how to deploy `AnsibleAIConnect` or `AnsibleMCPServer` on
+This guide shows you how to deploy `AnsibleAIConnect` or `AnsibleMCPConnect` on
 an OpenShift cluster.
 
 ## Permissions
@@ -174,23 +174,23 @@ gp3-customer-kms (default)   ebs.csi.aws.com
 
 These are [provisioned](https://docs.openshift.com/rosa/storage/persistent_storage/persistent-storage-aws.html) by OpenShift ROSA.
 
-## Create an `AnsibleMCPServer` instance
+## Create an `AnsibleMCPConnect` instance
 
 The Ansible MCP (Model Context Protocol) Server can be deployed alongside the `AnsibleAIConnect` instance to provide MCP functionality.
 
 ### Using Operator Lifecycle Management
 
-If the Operator was installed using the Operator Lifecycle Manager's `Catalog`, you can create an `AnsibleMCPServer` instance through the OpenShift console using the Operator's UI components.
+If the Operator was installed using the Operator Lifecycle Manager's `Catalog`, you can create an `AnsibleMCPConnect` instance through the OpenShift console using the Operator's UI components.
 
 ### Using the CLI
 
-To create an `AnsibleMCPServer` instance using the CLI:
+To create an `AnsibleMCPConnect` instance using the CLI:
 
 1. Create a file `mcpserver.yaml` with the following content:
 
 ```yaml
-apiVersion: mcpserver.ansible.com/v1alpha1
-kind: AnsibleMCPServer
+apiVersion: mcpconnect.ansible.com/v1alpha1
+kind: AnsibleMCPConnect
 metadata:
   name: my-mcpserver
   namespace: <target-namespace>
@@ -210,7 +210,7 @@ spec:
 kubectl apply -f mcpserver.yaml
 ```
 
-3. Once deployed, the `AnsibleMCPServer` instance will be accessible by running:
+3. Once deployed, the `AnsibleMCPConnect` instance will be accessible by running:
 
 ```bash
 oc get route -n <target-namespace> my-mcpserver
@@ -218,7 +218,7 @@ oc get route -n <target-namespace> my-mcpserver
 
 ### Configuration Options
 
-Key configuration options for the `AnsibleMCPServer` include:
+Key configuration options for the `AnsibleMCPConnect` include:
 
 - `public_base_url`: **Required.** The URL of your Ansible Automation Platform
 - `allow_write_operations` : Enable tools that support modification and data changes (using POST, DELETE, and PATCH methods). (default: `false`)

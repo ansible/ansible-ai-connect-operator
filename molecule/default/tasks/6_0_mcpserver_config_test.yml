@@ -5,7 +5,7 @@
         namespace: '{{ namespace }}'
         kind: Pod
         label_selectors:
-          - app.kubernetes.io/name = ansiblemcpserver-sample
+          - app.kubernetes.io/name = ansiblemcpconnect-sample
       register: mcpserver_pod
 
     - name: Get API Service details
@@ -13,7 +13,7 @@
         namespace: '{{ namespace }}'
         kind: Service
         label_selectors:
-          - app.kubernetes.io/name = ansiblemcpserver-sample
+          - app.kubernetes.io/name = ansiblemcpconnect-sample
       register: mcpserver_service
 
     - name: Get Health Check

@@ -1,5 +1,5 @@
 ---
-# Tasks file for AnsibleMCPServer
+# Tasks file for AnsibleMCPConnect
 
 - name: Combine default and custom vars for each component
   ansible.builtin.include_tasks: combine_defaults.yml
@@ -8,10 +8,11 @@
   ansible.builtin.include_role:
     name: common
   vars:
-    kind: 'AnsibleMCPServer'
-    api_version: 'mcpserver.ansible.com/v1alpha1'
+    kind: 'AnsibleMCPConnect'
+    api_version: 'mcpconnect.ansible.com/v1alpha1'
+    deployment_type: 'ansible-mcp-connect'
 
-- name: Set AnsibleMCPServer service images
+- name: Set AnsibleMCPConnect service images
   ansible.builtin.include_tasks: set_images.yml
 
 - name: Set Bundle Certificate Authority
