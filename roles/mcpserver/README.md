@@ -38,9 +38,9 @@ Role Variables
 
 ### Service Configuration
 
-- `default_http_port`: HTTP port (default: `8085`)
+- `default_http_port`: HTTP port (default: `8086`)
 - `default_https_port`: HTTPS port (default: `443`)
-- `default_target_port`: Target port (default: `8085`)
+- `default_target_port`: Target port (default: `8086`)
 - `service_type`: Kubernetes service type (default: `'ClusterIP'`)
 - `loadbalancer_protocol`: Load balancer protocol (optional)
 - `loadbalancer_port`: Load balancer port (optional)
