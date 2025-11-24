@@ -10,7 +10,9 @@ metadata:
   name: ansiblemcpconnect-sample
 spec:
   public_base_url: {{ public_base_url }}
+{% if allow_write_operations | string | lower == 'true' %}
   allow_write_operations: {{ allow_write_operations }}
+{% endif %}
   no_log: false
   ingress_type: Ingress
   ingress_path: /mcp
