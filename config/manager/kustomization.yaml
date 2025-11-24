@@ -5,4 +5,4 @@ kind: Kustomization
 images:
 - name: controller
   newName: quay.io/ansible/ansible-ai-connect-operator
-  newTag: 0.6.457-pr-659-202511040120
+  newTag: latest
