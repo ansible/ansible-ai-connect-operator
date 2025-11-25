@@ -9,7 +9,9 @@ metadata:
     {{ lookup("template", "../common/templates/labels/common.yaml.j2") | indent(width=4) | trim }}
 data:
   BASE_URL: "{{ public_base_url }}"
+{% if allow_write_operations is defined %}
   ALLOW_WRITE_OPERATIONS: "{{ allow_write_operations }}"
+{% endif %}
   # Custom user variables
 {% for item in extra_settings | default([]) %}
   {{ item.setting | upper }}: "{{ item.value }}"
