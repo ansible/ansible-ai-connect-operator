@@ -199,7 +199,6 @@ spec:
   service_type: ClusterIP
   ingress_type: Route
   public_base_url: https://your-aap-public-base-url.example.com
-  allow_write_operations: false
   image_pull_secrets:
     - redhat-operators-pull-secret
 ```
