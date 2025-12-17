@@ -23,6 +23,14 @@
     namespace: '{{ ansible_operator_meta.namespace }}'
     wait: yes
 
+- name: Remove Chatbot API Key Secret resource
+  kubernetes.core.k8s:
+    state: absent
+    kind: Secret
+    name: '{{ ansible_operator_meta.name }}-chatbot-api-key'
+    namespace: '{{ ansible_operator_meta.namespace }}'
+    wait: yes
+
 - name: Remove Chatbot Service resources
   kubernetes.core.k8s:
     state: absent
