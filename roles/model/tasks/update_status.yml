@@ -18,6 +18,7 @@
       chatbotImage: ""
       chatbotVersion: ""
       chatbotConfigurationSecret: ""
+      chatbotAuthenticationSecret: ""
 
 # ============================================
 # Retrieve and update AnsibleAIConnect status
@@ -102,6 +103,7 @@
           chatbotImage: "{{ _chatbot_image }}"
           chatbotVersion: "{{ chatbot_instance_version.stdout | trim }}"
           chatbotConfigurationSecret: "{{ chatbot_config_secret_name }}"
+          chatbotAuthenticationSecret: "{{ chatbot_api_key_secret_name }}"
   when:
     - chatbot_api_pod_name is defined
     - chatbot_api_pod_name | length

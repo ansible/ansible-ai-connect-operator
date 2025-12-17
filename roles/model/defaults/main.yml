@@ -49,6 +49,11 @@ auth_config_secret_name: ''
 model_config_secret_name: ''
 # ========================================
 
+# ----------------------------------------
+# Configuration for the Chatbot API Key
+# ----------------------------------------
+chatbot_api_key_secret_name: 'chatbot-api-key'
+# ========================================
 
 # ----------------------------------------
 # Configuration for underlying service

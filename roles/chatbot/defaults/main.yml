@@ -42,6 +42,11 @@ _chatbot_mcp_lightspeed_image_version: "{{ lookup('env', 'DEFAULT_CHATBOT_MCP_LI
 chatbot_config_secret_name: ''
 # ========================================
 
+# ----------------------------------------
+# Configuration for the Chatbot API Key
+# ----------------------------------------
+chatbot_api_key_secret_name: 'chatbot-api-key'
+# ========================================
 
 # ----------------------------------------
 # Configuration for underlying service
