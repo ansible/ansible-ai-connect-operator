@@ -29,8 +29,8 @@
         pod: "{{ model_api_pod_name }}"
         container: "model-api"
         command: >-
-          bash -c "echo 'import pkg_resources;
-          print(pkg_resources.get_distribution(\"ansible-ai-connect\").version)'
+          bash -c "echo 'from importlib.metadata import version;
+          print(version(\"ansible-ai-connect\"))'
           | wisdom-manage shell"
       register: instance_version
       changed_when: false
