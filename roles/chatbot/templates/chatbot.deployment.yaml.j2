@@ -103,14 +103,12 @@ spec:
           - /bin/sh
           - -c
           - |
-            if [ -z "$PROVIDER_VECTOR_DB_ID" ]; then
-              if [ -f "/rag/llama_stack_vector_db/provider_vector_db_id.ind" ]; then
-                export PROVIDER_VECTOR_DB_ID=$(cat /rag/llama_stack_vector_db/provider_vector_db_id.ind)
-                echo "Loaded PROVIDER_VECTOR_DB_ID: $PROVIDER_VECTOR_DB_ID"
-              else
-                echo "ERROR: PROVIDER_VECTOR_DB_ID is not set and file /rag/llama_stack_vector_db/provider_vector_db_id.ind was not found"
-                exit 1
-              fi
+            if [ -f "/rag/llama_stack_vector_db/provider_vector_db_id.ind" ]; then
+              export PROVIDER_VECTOR_DB_ID=$(cat /rag/llama_stack_vector_db/provider_vector_db_id.ind)
+              echo "Loaded PROVIDER_VECTOR_DB_ID: $PROVIDER_VECTOR_DB_ID"
+            else
+              echo "ERROR: PROVIDER_VECTOR_DB_ID is not set and file /rag/llama_stack_vector_db/provider_vector_db_id.ind was not found"
+              exit 1
             fi
             exec /.llama/entrypoint.sh /usr/bin/python3.12
         env:
