@@ -5,7 +5,7 @@
     - kubernetes.core
     - operator_sdk.util
   vars:
-    no_log: true
+    no_log: false
   pre_tasks:
     - name: Verify imagePullSecrets
       kubernetes.core.k8s_info:
