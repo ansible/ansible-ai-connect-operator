@@ -205,11 +205,11 @@ spec:
               name: "{{ __model_pipeline_secret_name }}"
               key: config
         - name: CHATBOT_API_KEY
-          value: "test-api-key-1"
-{#          valueFrom:#}
-{#            secretKeyRef:#}
-{#              name: "{{ ansible_operator_meta.name }}-{{ chatbot_api_key_secret_name }}"#}
-{#              key: api_key#}
+{#          value: "test-api-key-1"#}
+          valueFrom:
+            secretKeyRef:
+              name: "{{ ansible_operator_meta.name }}-{{ chatbot_api_key_secret_name }}"
+              key: api_key
 {% if chatbot_config is defined %}
         - name: CHATBOT_DEFAULT_PROVIDER
           value: {{ chatbot_llm_provider_type }}
