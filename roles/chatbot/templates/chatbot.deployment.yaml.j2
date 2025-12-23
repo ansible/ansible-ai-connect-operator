@@ -108,11 +108,11 @@ spec:
             value: ./embeddings_model
           - name: CHATBOT_API_KEY
             #value: {{ chatbot_api_key }}
-            #value: 'test-api-key-1'
-            valueFrom:
-              secretKeyRef:
-                name: "{{ ansible_operator_meta.name }}-{{ chatbot_api_key_secret_name }}"
-                key: api_key
+            value: 'test-api-key-1'
+{#            valueFrom:#}
+{#              secretKeyRef:#}
+{#                name: "{{ ansible_operator_meta.name }}-{{ chatbot_api_key_secret_name }}"#}
+{#                key: api_key#}
           - name: PROVIDER_TOKEN
             value: {{ chatbot_token }}
           - name: PROVIDER_URL
