@@ -31,6 +31,10 @@ data:
       transcripts_enabled: false
     customization:
       system_prompt_path: /.llama/distributions/ansible-chatbot/system-prompts/default.txt
+    authentication:
+      module: "api-key-token"
+      api_key_config:
+        api_key: ${env.CHATBOT_API_KEY}
 {% if _aap_gateway_url is defined or _aap_controller_url is defined %}
     mcp_servers:
 {% if _aap_gateway_url is defined and _aap_controller_url is defined %}
