@@ -106,6 +106,11 @@ spec:
             value: /.llama/data
           - name: EMBEDDING_MODEL
             value: ./embeddings_model
+          - name: CHATBOT_API_KEY
+            valueFrom:
+              secretKeyRef:
+                name: "{{ ansible_operator_meta.name }}-chatbot-api-key"
+                key: api_key
           - name: PROVIDER_TOKEN
             value: {{ chatbot_token }}
           - name: PROVIDER_URL
