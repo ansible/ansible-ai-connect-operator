@@ -2,6 +2,7 @@ FROM quay.io/operator-framework/ansible-operator:v1.36.1
 
 USER root
 RUN dnf update --security --bugfix -y
+RUN pip3 install --upgrade 'urllib3>=2.6.3' 'requests>=2.32.5' 'requests-unixsocket>=0.4.1'
 USER 1001
 
 ARG DEFAULT_AI_CONNECT_VERSION
