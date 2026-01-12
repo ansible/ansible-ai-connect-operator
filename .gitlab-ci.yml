@@ -6,7 +6,7 @@ before_script:
 
 default:
   tags:
-    - shared-podman
+    - itup-alm-x86
 
 downstreamify:
   stage: test
