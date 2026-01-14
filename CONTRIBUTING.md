@@ -24,6 +24,8 @@ export TAG=feature-branch
 make docker-build docker-push IMG=quay.io/$QUAY_USER/ansible-ai-connect-operator:$TAG
 ```
 
+> **Note** If you are using an ARM host (e.g., Apple Silicon), you may need to use `docker-buildx` or `podman-buildx` instead of the standard docker build commands.
+
 ### Deploy AnsibleAIConnect Operator
 
 1. Log in to your K8s or Openshift cluster.

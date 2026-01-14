@@ -5,8 +5,6 @@
 # - use environment variables to overwrite this value (e.g export VERSION=0.0.2)
 VERSION ?= 0.1.0
 
-CONTAINER_CMD ?= docker
-
 # CHANNELS define the bundle channels used in the bundle.
 # Add a new line here if you would like to change its default config. (E.g CHANNELS = "candidate,fast,stable")
 # To re-generate a bundle for other specific channels without changing the standard setup, you can:
@@ -57,6 +55,9 @@ OPERATOR_SDK_OPM_VERSION ?= v1.43.1
 # Image URL to use all building/pushing image targets
 IMG ?= $(IMAGE_TAG_BASE)-operator:$(VERSION)
 
+# CONTAINER_CMD defines the container tool to use (docker or podman)
+CONTAINER_CMD ?= docker
+
 .PHONY: all
 all: docker-build
 
@@ -86,11 +87,11 @@ run: ansible-operator ## Run against the configured Kubernetes cluster in ~/.kub
 
 .PHONY: docker-build
 docker-build: ## Build docker image with the manager.
-	${CONTAINER_CMD} build $(BUILD_ARGS) -t ${IMG} .
+	$(CONTAINER_CMD) build $(BUILD_ARGS) -t ${IMG} .
 
 .PHONY: docker-push
 docker-push: ## Push docker image with the manager.
-	${CONTAINER_CMD} push ${IMG}
+	$(CONTAINER_CMD) push ${IMG}
 
 # PLATFORMS defines the target platforms for  the manager image be build to provide support to multiple
 # architectures. (i.e. make docker-buildx IMG=myregistry/mypoperator:0.0.1). To use this option you need to:
@@ -109,6 +110,11 @@ docker-buildx: ## Build and push docker image for the manager for cross-platform
 	- ${CONTAINER_CMD} buildx rm project-v3-builder
 	# Delete temporary Dockerfile
 	rm Dockerfile.cross
+
+.PHONY: podman-buildx
+podman-buildx: ## Build and push multi-architecture image for podman
+	podman build $(BUILD_ARGS) --platform=$(PLATFORMS) --manifest ${IMG} .
+	podman manifest push ${IMG}
 
 ##@ Deployment
 
