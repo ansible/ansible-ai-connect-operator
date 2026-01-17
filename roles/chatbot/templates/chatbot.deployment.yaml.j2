@@ -100,7 +100,7 @@ spec:
         image: {{ _chatbot_image }}
         imagePullPolicy: '{{ image_pull_policy }}'
         args:
-          [ 'sh', '-c', 'export $(cat $LLAMA_STACK_CONFIG_DIR/distributions/ansible-chatbot/provider_rag.env | xargs) && /.llama/entrypoint.sh /app-root/.venv/bin/python3.12' ]
+          [ 'sh', '-c', 'export $(cat $LLAMA_STACK_CONFIG_DIR/distributions/ansible-chatbot/provider_rag.env | xargs) && /.llama/entrypoint.sh $PYTHON' ]
         env:
           - name: LLAMA_STACK_CONFIG_DIR
             value: /.llama/data
