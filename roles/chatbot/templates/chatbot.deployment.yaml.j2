@@ -245,7 +245,7 @@ spec:
       volumes:
         - name: ansible-chatbot-storage
           emptyDir:
-            sizeLimit: 1000Mi
+            sizeLimit: 5000Mi
         - name: ansible-chatbot-lightspeed-stack-config
           configMap:
             name: '{{ ansible_operator_meta.name }}-{{ deployment_type }}-lightspeed-stack-config'
