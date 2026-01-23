@@ -78,9 +78,9 @@ data:
               model_id: ${env.INFERENCE_MODEL_FILTER:=}
               always_include_tools:
               - knowledge_search
-{% if chatbot_temperature_override is defined %}
-            chatbot_temperature_override: {{ chatbot_temperature_override }}
-{% endif %}
+{% for key, value in chatbot_agent_config_extras.items() %}
+            {{ key }}: {{ value }}
+{% endfor %}
       datasetio:
         - provider_id: localfs
           provider_type: inline::localfs

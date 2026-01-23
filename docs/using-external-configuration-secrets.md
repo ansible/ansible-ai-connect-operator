@@ -90,6 +90,7 @@ stringData:
   chatbot_model: <Chatbot model name>
   chatbot_token: <Chatbot LLM access token or API key>
   chatbot_model_config_extras: <JSON dict with provider-specific config (optional)>
+  chatbot_agent_config_extras: <JSON dict with agent specific config (optional)>
   aap_gateway_url: <AAP Gateway URL>
   aap_controller_url: <AAP Controller URL>
 type: Opaque
@@ -108,6 +109,8 @@ type: Opaque
   - `azure_openai` - Azure OpenAI Service
 * `chatbot_model_config_extras` - JSON dict with provider-specific configuration (optional)
   - For Azure OpenAI: `{"api_version": "2024-02-15-preview"}`
+* `chatbot_agent_config_extras` - JSON dict with agent specific configuration (optional)
+  - For overriding temperature parameter: `{"chatbot_temperature_override" : 1.0}` 
 * `aap_gateway_url` - AAP Gateway URL for MCP server integration
 * `aap_controller_url` - AAP Controller URL for MCP server integration
 
@@ -205,6 +208,7 @@ stringData:
   chatbot_url: https://api.openai.com/v1
   chatbot_model: gpt-4o-mini
   chatbot_token: <OpenAI API Key>
+  chatbot_agent_config_extras: '{"chatbot_temperature_override" : 1.0}'
 type: Opaque
 ```
 
@@ -221,6 +225,7 @@ stringData:
   chatbot_model: gpt-4o-mini
   chatbot_token: <Azure OpenAI API Key>
   chatbot_model_config_extras: '{"api_version": "2024-02-15-preview"}'
+  chatbot_agent_config_extras: '{"chatbot_temperature_override" : 1.0}'
 type: Opaque
 ```
 
