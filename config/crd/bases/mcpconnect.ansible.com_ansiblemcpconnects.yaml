@@ -34,6 +34,9 @@ spec:
             type: object
             required:
               - public_base_url
+            x-kubernetes-validations:
+              - rule: "has(self.image) && has(self.image_version) || !has(self.image) && !has(self.image_version)"
+                message: "Both image and image_version must be set together or both must be unset"
             properties:
               image_pull_policy:
                 description: The image pull policy

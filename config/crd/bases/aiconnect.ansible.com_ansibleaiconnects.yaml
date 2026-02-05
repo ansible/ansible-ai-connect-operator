@@ -32,6 +32,21 @@ spec:
           spec:
             description: Spec defines the desired state of AnsibleAIConnect
             type: object
+            x-kubernetes-validations:
+              - rule: "has(self.image) && has(self.image_version) || !has(self.image) && !has(self.image_version)"
+                message: "Both image and image_version must be set together or both must be unset"
+              - rule: "has(self.chatbot_image) && has(self.chatbot_image_version) || !has(self.chatbot_image) && !has(self.chatbot_image_version)"
+                message: "Both chatbot_image and chatbot_image_version must be set together or both must be unset"
+              - rule: "has(self.chatbot_rag_db_image) && has(self.chatbot_rag_db_image_version) || !has(self.chatbot_rag_db_image) && !has(self.chatbot_rag_db_image_version)"
+                message: "Both chatbot_rag_db_image and chatbot_rag_db_image_version must be set together or both must be unset"
+              - rule: "has(self.chatbot_mcp_gateway_image) && has(self.chatbot_mcp_gateway_image_version) || !has(self.chatbot_mcp_gateway_image) && !has(self.chatbot_mcp_gateway_image_version)"
+                message: "Both chatbot_mcp_gateway_image and chatbot_mcp_gateway_image_version must be set together or both must be unset"
+              - rule: "has(self.chatbot_mcp_controller_image) && has(self.chatbot_mcp_controller_image_version) || !has(self.chatbot_mcp_controller_image) && !has(self.chatbot_mcp_controller_image_version)"
+                message: "Both chatbot_mcp_controller_image and chatbot_mcp_controller_image_version must be set together or both must be unset"
+              - rule: "has(self.chatbot_mcp_lightspeed_image) && has(self.chatbot_mcp_lightspeed_image_version) || !has(self.chatbot_mcp_lightspeed_image) && !has(self.chatbot_mcp_lightspeed_image_version)"
+                message: "Both chatbot_mcp_lightspeed_image and chatbot_mcp_lightspeed_image_version must be set together or both must be unset"
+              - rule: "has(self.postgres_image) && has(self.postgres_image_version) || !has(self.postgres_image) && !has(self.postgres_image_version)"
+                message: "Both postgres_image and postgres_image_version must be set together or both must be unset"
             properties:
               image_pull_policy:
                 description: The image pull policy
