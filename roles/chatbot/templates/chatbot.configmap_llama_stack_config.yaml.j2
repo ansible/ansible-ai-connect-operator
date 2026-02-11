@@ -17,7 +17,6 @@ data:
       - safety
       - agents
       - datasetio
-      - telemetry
       - tool_runtime
       - files
     providers:
@@ -98,13 +97,6 @@ data:
               type: sqlite
               namespace: null
               db_path: ${env.PROVIDERS_DB_DIR:=/.llama/data/distributions/ansible-chatbot}/files_store.db
-      telemetry:
-        - provider_id: meta-reference
-          provider_type: inline::meta-reference
-          config:
-            service_name: ${env.OTEL_SERVICE_NAME:=ansible-chatbot-stack}
-            sinks: ${env.TELEMETRY_SINKS:=console,sqlite}
-            sqlite_db_path: ${env.PROVIDERS_DB_DIR:=/.llama/data/distributions/ansible-chatbot}/trace_store.db
       tool_runtime:
         - provider_id: rag-runtime
           provider_type: inline::rag-runtime
