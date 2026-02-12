@@ -58,6 +58,10 @@ IMG ?= $(IMAGE_TAG_BASE)-operator:$(VERSION)
 # CONTAINER_CMD defines the container tool to use (docker or podman)
 CONTAINER_CMD ?= docker
 
+# NAMESPACE defines the target namespace for operator deployment
+# CI uses the default, but developers can override with: make deploy NAMESPACE=my-namespace
+NAMESPACE ?= ansible-ai-connect-operator-system
+
 .PHONY: all
 all: docker-build
 
@@ -128,12 +132,14 @@ uninstall: kustomize ## Uninstall CRDs from the K8s cluster specified in ~/.kube
 
 .PHONY: deploy
 deploy: kustomize ## Deploy controller to the K8s cluster specified in ~/.kube/config.
-	cd config/manager && $(KUSTOMIZE) edit set image controller=${IMG}
-	$(KUSTOMIZE) build config/default | kubectl apply -f -
+	@cd config/manager && $(KUSTOMIZE) edit set image controller=${IMG}
+	@cd config/default && $(KUSTOMIZE) edit set namespace ${NAMESPACE}
+	@$(KUSTOMIZE) build config/default | kubectl apply -f -
 
 .PHONY: undeploy
 undeploy: ## Undeploy controller from the K8s cluster specified in ~/.kube/config.
-	$(KUSTOMIZE) build config/default | kubectl delete -f -
+	@cd config/default && $(KUSTOMIZE) edit set namespace ${NAMESPACE}
+	@$(KUSTOMIZE) build config/default | kubectl delete -f -
 
 OS := $(shell uname -s | tr '[:upper:]' '[:lower:]')
 ARCH := $(shell uname -m | sed 's/x86_64/amd64/' | sed 's/aarch64/arm64/')
