@@ -117,13 +117,11 @@ jobs:
           fi
 
       - name: Push Bundle images to registry
-        uses: redhat-actions/push-to-registry@v2.8
-        with:
-          image: ansible-ai-connect-bundle
-          tags: ${{ env.REGISTRY_TAGS }}
-          registry: ${{ env.REGISTRY }}
-          username: ${{ secrets.QUAY_USER }}
-          password: ${{ secrets.QUAY_TOKEN }}
+        run: |
+          docker tag ansible-ai-connect-bundle:${IMAGE_SEMVER_VERSION} ${{ env.REGISTRY }}/ansible-ai-connect-bundle:${IMAGE_SEMVER_VERSION}
+          docker tag ansible-ai-connect-bundle:latest ${{ env.REGISTRY }}/ansible-ai-connect-bundle:latest
+          docker push ${{ env.REGISTRY }}/ansible-ai-connect-bundle:${IMAGE_SEMVER_VERSION}
+          docker push ${{ env.REGISTRY }}/ansible-ai-connect-bundle:latest
       # ===============================
 
       # ===============================
@@ -164,13 +162,11 @@ jobs:
           docker tag ansible-ai-connect-catalog:${IMAGE_SEMVER_VERSION} ansible-ai-connect-catalog:latest
 
       - name: Push Catalog images to registry
-        uses: redhat-actions/push-to-registry@v2.8
-        with:
-          image: ansible-ai-connect-catalog
-          tags: ${{ env.REGISTRY_TAGS }}
-          registry: ${{ env.REGISTRY }}
-          username: ${{ secrets.QUAY_USER }}
-          password: ${{ secrets.QUAY_TOKEN }}
+        run: |
+          docker tag ansible-ai-connect-catalog:${IMAGE_SEMVER_VERSION} ${{ env.REGISTRY }}/ansible-ai-connect-catalog:${IMAGE_SEMVER_VERSION}
+          docker tag ansible-ai-connect-catalog:latest ${{ env.REGISTRY }}/ansible-ai-connect-catalog:latest
+          docker push ${{ env.REGISTRY }}/ansible-ai-connect-catalog:${IMAGE_SEMVER_VERSION}
+          docker push ${{ env.REGISTRY }}/ansible-ai-connect-catalog:latest
       # ===============================
 
       # ===============================
