@@ -26,7 +26,7 @@ jobs:
       OPERATOR_IMAGE: ${{ vars.TESTING_OPERATOR_IMAGE }}
       OPERATOR_PULL_POLICY: ${{ vars.TESTING_OPERATOR_PULL_POLICY }}
       DOCKER_CONFIG_JSON: ${{ secrets.TESTING_DOCKER_CONFIG_JSON }}
-      DOCKER_API_VERSION: "1.41"
+      DOCKER_API_VERSION: "1.44"
 
     steps:
       - uses: actions/checkout@v3
