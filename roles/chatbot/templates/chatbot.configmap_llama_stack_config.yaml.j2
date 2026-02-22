@@ -36,7 +36,7 @@ data:
 {% elif chatbot_llm_provider_type == "rhoai_vllm" %}
           provider_type: remote::vllm
           config:
-            url: ${env.PROVIDER_URL}
+            base_url: ${env.PROVIDER_URL}
             max_tokens: ${env.VLLM_MAX_TOKENS:=4096}
             api_token: ${env.PROVIDER_TOKEN:=fake}
             tls_verify: ${env.VLLM_TLS_VERIFY:=true}
@@ -51,10 +51,9 @@ data:
         - provider_id: aap_faiss
           provider_type: inline::faiss
           config:
-            kvstore:
-              type: sqlite
-              namespace: null
-              db_path: ${env.VECTOR_DB_DIR:=/.llama/data/distributions/ansible-chatbot}/aap_faiss_store.db
+            persistence:
+              namespace: vector_io::faiss
+              backend: kv_rag
       safety:
         - provider_id: llama-guard
           provider_type: inline::llama-guard
@@ -64,14 +63,13 @@ data:
         - provider_id: lightspeed_inline_agent
           provider_type: inline::lightspeed_inline_agent
           config:
-            persistence_store:
-              type: sqlite
-              namespace: null
-              db_path: ${env.PROVIDERS_DB_DIR:=/.llama/data/distributions/ansible-chatbot}/agents_store.db
-            responses_store:
-              type: sqlite
-              namespace: null
-              db_path: ${env.PROVIDERS_DB_DIR:=/.llama/data/distributions/ansible-chatbot}/responses_store.db
+            persistence:
+              agent_state:
+                namespace: lightspeed_agents
+                backend: kv_default
+              responses:
+                table_name: lightspeed_responses
+                backend: sql_default
             tools_filter:
               enabled: true
               model_id: ${env.INFERENCE_MODEL_FILTER:=}
@@ -85,18 +83,16 @@ data:
           provider_type: inline::localfs
           config:
             kvstore:
-              type: sqlite
-              namespace: null
-              db_path: ${env.PROVIDERS_DB_DIR:=/.llama/data/distributions/ansible-chatbot}/localfs_datasetio.db
+              namespace: localfs_datasetio
+              backend: kv_default
       files:
-        - provider_id: localfs
+        - provider_id: meta-reference-files
           provider_type: inline::localfs
           config:
             storage_dir: ${env.PROVIDERS_DB_DIR:=/.llama/data/distributions/ansible-chatbot}/files
             metadata_store:
-              type: sqlite
-              namespace: null
-              db_path: ${env.PROVIDERS_DB_DIR:=/.llama/data/distributions/ansible-chatbot}/files_store.db
+              table_name: files_metadata
+              backend: sql_default
       tool_runtime:
         - provider_id: rag-runtime
           provider_type: inline::rag-runtime
@@ -104,46 +100,75 @@ data:
         - provider_id: model-context-protocol
           provider_type: remote::model-context-protocol
           config: {}
-    metadata_store:
-      namespace: null
-      type: sqlite
-      db_path: ${env.PROVIDERS_DB_DIR:=/.llama/data/distributions/ansible-chatbot}/registry.db
-    models:
-      - metadata: {}
-        model_id: ${env.INFERENCE_MODEL}
-        provider_id: {{ chatbot_llm_provider_type }}
-        provider_model_id: ${env.INFERENCE_MODEL}
-      - metadata:
+    storage:
+      backends:
+        kv_rag:
+          type: kv_sqlite
+          db_path: ${env.VECTOR_DB_DIR:=/.llama/data/distributions/ansible-chatbot}/aap_faiss_store.db
+        kv_default:
+          type: kv_sqlite
+          db_path: ${env.KV_STORE_DB_DIR:=/.llama/data/distributions/ansible-chatbot}/kv_store.db
+        sql_default:
+          type: sql_sqlite
+          db_path: ${env.SQL_STORE_DB_DIR:=/.llama/data/distributions/ansible-chatbot}/sql_store.db
+      stores:
+        metadata:
+          namespace: registry
+          backend: kv_default
+        inference:
+          table_name: inference_store
+          backend: sql_default
+          max_write_queue_size: 10000
+          num_writers: 4
+        conversations:
+          table_name: openai_conversations
+          backend: sql_default
+    registered_resources:
+
+
+      models:
+        - metadata: {}
+          model_id: ${env.INFERENCE_MODEL}
+          provider_id: my_rhoai_dev
+          provider_model_id: null
+        - metadata:
+            embedding_dimension: 768
+          model_id: sentence-transformers/all-mpnet-base-v2
+          provider_id: inline_sentence-transformer
+          provider_model_id: ${env.EMBEDDINGS_MODEL:=/.llama/data/embeddings_model}
+          model_type: embedding
+      shields: []
+      vector_stores:
+        - metadata: {}
+          vector_store_id: ${env.PROVIDER_VECTOR_DB_ID:=}
+          embedding_model: ${env.EMBEDDINGS_MODEL:=inline_sentence-transformer//.llama/data/embeddings_model}
           embedding_dimension: 768
-        model_id: ${env.EMBEDDINGS_MODEL:=/.llama/data/distributions/ansible-chatbot/embeddings_model}
-        provider_id: inline_sentence-transformer
-        model_type: embedding
-    shields: []
-    vector_dbs:
-      - metadata: {}
-        vector_db_id: "aap-product-docs-2_6"
-        provider_vector_db_id: ${env.PROVIDER_VECTOR_DB_ID:=}
-        embedding_model: ${env.EMBEDDINGS_MODEL:=/.llama/data/distributions/ansible-chatbot/embeddings_model}
-        embedding_dimension: 768
-        provider_id: "aap_faiss"
-    datasets: []
-    scoring_fns: []
-    benchmarks: []
-    tool_groups:
-      - toolgroup_id: builtin::rag
-        provider_id: rag-runtime
+          provider_id: "aap_faiss"
+      datasets: []
+      scoring_fns: []
+      benchmarks: []
+      tool_groups:
+        - toolgroup_id: builtin::rag
+          provider_id: rag-runtime
 {% if _aap_gateway_url is defined and _aap_controller_url is defined %}
-      - toolgroup_id: mcp::aap-controller
-        provider_id: model-context-protocol
-        mcp_endpoint:
-          uri: http://127.0.0.1:8004/sse
+        - toolgroup_id: mcp::aap-controller
+          provider_id: model-context-protocol
+          mcp_endpoint:
+            uri: http://localhost:8004/sse
 {% endif %}
 {% if _aap_gateway_url is defined %}
-      - toolgroup_id: mcp::aap-lightspeed
-        provider_id: model-context-protocol
-        mcp_endpoint:
-          uri: http://127.0.0.1:8005/sse
+        - toolgroup_id: mcp::aap-lightspeed
+          provider_id: model-context-protocol
+          mcp_endpoint:
+            url: http://localhost:8005/sse
 {% endif %}
+      safety:
+        - default_shield_id: llama-guard
+    vector_stores:
+      default_provider_id: faiss
+      default_embedding_model: # Define the default embedding model for RAG
+        provider_id: inline_sentence-transformer
+        model_id: /.llama/data/embeddings_model
     logging: null
     server:
       port: 8443
