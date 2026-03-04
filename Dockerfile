@@ -1,4 +1,4 @@
-FROM quay.io/operator-framework/ansible-operator:v1.36.1
+FROM quay.io/operator-framework/ansible-operator:v1.40.0
 
 USER root
 RUN dnf update --disableplugin=subscription-manager --security --bugfix -y
