@@ -40,11 +40,11 @@ spec:
         checksum-secret-chatbot_config: "{{ lookup('ansible.builtin.vars', 'chatbot_config', default='')["resources"][0]["data"] | default('') | sha1 }}"
     spec:
       serviceAccountName: '{{ ansible_operator_meta.name }}'
-      # Pod-level security context (OpenShift SCC compatible)
+      # Pod-level security context
       securityContext:
-        runAsNonRoot: true              # Enforce non-root execution
+        runAsNonRoot: true
         seccompProfile:
-          type: RuntimeDefault          # Secure computing mode
+          type: RuntimeDefault
 {% if image_pull_secrets | length > 0 %}
       imagePullSecrets:
 {% for secret in image_pull_secrets %}
@@ -120,7 +120,11 @@ spec:
           - name: INFERENCE_MODEL_FILTER
             value: {{ chatbot_model }}
         ports:
+{% if is_openshift %}
           - containerPort: 8443
+{% else %}
+          - containerPort: 8080
+{% endif %}
             protocol: TCP
         volumeMounts:
           - name: ansible-chatbot-storage
