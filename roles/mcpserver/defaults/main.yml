@@ -133,14 +133,8 @@ bundle_cacert_secret: ''
 # ----------------------------------------
 
 # ========================================
-# IPv6 configuration
-# ----------------------------------------
-# Set to true to disable IPv6 and use IPv4-only addresses
-ipv6_disabled: false
-# ----------------------------------------
-
-# ========================================
 # Unused by AnsibleMCPConnect
 # ----------------------------------------
+# ipv6_disabled: false
 # websocket_ssl_verify: false
 # ----------------------------------------

@@ -12,7 +12,7 @@ data:
   lightspeed-stack.yaml: |
     name: Ansible Lightspeed Intelligent Assistant
     service:
-      host: "{{ '0.0.0.0' if ipv6_disabled | default(false) | bool else '*' }}"
+      host: "*"
 {% if is_openshift %}
       port: 8443
 {% else %}
@@ -44,11 +44,11 @@ data:
 {% if _aap_gateway_url is defined and _aap_controller_url is defined %}
       - name: mcp::aap-controller
         provider_id: model-context-protocol
-        url: "http://{{ '[::1]' if not (ipv6_disabled | default(false) | bool) else '127.0.0.1' }}:8004/sse"
+        url: http://127.0.0.1:8004/sse
 {% endif %}
 {% if _aap_gateway_url is defined %}
       - name: mcp::aap-lightspeed
         provider_id: model-context-protocol
-        url: "http://{{ '[::1]' if not (ipv6_disabled | default(false) | bool) else '127.0.0.1' }}:8005/sse"
+        url: http://127.0.0.1:8005/sse
 {% endif %}
 {% endif %}
