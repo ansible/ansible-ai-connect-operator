@@ -69,6 +69,10 @@ spec:
                 description: Configure no_log for no log tasks
                 type: boolean
                 default: true
+              ipv6_disabled:
+                description: Set to true to disable IPv6 support and use IPv4-only addresses
+                type: boolean
+                default: false
               api:
                 description: Defines desired state of the resources
                 properties:
