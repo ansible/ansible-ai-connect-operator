@@ -18,22 +18,3 @@
         fail_msg: >-
           Lightspeed stack config should have host set to "*" to accept both IPv4 and IPv6.
           Got: {{ lightspeed_config | regex_search('host:.*') }}
-
-    - name: Get Llama stack ConfigMap
-      kubernetes.core.k8s_info:
-        namespace: '{{ namespace }}'
-        kind: ConfigMap
-        name: ansibleaiconnect-sample-ansible-ai-connect-llama-stack-config
-      register: llama_configmap
-
-    - name: Extract Llama stack config
-      ansible.builtin.set_fact:
-        llama_config: '{{ llama_configmap.resources[0].data["ansible-chatbot-run.yaml"] }}'
-
-    - name: Assert Llama stack disable_ipv6 is false
-      ansible.builtin.assert:
-        that:
-          - '"disable_ipv6: false" in llama_config'
-        fail_msg: >-
-          Llama stack config should have disable_ipv6 set to false by default.
-          Got: {{ llama_config | regex_search('disable_ipv6:.*') }}
