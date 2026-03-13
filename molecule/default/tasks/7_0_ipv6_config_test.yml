@@ -18,3 +18,4 @@
         fail_msg: >-
           Lightspeed stack config should have host set to "*" to accept both IPv4 and IPv6.
           Got: {{ lightspeed_config | regex_search('host:.*') }}
+  when: chatbot_test_image is defined and chatbot_test_image != ''

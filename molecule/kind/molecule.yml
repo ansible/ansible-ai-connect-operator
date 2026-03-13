@@ -36,6 +36,7 @@ provisioner:
         wisdom_service_version: ${WISDOM_SERVICE_TEST_VERSION:-""}
         mcpserver_image: ${MCP_SERVER_TEST_IMAGE:-""}
         mcpserver_version: ${MCP_SERVER_TEST_VERSION:-""}
+        chatbot_test_image: ${CHATBOT_TEST_IMAGE:-""}
         docker_config_json: ${DOCKER_CONFIG_JSON:-""}
         ansible_python_interpreter: '{{ ansible_playbook_python }}'
         config_dir: ${MOLECULE_PROJECT_DIRECTORY}/config
