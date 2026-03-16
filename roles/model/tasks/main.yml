@@ -48,6 +48,9 @@
 - name: Deploy Model API service
   ansible.builtin.include_tasks: deploy_model_api.yml
 
+- name: Deploy token cleanup CronJobs
+  ansible.builtin.include_tasks: deploy_token_cleanup_cronjobs.yml
+
 - name: Setup HorizontalPodAutoscaler for Model API deployment
   ansible.builtin.include_tasks: setup_hpa.yml
 

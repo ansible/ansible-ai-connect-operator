@@ -24,6 +24,7 @@
             - tasks/6_0_mcpserver_config_test.yml
             - tasks/7_0_instance_version_test.yml
             - tasks/8_0_admin_user_test.yml
+            - tasks/9_0_token_cleanup_cronjobs_test.yml
           tags:
             - always
       rescue:
