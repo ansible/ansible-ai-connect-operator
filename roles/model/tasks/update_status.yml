@@ -31,7 +31,7 @@
         command: >-
           bash -c "echo 'from importlib.metadata import version;
           print(version(\"ansible-ai-connect\"))'
-          | wisdom-manage shell"
+          | wisdom-manage shell -v 0"
       register: instance_version
       changed_when: false
 
