@@ -134,6 +134,7 @@ rules:
       - extensions
     resources:
       - jobs
+      - cronjobs
     verbs:
       - get
       - list
