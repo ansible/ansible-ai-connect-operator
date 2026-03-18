@@ -1,0 +1,40 @@
+---
+# Validates that the AnsibleAIConnect custom resource status.version
+# is a valid PEP 440 version string (e.g. "1.0.0", "1.2.3rc1", "2.0.0.dev4").
+# With Django 5.2, `wisdom-manage shell` changed verbosity handling (-v flag)
+# and may append extra output that corrupts the version string if not suppressed.
+
+- block:
+    - name: Retrieve AnsibleAIConnect instance
+      kubernetes.core.k8s_info:
+        api_version: aiconnect.ansible.com/v1alpha1
+        kind: AnsibleAIConnect
+        name: ansibleaiconnect-sample
+        namespace: '{{ namespace }}'
+      register: aiconnect_instance
+
+    - name: Set instance version fact
+      ansible.builtin.set_fact:
+        instance_version: "{{ aiconnect_instance.resources[0].status.version }}"
+
+    - name: Display instance version
+      ansible.builtin.debug:
+        msg: "Instance version: '{{ instance_version }}'"
+
+    - name: Assert instance version is defined and not empty
+      ansible.builtin.assert:
+        that:
+          - instance_version is defined
+          - instance_version | length > 0
+        fail_msg: "Instance version is empty or not defined in custom resource status."
+
+    - name: Assert instance version matches PEP 440 pattern
+      vars:
+        version_pattern: '^\d+\.\d+\.\d+([._]?(dev|a|alpha|b|beta|rc|post)\d*)*$'
+      ansible.builtin.assert:
+        that:
+          - instance_version is regex(version_pattern)
+        fail_msg: >-
+          Instance version '{{ instance_version }}' does not match expected
+          PEP 440 pattern (e.g. '1.0.0', '1.2.3rc1', '2.0.0.dev4').
+          This may indicate 'wisdom-manage shell' is appending extra output.
