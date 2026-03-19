@@ -1,0 +1,218 @@
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  labels:
+    {{ lookup("template", "../common/templates/labels/common.yaml.j2")  | indent(width=4) | trim }}
+    {{ lookup("template", "../common/templates/labels/version.yaml.j2") | indent(width=4) | trim }}
+    app.kubernetes.io/component: '{{ deployment_type }}-token-cleanup'
+  name: '{{ ansible_operator_meta.name }}-cronjob-{{ _cronjob_name }}'
+  namespace: '{{ ansible_operator_meta.namespace }}'
+spec:
+  schedule: "{{ _cronjob_schedule }}"
+  concurrencyPolicy: Forbid
+  suspend: false
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            {{ lookup("template", "../common/templates/labels/common.yaml.j2")  | indent(width=12) | trim }}
+            app.kubernetes.io/component: '{{ deployment_type }}-token-cleanup'
+        spec:
+          serviceAccountName: '{{ ansible_operator_meta.name }}'
+{% if image_pull_secrets | length > 0 %}
+          imagePullSecrets:
+{% for secret in image_pull_secrets %}
+            - name: {{ secret }}
+{% endfor %}
+{% endif %}
+{% if combined_api.node_selector is defined %}
+          nodeSelector:
+            {{ combined_api.node_selector | indent(width=12) }}
+{% endif %}
+{% if combined_api.tolerations is defined %}
+          tolerations:
+            {{ combined_api.tolerations | indent(width=12) }}
+{% endif %}
+{% if bundle_ca_crt or is_openshift %}
+          initContainers:
+          - name: configure-combined-ca-bundle
+            image: {{ _image }}
+            imagePullPolicy: '{{ image_pull_policy }}'
+            command:
+              - /bin/sh
+              - -c
+              - |
+                mkdir -p /etc/ssl/combined-ca/
+                mkdir -p /etc/pki/ca-trust/extracted/{java,pem,openssl,edk2}
+                update-ca-trust extract --output /etc/pki/ca-trust/extracted
+                CERTIFI_PATH=$(python3 -c "import certifi; print(certifi.where())")
+                cat "$CERTIFI_PATH" > /etc/ssl/combined-ca/ca-bundle.crt
+{% if is_openshift %}
+                if [ -f /var/run/secrets/kubernetes.io/serviceaccount/service-ca.crt ]; then
+                  cat /var/run/secrets/kubernetes.io/serviceaccount/service-ca.crt >> /etc/ssl/combined-ca/ca-bundle.crt
+                fi
+{% endif %}
+{% if bundle_ca_crt %}
+                if [ -f /etc/pki/ca-trust/source/anchors/bundle-ca.crt ]; then
+                  cat /etc/pki/ca-trust/source/anchors/bundle-ca.crt >> /etc/ssl/combined-ca/ca-bundle.crt
+                fi
+{% endif %}
+                chmod 644 /etc/ssl/combined-ca/ca-bundle.crt
+            volumeMounts:
+{% if is_openshift %}
+              - name: server-tls-certs
+                mountPath: /var/run/secrets/kubernetes.io/serviceaccount/
+                readOnly: true
+{% endif %}
+              - name: combined-ca-bundle
+                mountPath: /etc/ssl/combined-ca/
+              - name: "ca-trust-extracted"
+                mountPath: "/etc/pki/ca-trust/extracted"
+{% if bundle_ca_crt %}
+              - name: "{{ ansible_operator_meta.name }}-bundle-cacert"
+                mountPath: /etc/pki/ca-trust/source/anchors/bundle-ca.crt
+                subPath: bundle-ca.crt
+                readOnly: true
+{% endif %}
+{% endif %}
+          containers:
+          - name: '{{ _cronjob_name }}'
+            image: {{ _image }}
+            imagePullPolicy: '{{ image_pull_policy }}'
+            command: ["venv/bin/wisdom-manage", "{{ _cronjob_command }}"]
+            env:
+{% if auth_config is defined %}
+            - name: AAP_API_URL
+              valueFrom:
+                secretKeyRef:
+                  name: "{{ auth_config_secret_name }}"
+                  key: auth_api_url
+            - name: SOCIAL_AUTH_AAP_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: "{{ auth_config_secret_name }}"
+                  key: auth_api_key
+            - name: SOCIAL_AUTH_AAP_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: "{{ auth_config_secret_name }}"
+                  key: auth_api_secret
+            - name: SOCIAL_AUTH_VERIFY_SSL
+              valueFrom:
+                secretKeyRef:
+                  name: "{{ auth_config_secret_name }}"
+                  key: auth_verify_ssl
+            - name: ANSIBLE_WISDOM_DOMAIN
+              valueFrom:
+                secretKeyRef:
+                  name: "{{ auth_config_secret_name }}"
+                  key: auth_allowed_hosts
+{% endif %}
+{% if not auth_config is defined %}
+            - name: ANSIBLE_WISDOM_DOMAIN
+              value: "*"
+{% endif %}
+            - name: SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: "{{ __db_fields_encryption_secret_name }}"
+                  key: secret_key
+            - name: ANSIBLE_AI_DATABASE_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: "{{ __database_secret_name }}"
+                  key: host
+            - name: ANSIBLE_AI_DATABASE_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: "{{ __database_secret_name }}"
+                  key: database
+            - name: ANSIBLE_AI_DATABASE_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: "{{ __database_secret_name }}"
+                  key: port
+            - name: ANSIBLE_AI_DATABASE_USER
+              valueFrom:
+                secretKeyRef:
+                  name: "{{ __database_secret_name }}"
+                  key: username
+            - name: ANSIBLE_AI_DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: "{{ __database_secret_name }}"
+                  key: password
+            - name: ANSIBLE_AI_MODEL_MESH_CONFIG
+              valueFrom:
+                secretKeyRef:
+                  name: "{{ __model_pipeline_secret_name }}"
+                  key: config
+{% if bundle_ca_crt or is_openshift %}
+            - name: COMBINED_CA_BUNDLE_PATH
+              value: "/etc/ssl/combined-ca/ca-bundle.crt"
+            - name: REQUESTS_CA_BUNDLE
+              value: "/etc/ssl/combined-ca/ca-bundle.crt"
+            - name: SSL_CERT_FILE
+              value: "/etc/ssl/combined-ca/ca-bundle.crt"
+{% endif %}
+{% if is_openshift %}
+            - name: SERVICE_CA_PATH
+              value: "/var/run/secrets/kubernetes.io/serviceaccount/service-ca.crt"
+{% endif %}
+            envFrom:
+              - configMapRef:
+                  name: "{{ ansible_operator_meta.name }}-{{ deployment_type }}-env-properties"
+            securityContext:
+              runAsNonRoot: true
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop:
+                  - "ALL"
+              seccompProfile:
+                type: RuntimeDefault
+{% if bundle_ca_crt or is_openshift %}
+            volumeMounts:
+              - name: combined-ca-bundle
+                mountPath: /etc/ssl/combined-ca/
+                readOnly: true
+              - name: "ca-trust-extracted"
+                mountPath: "/etc/pki/ca-trust/extracted"
+{% if bundle_ca_crt %}
+              - name: "{{ ansible_operator_meta.name }}-bundle-cacert"
+                mountPath: /etc/pki/ca-trust/source/anchors/bundle-ca.crt
+                subPath: bundle-ca.crt
+                readOnly: true
+{% endif %}
+{% if is_openshift %}
+              - name: server-tls-certs
+                mountPath: /var/run/secrets/kubernetes.io/serviceaccount/
+{% endif %}
+{% endif %}
+          restartPolicy: OnFailure
+{% if bundle_ca_crt or is_openshift %}
+          volumes:
+            - name: combined-ca-bundle
+              emptyDir: {}
+            - name: "ca-trust-extracted"
+              emptyDir: {}
+{% if bundle_ca_crt %}
+            - name: "{{ ansible_operator_meta.name }}-bundle-cacert"
+              secret:
+                secretName: "{{ bundle_cacert_secret }}"
+                items:
+                  - key: bundle-ca.crt
+                    path: 'bundle-ca.crt'
+{% endif %}
+{% if is_openshift %}
+            - name: server-tls-certs
+              configMap:
+                items:
+                  - key: service-ca.crt
+                    path: service-ca.crt
+                name: openshift-service-ca.crt
+{% endif %}
+{% endif %}

@@ -1,0 +1,17 @@
+---
+- name: Apply token cleanup CronJob resources
+  kubernetes.core.k8s:
+    apply: yes
+    definition: "{{ lookup('template', 'model.cronjob.token-cleanup.yaml.j2') }}"
+    wait: no
+  loop:
+    - name: revoke-tokens
+      command: revoke_expired_refreshtokens
+      schedule: "*/5 * * * *"
+    - name: cleartokens
+      command: cleartokens
+      schedule: "*/15 * * * *"
+  vars:
+    _cronjob_name: "{{ item.name }}"
+    _cronjob_command: "{{ item.command }}"
+    _cronjob_schedule: "{{ item.schedule }}"

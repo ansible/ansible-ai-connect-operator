@@ -1,0 +1,41 @@
+---
+- block:
+    - name: Get revoke-expired-refreshtokens CronJob
+      kubernetes.core.k8s_info:
+        namespace: '{{ namespace }}'
+        kind: CronJob
+        name: ansibleaiconnect-sample-cronjob-revoke-tokens
+      register: revoke_cronjob
+
+    - name: Assert revoke-expired-refreshtokens CronJob exists
+      ansible.builtin.assert:
+        that:
+          - revoke_cronjob.resources | length == 1
+          - revoke_cronjob.resources[0].spec.schedule == "*/5 * * * *"
+          - revoke_cronjob.resources[0].spec.concurrencyPolicy == "Forbid"
+          - >-
+            revoke_cronjob.resources[0].spec.jobTemplate.spec.template.spec.containers[0].command
+            == ["venv/bin/wisdom-manage", "revoke_expired_refreshtokens"]
+        fail_msg: >-
+          revoke-expired-refreshtokens CronJob is not configured correctly.
+          Got: {{ revoke_cronjob.resources }}
+
+    - name: Get cleartokens CronJob
+      kubernetes.core.k8s_info:
+        namespace: '{{ namespace }}'
+        kind: CronJob
+        name: ansibleaiconnect-sample-cronjob-cleartokens
+      register: cleartokens_cronjob
+
+    - name: Assert cleartokens CronJob exists
+      ansible.builtin.assert:
+        that:
+          - cleartokens_cronjob.resources | length == 1
+          - cleartokens_cronjob.resources[0].spec.schedule == "*/15 * * * *"
+          - cleartokens_cronjob.resources[0].spec.concurrencyPolicy == "Forbid"
+          - >-
+            cleartokens_cronjob.resources[0].spec.jobTemplate.spec.template.spec.containers[0].command
+            == ["venv/bin/wisdom-manage", "cleartokens"]
+        fail_msg: >-
+          cleartokens CronJob is not configured correctly.
+          Got: {{ cleartokens_cronjob.resources }}
