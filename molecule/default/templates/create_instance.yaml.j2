@@ -22,9 +22,6 @@ spec:
 {% endif %}
   auth_config_secret_name: 'auth-configuration-secret'
   model_config_secret_name: 'model-configuration-secret'
-{% if chatbot_test_image is defined and chatbot_test_image != '' %}
-  chatbot_config_secret_name: 'chatbot-configuration-secret'
-{% endif %}
   api:
     resource_requirements:
       requests:

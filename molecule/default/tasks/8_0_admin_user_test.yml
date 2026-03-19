@@ -1,0 +1,77 @@
+---
+# Validates that the admin user was created successfully by create_admin_user.yml.
+# With Django 5.2, `wisdom-manage shell -v 0` is required to suppress extra output.
+# This test exercises the same code path to confirm it works correctly.
+
+- block:
+    - name: Retrieve AnsibleAIConnect instance
+      kubernetes.core.k8s_info:
+        api_version: aiconnect.ansible.com/v1alpha1
+        kind: AnsibleAIConnect
+        name: ansibleaiconnect-sample
+        namespace: '{{ namespace }}'
+      register: aiconnect_instance
+
+    - name: Assert adminUser is set in custom resource status
+      ansible.builtin.assert:
+        that:
+          - aiconnect_instance.resources[0].status.adminUser is defined
+          - aiconnect_instance.resources[0].status.adminUser | length > 0
+        fail_msg: "adminUser is empty or not defined in custom resource status."
+
+    - name: Assert adminPasswordSecret is set in custom resource status
+      ansible.builtin.assert:
+        that:
+          - aiconnect_instance.resources[0].status.adminPasswordSecret is defined
+          - aiconnect_instance.resources[0].status.adminPasswordSecret | length > 0
+        fail_msg: "adminPasswordSecret is empty or not defined in custom resource status."
+
+    - name: Get API Pod name
+      kubernetes.core.k8s_info:
+        namespace: '{{ namespace }}'
+        kind: Pod
+        label_selectors:
+          - app.kubernetes.io/name = ansibleaiconnect-sample
+      register: aiconnect_api_pod
+
+    - name: Set admin user and pod facts
+      ansible.builtin.set_fact:
+        admin_username: "{{ aiconnect_instance.resources[0].status.adminUser }}"
+        api_pod_name: "{{ aiconnect_api_pod.resources[0].metadata.name }}"
+
+    - name: Display admin user
+      ansible.builtin.debug:
+        msg: "Admin user: '{{ admin_username }}', Pod: '{{ api_pod_name }}'"
+
+    - name: Verify admin superuser exists via wisdom-manage shell
+      kubernetes.core.k8s_exec:
+        namespace: '{{ namespace }}'
+        pod: '{{ api_pod_name }}'
+        container: "model-api"
+        command: >-
+          bash -c "echo 'from django.contrib.auth import get_user_model;
+          User = get_user_model();
+          nsu = User.objects.filter(is_superuser=True, username=\"{{ admin_username }}\").count();
+          print(nsu)'
+          | wisdom-manage shell -v 0"
+      register: admin_check_result
+
+    - name: Display admin check output
+      ansible.builtin.debug:
+        msg: "Admin check stdout: '{{ admin_check_result.stdout | trim }}'"
+
+    - name: Assert admin superuser count is a clean integer
+      ansible.builtin.assert:
+        that:
+          - admin_check_result.stdout | trim is regex('^\d+$')
+        fail_msg: >-
+          Expected a numeric superuser count but got '{{ admin_check_result.stdout | trim }}'.
+          This may indicate 'wisdom-manage shell' is appending extra output (Django 5.2 verbosity issue).
+
+    - name: Assert at least one admin superuser exists
+      ansible.builtin.assert:
+        that:
+          - (admin_check_result.stdout | trim | int) >= 1
+        fail_msg: >-
+          Admin superuser '{{ admin_username }}' was not found.
+          Expected at least 1 superuser but got {{ admin_check_result.stdout | trim }}.

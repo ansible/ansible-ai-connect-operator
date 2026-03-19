@@ -22,7 +22,8 @@
             # - tasks/4_0_model_pipeline_config_optional_model_config_test.yml
             # - tasks/5_0_optional_auth_config_test.yml
             - tasks/6_0_mcpserver_config_test.yml
-            - tasks/7_0_ipv6_config_test.yml
+            - tasks/7_0_instance_version_test.yml
+            - tasks/8_0_admin_user_test.yml
           tags:
             - always
       rescue:
