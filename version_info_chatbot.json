@@ -1,5 +1,5 @@
 {
   "ansible_chatbot_service": {
-    "imageTag": "1.0.202507161115"
+    "imageTag": "latest"
   }
 }
