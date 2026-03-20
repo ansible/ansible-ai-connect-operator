@@ -45,10 +45,14 @@ data:
       - name: mcp::aap-controller
         provider_id: model-context-protocol
         url: http://127.0.0.1:8004/sse
+        authorization_headers:
+          X-DAB-JW-TOKEN: "client"
 {% endif %}
 {% if _aap_gateway_url is defined %}
       - name: mcp::aap-lightspeed
         provider_id: model-context-protocol
         url: http://127.0.0.1:8005/sse
+        authorization_headers:
+          X-DAB-JW-TOKEN: "client"
 {% endif %}
 {% endif %}
