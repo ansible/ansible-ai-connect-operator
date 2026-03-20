@@ -248,7 +248,7 @@ oc get secret <resourcename>-chatbot-api-tls \
 
 ### Additional Advanced Configuration
 - [No Log](./docs/user-guide/advanced-configuration/no-log.md)
-- [Deploy a Specific Version of `AnsibleAIConnect`](./docs/user-guide/advanced-configuration/deploying-a-specific-version.md)
+- [Deploy a Specific Version of `AnsibleAIConnect` or `Chatbot`](./docs/user-guide/advanced-configuration/deploying-a-specific-version.md) By default, the operator installs the `latest` versions of container images using an `image_pull_policy` of `IfNotPresent`. To specify different versions or modify the pull policy, please refer to this page.
 - [Trusting a Custom Certificate Authority](./docs/user-guide/advanced-configuration/trusting-a-custom-certificate-authority.md)
 
 ## Advanced Configuration for `AnsibleMCPConnect`
