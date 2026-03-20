@@ -12,7 +12,7 @@ data:
   lightspeed-stack.yaml: |
     name: Ansible Lightspeed Intelligent Assistant
     service:
-      host: 0.0.0.0
+      host: "*"
 {% if is_openshift %}
       port: 8443
 {% else %}
