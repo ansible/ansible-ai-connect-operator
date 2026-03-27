@@ -21,6 +21,38 @@
          default(_default_chatbot_image, true) }}
 # =======================================
 
+# =======================================
+# Chatbot BYOK
+# ---------------------------------------
+
+- name: Create the chatbot BYOK configuration
+  when: chatbot_extra_settings is defined
+  block:
+    - name: Set Chatbot BYOK image version when defined and not empty
+      ansible.builtin.set_fact:
+        _chatbot_byok_image_version: "{{ chatbot_extra_settings['chatbot_byok_image_version'] | string }}"
+      when:
+        - chatbot_extra_settings['chatbot_byok_image_version'] is defined
+        - chatbot_extra_settings['chatbot_byok_image_version'] | string | length
+
+    - name: Set Chatbot BYOK image default version when not defined
+      ansible.builtin.set_fact:
+        _chatbot_byok_image_version: "latest"
+      when:
+        - _chatbot_byok_image_version is not defined
+
+    - name: Set Chatbot BYOK image when defined and not empty
+      ansible.builtin.set_fact:
+        _chatbot_byok_image: "{{ chatbot_extra_settings['chatbot_byok_image'] | string }}:{{ _chatbot_byok_image_version }}"
+      when:
+        - chatbot_extra_settings['chatbot_byok_image'] is defined
+        - chatbot_extra_settings['chatbot_byok_image'] | string | length
+        - _chatbot_byok_image_version is defined
+
+    - name: Set Chat BYOK storage size
+      ansible.builtin.set_fact:
+        _chatbot_byok_storage_size: "{{ chatbot_extra_settings['chatbot_byok_storage_size'] | default('2Gi') | string }}"
+# =======================================
 
 # =======================================
 # RAG database image

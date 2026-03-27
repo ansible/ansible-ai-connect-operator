@@ -85,6 +85,11 @@ spec:
         path: chatbot_mcp_lightspeed_image_version
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:advanced
+      - description: Chatbot extra settings key-value pairs.
+        displayName: Chatbot Extra Settings
+        path: chatbot_extra_settings
+        x-descriptors:
+          - urn:alm:descriptor:com.tectonic.ui:fieldGroup:Advanced
       - displayName: Additional labels defined on the resource, which should be propagated
           to child resources
         path: additional_labels
