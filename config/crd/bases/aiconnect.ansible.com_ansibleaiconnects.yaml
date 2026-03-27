@@ -118,6 +118,11 @@ spec:
               chatbot_config_secret_name:
                 description: "Secret where the chatbot configuration can be found"
                 type: string
+              chatbot_extra_settings:
+                type: object
+                description: "Chatbot Dynamic dictionary for extra settings"
+                additionalProperties:
+                  x-kubernetes-preserve-unknown-fields: true
               database:
                 description: The PostgreSQL database StatefulSet
                 properties:

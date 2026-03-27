@@ -95,15 +95,45 @@ spec:
             mountPath: /.llama/data
         command:
           - /rag/entrypoint.sh
+{% if _chatbot_byok_image is defined %}
+      - name: init-byok-vector-db
+        image: '{{ _chatbot_byok_image }}'
+        env:
+          - name: BYOK_CONFIG_CHATBOT_DIR
+            value: /.llama/data/byok/distributions/ansible-chatbot
+        volumeMounts:
+          - name: ansible-chatbot-byok-storage
+            mountPath: /.llama/data/byok
+        command:
+          - sh
+          - '-c'
+          - >-
+            mkdir -p ${BYOK_CONFIG_CHATBOT_DIR} &&
+            cp /rag/vector_db/provider_vector_db_id.ind ${BYOK_CONFIG_CHATBOT_DIR} &&
+            gzip -cd /rag/vector_db/faiss_store.db.gz > ${BYOK_CONFIG_CHATBOT_DIR}/faiss_store.db
+{% endif %}
       containers:
       - name: ansible-chatbot
         image: {{ _chatbot_image }}
         imagePullPolicy: '{{ image_pull_policy }}'
-        args:
-          [ 'sh', '-c', 'export $(cat $LLAMA_STACK_CONFIG_DIR/distributions/ansible-chatbot/provider_rag.env) && /.llama/entrypoint.sh $PYTHON' ]
+        command:
+          - sh
+          - '-c'
+          - >-
+            export PROVIDER_VECTOR_DB_ID=$(cat ${LLAMA_STACK_CONFIG_DIR}/distributions/ansible-chatbot/provider_vector_db_id.ind)
+{% if _chatbot_byok_image is defined %}
+            BYOK_PROVIDER_VECTOR_DB_ID=$(cat ${BYOK_CONFIG_CHATBOT_DIR}/provider_vector_db_id.ind)
+{% endif %}
+            && /.llama/entrypoint.sh $PYTHON
         env:
           - name: LLAMA_STACK_CONFIG_DIR
             value: /.llama/data
+{% if _chatbot_byok_image is defined %}
+          - name: BYOK_CONFIG_DIR
+            value: /.llama/data/byok
+          - name: BYOK_CONFIG_CHATBOT_DIR
+            value: /.llama/data/byok/distributions/ansible-chatbot
+{% endif %}
           - name: EMBEDDING_MODEL
             value: ./embeddings_model
           - name: CHATBOT_API_KEY
@@ -129,6 +159,10 @@ spec:
         volumeMounts:
           - name: ansible-chatbot-storage
             mountPath: /.llama/data
+{% if _chatbot_byok_image is defined %}
+          - name: ansible-chatbot-byok-storage
+            mountPath: /.llama/data/byok
+{% endif %}
           - name: ansible-chatbot-lightspeed-stack-config
             mountPath: /.llama/distributions/ansible-chatbot/config
           - name: ansible-chatbot-llama-stack-config
@@ -268,6 +302,11 @@ spec:
             items:
               - key: DEFAULT_SYSTEM_PROMPT
                 path: default.txt
+{% if _chatbot_byok_image is defined %}
+        - name: ansible-chatbot-byok-storage
+          emptyDir:
+            sizeLimit: '{{ _chatbot_byok_storage_size }}'
+{% endif %}
 {% if is_openshift %}
         - name: lm-stack-tls-certs
           secret:

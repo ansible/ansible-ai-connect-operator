@@ -35,6 +35,19 @@ data:
       transcripts_enabled: false
     customization:
       system_prompt_path: /.llama/distributions/ansible-chatbot/system-prompts/default.txt
+{% if _chatbot_byok_image is defined %}
+    byok_rag:
+      - rag_id: byok-docs
+        rag_type: inline::faiss
+        embedding_model: sentence-transformers/${env.EMBEDDINGS_MODEL:=/.llama/data/embeddings_model}
+        embedding_dimension: 768
+        vector_db_id: ${env.BYOK_PROVIDER_VECTOR_DB_ID:=}
+        db_path: ${env.VECTOR_DB_DIR:=/.llama/data/byok/distributions/ansible-chatbot}/faiss_store.db
+        score_multiplier: 1.0
+    rag:
+      tool:
+        - byok-docs
+{% endif %}
     authentication:
       module: "api-key-token"
       api_key_config:

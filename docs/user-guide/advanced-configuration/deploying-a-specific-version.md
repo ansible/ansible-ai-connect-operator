@@ -2,16 +2,25 @@
 
 There are a few variables that are customizable for `AnsibleAIConnect` image management.
 
-| Name                     | Description               | Default                                          |
-|--------------------------|---------------------------|--------------------------------------------------|
-| `image`                  | Path of the image to pull | `quay.io/ansible/ansible-ai-connect-service`                     |
-| `chatbot_image`          | Path of the image to pull | `quay.io/ansible/ansible-chatbot-service`                     |
-| `image_version`          | Image version to pull     | value of `DEFAULT_AI_CONNECT_VERSION` or `main`  |
-| `chatbot_image_version`  | Image version to pull     | value of `DEFAULT_CHATBOT_AI_CONNECT_VERSION` or `main`  |
-| `image_pull_policy`      | The pull policy to adopt  | `IfNotPresent`                                   |
-| `image_pull_secrets`     | The pull secrets to use   | `None`                                           |
-| `postgres_image`         | Path of the image to pull | `postgres`                                       |
-| `postgres_image_version` | Image version to pull     | `latest`                                         |
+| Name                         | Description                        | Default                                                 |
+|------------------------------|------------------------------------|---------------------------------------------------------|
+| `image`                      | Path of the image to pull          | `quay.io/ansible/ansible-ai-connect-service`            |
+| `chatbot_image`              | Path of the image to pull          | `quay.io/ansible/ansible-chatbot-service`               |
+| `image_version`              | Image version to pull              | value of `DEFAULT_AI_CONNECT_VERSION` or `main`         |
+| `chatbot_image_version`      | Image version to pull              | value of `DEFAULT_CHATBOT_AI_CONNECT_VERSION` or `main` |
+| `image_pull_policy`          | The pull policy to adopt           | `IfNotPresent`                                          |
+| `image_pull_secrets`         | The pull secrets to use            | `None`                                                  |
+| `postgres_image`             | Path of the image to pull          | `postgres`                                              |
+| `postgres_image_version`     | Image version to pull              | `latest`                                                |
+| `chatbot_extra_settings`     | Chatbot extra settings Dictionary  | `None`                                                  |
+
+Chatbot extra settings (chatbot_extra_settings) possible keys values
+
+| Name                         | Description                        | Default  |
+|------------------------------|------------------------------------|----------|
+| `chatbot_byok_image`         | Chatbot BYOK image                 | `None`   |
+| `chatbot_byok_image_version` | Chatbot BYOK image version to pull | `latest` |
+| `chatbot_byok_storage_size`  | Chatbot BYOK Volume storage size   | `2Gi`    |
 
 Example of customization could be:
 
@@ -54,4 +63,16 @@ kubectl create secret generic redhat-operators-pull-secret \
 spec:
   image_pull_secrets:
     - redhat-operators-pull-secret
+```
+
+3. Add Chatbot BYOK settings
+
+```yaml
+---
+...
+spec:
+  chatbot_extra_settings:
+    chatbot_byok_image: 'quay.io/<repository>/rag-content-output'
+    chatbot_byok_image_version: latest
+    chatbot_byok_storage_size: '2Gi'
 ```
