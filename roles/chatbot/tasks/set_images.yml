@@ -49,9 +49,13 @@
         - chatbot_extra_settings['chatbot_byok_image'] | string | length
         - _chatbot_byok_image_version is defined
 
-    - name: Set Chat BYOK storage size
+    - name: Set Chatbot BYOK storage size
       ansible.builtin.set_fact:
         _chatbot_byok_storage_size: "{{ chatbot_extra_settings['chatbot_byok_storage_size'] | default('2Gi') | string }}"
+
+    - name: Set Chatbot BYOK score_multiplier
+      ansible.builtin.set_fact:
+        _chatbot_byok_score_multiplier: "{{ chatbot_extra_settings['chatbot_byok_score_multiplier'] | default(1.2) | float }}"
 # =======================================
 
 # =======================================

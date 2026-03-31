@@ -43,7 +43,7 @@ data:
         embedding_dimension: 768
         vector_db_id: ${env.BYOK_PROVIDER_VECTOR_DB_ID:=}
         db_path: ${env.VECTOR_DB_DIR:=/.llama/data/byok/distributions/ansible-chatbot}/faiss_store.db
-        score_multiplier: 1.0
+        score_multiplier: {{ _chatbot_byok_score_multiplier }}
     rag:
       tool:
         - byok-docs
