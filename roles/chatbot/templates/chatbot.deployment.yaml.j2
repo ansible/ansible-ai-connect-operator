@@ -109,7 +109,7 @@ spec:
           - '-c'
           - >-
             mkdir -p ${BYOK_CONFIG_CHATBOT_DIR} &&
-            cp /rag/vector_db/provider_vector_db_id.ind ${BYOK_CONFIG_CHATBOT_DIR} &&
+            set -o pipefail && sed -n 's/.*vector_store_id: //p' /rag/vector_db/llama-stack.yaml | tr -d '\n' > ${BYOK_CONFIG_CHATBOT_DIR}/provider_vector_db_id.ind &&
             gzip -cd /rag/vector_db/faiss_store.db.gz > ${BYOK_CONFIG_CHATBOT_DIR}/faiss_store.db
 {% endif %}
       containers:
