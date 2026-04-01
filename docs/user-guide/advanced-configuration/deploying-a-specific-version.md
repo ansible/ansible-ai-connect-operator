@@ -16,11 +16,12 @@ There are a few variables that are customizable for `AnsibleAIConnect` image man
 
 Chatbot extra settings (chatbot_extra_settings) possible keys values
 
-| Name                         | Description                        | Default  |
-|------------------------------|------------------------------------|----------|
-| `chatbot_byok_image`         | Chatbot BYOK image                 | `None`   |
-| `chatbot_byok_image_version` | Chatbot BYOK image version to pull | `latest` |
-| `chatbot_byok_storage_size`  | Chatbot BYOK Volume storage size   | `2Gi`    |
+| Name                            | Description                        | Default  |
+|---------------------------------|------------------------------------|----------|
+| `chatbot_byok_image`            | Chatbot BYOK image                 | `None`   |
+| `chatbot_byok_image_version`    | Chatbot BYOK image version to pull | `latest` |
+| `chatbot_byok_storage_size`     | Chatbot BYOK Volume storage size   | `2Gi`    |
+| `chatbot_byok_score_multiplier` | Chatbot BYOK score multiplier      | `1.2`    |
 
 Example of customization could be:
 
@@ -75,4 +76,5 @@ spec:
     chatbot_byok_image: 'quay.io/<repository>/rag-content-output'
     chatbot_byok_image_version: latest
     chatbot_byok_storage_size: '2Gi'
+    chatbot_byok_score_multiplier: 1.2
 ```
