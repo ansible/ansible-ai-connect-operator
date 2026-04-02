@@ -133,6 +133,8 @@ spec:
             value: /.llama/data/byok
           - name: BYOK_CONFIG_CHATBOT_DIR
             value: /.llama/data/byok/distributions/ansible-chatbot
+          - name: BYOK_IMAGE
+            value: '{{ _chatbot_byok_image }}'
 {% endif %}
           - name: EMBEDDING_MODEL
             value: ./embeddings_model
