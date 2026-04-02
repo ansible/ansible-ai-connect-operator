@@ -18,3 +18,8 @@
     - create_mcpserver_instance.yaml.j2
   loop_control:
     loop_var: template_item
+  register: k8s_result
+
+- name: Display the result for debugging
+  ansible.builtin.debug:
+    var: k8s_result
