@@ -1,4 +1,24 @@
 ---
+- name: Get current CR details for ownerReferences
+  kubernetes.core.k8s_info:
+    api_version: "{{ api_version }}"
+    kind: "{{ kind }}"
+    name: "{{ ansible_operator_meta.name }}"
+    namespace: "{{ ansible_operator_meta.namespace }}"
+  register: _cr_info
+
+- name: Verify CR exists
+  ansible.builtin.assert:
+    that:
+      - _cr_info.resources | length > 0
+    fail_msg: "Failed to find AnsibleAIConnect/{{ ansible_operator_meta.name }} CR"
+
+- name: Set CR facts for ownerReferences
+  ansible.builtin.set_fact:
+    _cr_uid: "{{ _cr_info.resources[0].metadata.uid }}"
+    api_version: "{{ _cr_info.resources[0].apiVersion }}"
+    kind: "{{ _cr_info.resources[0].kind }}"
+
 - name: Apply token cleanup CronJob resources
   kubernetes.core.k8s:
     apply: yes
