@@ -138,6 +138,11 @@ spec:
         - name: SERVICE_CA_PATH
           value: "/var/run/secrets/kubernetes.io/serviceaccount/service-ca.crt"
 {% endif %}
+        - name: TELEMETRY_HMAC_KEY
+          valueFrom:
+            secretKeyRef:
+              name: '{{ __telemetry_hmac_secret_name }}'
+              key: telemetry_hmac_key
         envFrom:
           - configMapRef:
               name: "{{ ansible_operator_meta.name }}-{{ deployment_type }}-env-properties"

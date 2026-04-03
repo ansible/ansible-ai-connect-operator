@@ -1,0 +1,48 @@
+---
+- name: Check for custom telemetry HMAC key secret
+  kubernetes.core.k8s_info:
+    kind: Secret
+    namespace: '{{ ansible_operator_meta.namespace }}'
+    name: '{{ telemetry_hmac_secret }}'
+  register: _custom_telemetry_hmac
+  no_log: "{{ no_log }}"
+  when: telemetry_hmac_secret | length
+
+- name: Check for existing telemetry HMAC key secret
+  kubernetes.core.k8s_info:
+    kind: Secret
+    namespace: '{{ ansible_operator_meta.namespace }}'
+    name: '{{ ansible_operator_meta.name }}-telemetry-hmac-secret'
+  register: _existing_telemetry_hmac
+  no_log: "{{ no_log }}"
+
+- name: Set telemetry HMAC key secret
+  ansible.builtin.set_fact:
+    _telemetry_hmac_secret: '{{ _custom_telemetry_hmac["resources"] | default([]) | length | ternary(_custom_telemetry_hmac, _existing_telemetry_hmac) }}'
+  no_log: "{{ no_log }}"
+
+- block:
+    - name: Create telemetry HMAC key secret
+      kubernetes.core.k8s:
+        apply: true
+        definition: "{{ lookup('template', 'secrets/telemetry_hmac_key.yaml.j2') }}"
+      no_log: "{{ no_log }}"
+
+    - name: Read telemetry HMAC key secret
+      kubernetes.core.k8s_info:
+        kind: Secret
+        namespace: '{{ ansible_operator_meta.namespace }}'
+        name: '{{ ansible_operator_meta.name }}-telemetry-hmac-secret'
+      register: _generated_telemetry_hmac
+      no_log: "{{ no_log }}"
+  when: not _telemetry_hmac_secret['resources'] | default([]) | length
+
+- name: Set telemetry HMAC key secret
+  ansible.builtin.set_fact:
+    telemetry_hmac: '{{ _generated_telemetry_hmac["resources"] | default([]) | length | ternary(_generated_telemetry_hmac, _telemetry_hmac_secret) }}'
+  no_log: "{{ no_log }}"
+
+- name: Store telemetry HMAC key secret name
+  ansible.builtin.set_fact:
+    __telemetry_hmac_secret_name: "{{ telemetry_hmac['resources'][0]['metadata']['name'] }}"
+  no_log: "{{ no_log }}"
