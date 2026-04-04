@@ -8,6 +8,16 @@ metadata:
     app.kubernetes.io/component: '{{ deployment_type }}-token-cleanup'
   name: '{{ ansible_operator_meta.name }}-cronjob-{{ _cronjob_name }}'
   namespace: '{{ ansible_operator_meta.namespace }}'
+  # Explicit ownerReferences without controller=true prevents reconciliation loops.
+  # CronJob status updates (every 5min for revoke-tokens) would otherwise trigger
+  # full operator reconciliation (~3min), creating an infinite loop.
+  # Setting ownerReferences manually still ensures garbage collection on CR deletion.
+  ownerReferences:
+    - apiVersion: {{ api_version }}
+      kind: {{ kind }}
+      name: {{ ansible_operator_meta.name }}
+      uid: {{ _cr_uid }}
+      blockOwnerDeletion: false
 spec:
   schedule: "{{ _cronjob_schedule }}"
   concurrencyPolicy: Forbid
