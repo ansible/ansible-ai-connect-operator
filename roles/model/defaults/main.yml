@@ -1,17 +1,17 @@
 ---
-# defaults file for AnsibleAIConnect
+# defaults file for AnsibleLightspeed
 
 # ========================================
 # Basic k8s configuration
 # ----------------------------------------
-kind: 'AnsibleAIConnect'
-api_version: 'aiconnect.ansible.com/v1alpha1'
-deployment_type: 'ansible-ai-connect'
+kind: 'AnsibleLightspeed'
+api_version: 'lightspeed.ansible.com/v1alpha1'
+deployment_type: 'ansible-lightspeed'
 
 image_pull_policy: IfNotPresent
 image_pull_secrets: []
 
-_image: quay.io/ansible/ansible-ai-connect-service
+_image: quay.io/ansible/ansible-lightspeed-service
 _image_version: "{{ lookup('env', 'DEFAULT_AI_CONNECT_VERSION') or 'latest' }}"
 
 # Labels defined on the resource, which should be propagated to child resources
@@ -29,7 +29,7 @@ no_log: false
 # ========================================
 # AnsbileAIConnect
 # ----------------------------------------
-# Add a nodeSelector for the AnsibleAIConnect pods. It must match a node's labels for the pod
+# Add a nodeSelector for the AnsibleLightspeed pods. It must match a node's labels for the pod
 # to be scheduled on that node. Specify as literal block. E.g.:
 # api:
 #   node_selector: |
@@ -133,7 +133,7 @@ route_host: ''
 #   eks.amazonaws.com/role-arn: arn:aws:iam::<ACCOUNT_ID>:role/<IAM_ROLE_NAME>
 service_account_annotations: ''
 
-# Custom annotations for the ansible-ai-connect service. Specify as literal block. E.g.:
+# Custom annotations for the ansible-lightspeed service. Specify as literal block. E.g.:
 # service_annotations: |
 #   environment: non-production
 #   zone: internal
@@ -162,7 +162,7 @@ admin_password_secret: ''
 
 
 # ========================================
-# Unused by AnsibleAIConnect
+# Unused by AnsibleLightspeed
 # ----------------------------------------
 # Disable UI container's nginx ipv6 listener
 # ipv6_disabled: false

@@ -1,4 +1,4 @@
 ---
-# vars file for AnsibleAIConnect
+# vars file for AnsibleLightspeed
 
 bundle_ca_crt: ''

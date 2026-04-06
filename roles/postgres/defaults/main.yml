@@ -1,7 +1,7 @@
 ---
-# defaults file for AnsibleAIConnect
+# defaults file for AnsibleLightspeed
 
-deployment_type: 'ansible-ai-connect'
+deployment_type: 'ansible-lightspeed'
 database_name: 'wisdom'
 database_username: 'wisdom_service_user'
 
@@ -23,7 +23,7 @@ _postgres_image_version: latest
 #   postgres_tolerations: |
 #     - key: "dedicated"
 #       operator: "Equal"
-#       value: "AnsibleAIConnect"
+#       value: "AnsibleLightspeed"
 #       effect: "NoSchedule"
 
 

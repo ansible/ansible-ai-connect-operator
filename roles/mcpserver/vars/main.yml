@@ -1,4 +1,4 @@
 ---
-# vars file for AnsibleMCPConnect
+# vars file for AnsibleMCPServer
 
 bundle_ca_crt: ''

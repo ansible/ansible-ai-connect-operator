@@ -1,5 +1,5 @@
 ---
-- name: Patching labels to AnsibleAIConnect resource
+- name: Patching labels to AnsibleLightspeed resource
   kubernetes.core.k8s:
     state: present
     definition:

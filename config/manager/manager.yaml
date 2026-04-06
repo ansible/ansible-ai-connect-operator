@@ -32,7 +32,7 @@ spec:
   template:
     metadata:
       annotations:
-        kubectl.kubernetes.io/default-container: ansibleaiconnect-manager
+        kubectl.kubernetes.io/default-container: ansible-lightspeed-manager
       labels:
         control-plane: controller-manager
     spec:
@@ -65,7 +65,7 @@ spec:
         - --health-probe-bind-address=:6789
         image: controller:latest
         imagePullPolicy: IfNotPresent
-        name: ansibleaiconnect-manager
+        name: ansible-lightspeed-manager
         env:
           - name: ANSIBLE_GATHERING
             value: explicit
@@ -77,6 +77,22 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: metadata.namespace
+          - name: RELATED_IMAGE_ANSIBLE_MCP_SERVER
+            value: quay.io/ttakamiy/aap-mcp-server:latest
+          - name: RELATED_IMAGE_ANSIBLE_AI_CONNECT
+            value: quay.io/ansible/wisdom-service:latest
+          - name: RELATED_IMAGE_ANSIBLE_AI_CONNECT_CHATBOT
+            value: quay.io/ansible/ansible-chatbot-stack:latest
+          - name: RELATED_IMAGE_ANSIBLE_AI_CONNECT_CHATBOT_MCP_GATEWAY
+            value: quay.io/ansible/ansible-mcp-gateway:latest
+          - name: RELATED_IMAGE_ANSIBLE_AI_CONNECT_CHATBOT_MCP_CONTROLLER
+            value: quay.io/ansible/ansible-mcp-controller:latest
+          - name: RELATED_IMAGE_ANSIBLE_AI_CONNECT_CHATBOT_MCP_LIGHTSPEED
+            value: quay.io/ansible/ansible-mcp-lightspeed:latest
+          - name: RELATED_IMAGE_ANSIBLE_AI_CONNECT_CHATBOT_RAG_DB
+            value: quay.io/ansible/aap-rag-content:latest
+          - name: RELATED_IMAGE_ANSIBLE_AI_CONNECT_POSTGRES
+            value: quay.io/sclorg/postgresql-15-c9s:latest
         securityContext:
           allowPrivilegeEscalation: false
           capabilities:

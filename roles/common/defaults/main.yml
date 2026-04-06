@@ -1,9 +1,9 @@
 ---
-# defaults file for AnsibleAIConnect
+# defaults file for AnsibleLightspeed
 
-kind: 'AnsibleAIConnect'
-api_version: 'aiconnect.ansible.com/v1alpha1'
-deployment_type: 'ansible-ai-connect'
+kind: 'AnsibleLightspeed'
+api_version: 'lightspeed.ansible.com/v1alpha1'
+deployment_type: 'ansible-lightspeed'
 
 # Labels defined on the resource, which should be propagated to child resources
 additional_labels: []

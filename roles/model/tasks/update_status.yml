@@ -20,7 +20,7 @@
       chatbotConfigurationSecret: ""
 
 # ============================================
-# Retrieve and update AnsibleAIConnect status
+# Retrieve and update AnsibleLightspeed status
 # ============================================
 - block:
     - name: Retrieve instance version

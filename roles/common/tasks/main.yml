@@ -18,9 +18,9 @@
 - ansible.builtin.debug:
     msg: "CLUSTER TYPE: is_openshift={{ is_openshift }}; is_k8s={{ is_k8s }}"
 
-# Tasks file for AnsibleAIConnect
+# Tasks file for AnsibleLightspeed
 
-- name: Create AnsibleAIConnect ServiceAccount
+- name: Create AnsibleLightspeed ServiceAccount
   kubernetes.core.k8s:
     apply: yes
     definition: "{{ lookup('template', item + '.yaml.j2') }}"

@@ -1,5 +1,5 @@
 ---
-# Tasks file for AnsibleAIConnect
+# Tasks file for AnsibleLightspeed
 
 - name: Combine default and custom vars for each component
   ansible.builtin.include_tasks: combine_defaults.yml
@@ -12,7 +12,7 @@
   ansible.builtin.include_role:
     name: postgres
 
-- name: Set AnsibleAIConnect service images
+- name: Set AnsibleLightspeed service images
   ansible.builtin.include_tasks: set_images.yml
 
 - name: Set Bundle Certificate Authority

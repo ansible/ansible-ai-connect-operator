@@ -1,4 +1,4 @@
-# AnsibleAIConnect ConfigMap.
+# AnsibleLightspeed ConfigMap.
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -30,6 +30,8 @@ data:
   ENABLE_HEALTHCHECK_ATTRIBUTION: "false"
   ENABLE_HEALTHCHECK_AUTHORIZATION: "false"
   ENABLE_HEALTHCHECK_SECRET_MANAGER: "false"
+  # Downstream variables
+  ANSIBLE_AI_PROJECT_NAME: "Red Hat Ansible Lightspeed with IBM watsonx Code Assistant"
 
   PYTHONUNBUFFERED: "1"
 

@@ -203,6 +203,9 @@ spec:
 {% endif %}
 {% if _aap_gateway_url is defined and _aap_controller_url is defined %}
       - name: ansible-mcp-controller
+        command:
+          - python3.12
+          - controller_server.py
         image: {{ _chatbot_mcp_controller_image }}
         imagePullPolicy: '{{ image_pull_policy }}'
         env:
@@ -243,6 +246,9 @@ spec:
 {% endif %}
 {% if _aap_gateway_url is defined %}
       - name: ansible-mcp-lightspeed
+        command:
+          - python3.12
+          - lightspeed_server.py
         image: {{ _chatbot_mcp_lightspeed_image }}
         imagePullPolicy: '{{ image_pull_policy }}'
         env:

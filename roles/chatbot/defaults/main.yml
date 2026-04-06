@@ -1,11 +1,11 @@
 ---
-# defaults file for AnsibleAIConnect's Chatbot
+# defaults file for AnsibleLightspeed's Chatbot
 
 # ========================================
 # Basic k8s configuration
 # ----------------------------------------
-api_version: 'aiconnect.ansible.com/v1alpha1'
-deployment_type: 'ansible-ai-connect'
+api_version: 'lightspeed.ansible.com/v1alpha1'
+deployment_type: 'ansible-lightspeed'
 
 # Chatbot container image
 _chatbot_image: quay.io/ansible/ansible-chatbot-stack
@@ -26,9 +26,9 @@ _chatbot_mcp_lightspeed_image_version: "{{ lookup('env', 'DEFAULT_CHATBOT_MCP_LI
 
 
 # ========================================
-# AnsibleAIConnect's Chatbot
+# AnsibleLightspeed's Chatbot
 # ----------------------------------------
-# Add a nodeSelector for the AnsibleAIConnectChatbot pods. It must match a node's labels for the pod
+# Add a nodeSelector for the AnsibleLightspeedChatbot pods. It must match a node's labels for the pod
 # to be scheduled on that node. Specify as literal block. E.g.:
 # chatbot_api:
 #   node_selector: |

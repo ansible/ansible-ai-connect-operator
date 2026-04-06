@@ -1,34 +1,34 @@
 ---
 - block:
 
-  # Tasks file for AnsibleAIConnect's Chatbot
+  # Tasks file for AnsibleLightspeed's Chatbot
   - name: Combine default and custom vars for each component
     ansible.builtin.include_tasks: combine_defaults.yml
 
-  - name: Set AnsibleAIConnect's Chatbot service images
+  - name: Set AnsibleLightspeed's Chatbot service images
     ansible.builtin.include_tasks: set_images.yml
 
-  - name: Set AnsibleAIConnect and AnsibleAIConnect's Chatbot service URLs
+  - name: Set AnsibleLightspeed and AnsibleLightspeed's Chatbot service URLs
     ansible.builtin.include_tasks: set_service_urls.yml
 
-  - name: Read AnsibleAIConnect's Chatbot secret
+  - name: Read AnsibleLightspeed's Chatbot secret
     ansible.builtin.include_tasks: read_chatbot_configuration_secret.yml
 
-  - name: Read AnsibleAIConnect's Chatbot API Key
+  - name: Read AnsibleLightspeed's Chatbot API Key
     ansible.builtin.include_tasks: handle_chatbot_api_key_secret.yml
 
   - name: Clean up old Chatbot PVC before upgrade
     ansible.builtin.include_tasks: upgrade_chatbot.yml
 
-  - name: Deploy AnsibleAIConnect's Chatbot service
+  - name: Deploy AnsibleLightspeed's Chatbot service
     ansible.builtin.include_tasks: deploy_chatbot_api.yml
 
   when:
     - chatbot_config_secret_name is defined
     - chatbot_config_secret_name | length
 
-# Remove AnsibleAIConnect's Chatbot
-- name: Remove AnsibleAIConnect's Chatbot service
+# Remove AnsibleLightspeed's Chatbot
+- name: Remove AnsibleLightspeed's Chatbot service
   ansible.builtin.include_tasks: remove_chatbot_api.yml
   when:
     - chatbot_config_secret_name is not defined or chatbot_config_secret_name | length == 0
