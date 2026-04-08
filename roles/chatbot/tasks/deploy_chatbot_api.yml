@@ -1,4 +1,13 @@
 ---
+- name: Apply Chatbot user data PVC
+  kubernetes.core.k8s:
+    apply: yes
+    definition: "{{ lookup('template', 'chatbot.pvc_user_data.yaml.j2') }}"
+    wait: no
+  when:
+    - chatbot_user_data_storage_class is defined
+    - chatbot_user_data_storage_class | length > 0
+
 - name: Apply Chatbot deployment resources
   kubernetes.core.k8s:
     apply: yes

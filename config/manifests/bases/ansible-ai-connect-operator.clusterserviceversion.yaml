@@ -85,6 +85,28 @@ spec:
         path: chatbot_mcp_lightspeed_image_version
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:advanced
+      - description: Enable file-based conversation transcript exports in the chatbot
+        displayName: Chatbot Transcripts Enabled
+        path: chatbot_transcripts_enabled
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+      - description: Enable user feedback collection in the chatbot
+        displayName: Chatbot Feedback Enabled
+        path: chatbot_feedback_enabled
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+      - description: Storage class for persistent transcript and feedback file exports.
+          When set, a PersistentVolumeClaim is created.
+        displayName: Chatbot User Data Storage Class
+        path: chatbot_user_data_storage_class
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:advanced
+        - urn:alm:descriptor:io.kubernetes:StorageClass
+      - description: Size of the chatbot transcript and feedback file volume
+        displayName: Chatbot User Data Storage Size
+        path: chatbot_user_data_storage_size
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:advanced
       - description: Chatbot extra settings key-value pairs.
         displayName: Chatbot Extra Settings
         path: chatbot_extra_settings

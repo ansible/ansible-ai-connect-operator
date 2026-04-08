@@ -106,11 +106,20 @@ data:
           type: kv_sqlite
           db_path: ${env.VECTOR_DB_DIR:=/.llama/data/distributions/ansible-chatbot}/aap_faiss_store.db
         kv_default:
-          type: kv_sqlite
-          db_path: ${env.KV_STORE_DB_DIR:=/.llama/data/distributions/ansible-chatbot}/kv_store.db
+          type: kv_postgres
+          host: {{ ansibleaiconnect_postgres_host }}
+          port: {{ ansibleaiconnect_postgres_port }}
+          db: {{ ansibleaiconnect_postgres_database }}
+          user: {{ ansibleaiconnect_postgres_user }}
+          password: {{ ansibleaiconnect_postgres_pass }}
+          table_name: llamastack_kvstore
         sql_default:
-          type: sql_sqlite
-          db_path: ${env.SQL_STORE_DB_DIR:=/.llama/data/distributions/ansible-chatbot}/sql_store.db
+          type: sql_postgres
+          host: {{ ansibleaiconnect_postgres_host }}
+          port: {{ ansibleaiconnect_postgres_port }}
+          db: {{ ansibleaiconnect_postgres_database }}
+          user: {{ ansibleaiconnect_postgres_user }}
+          password: {{ ansibleaiconnect_postgres_pass }}
       stores:
         metadata:
           namespace: registry

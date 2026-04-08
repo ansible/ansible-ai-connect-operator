@@ -30,9 +30,22 @@ data:
     llama_stack:
       use_as_library_client: true
       library_client_config_path: /.llama/distributions/llama-stack/config/ansible-chatbot-run.yaml
+    database:
+      postgres:
+        host: {{ ansibleaiconnect_postgres_host }}
+        port: {{ ansibleaiconnect_postgres_port }}
+        db: {{ ansibleaiconnect_postgres_database }}
+        user: {{ ansibleaiconnect_postgres_user }}
+        password: {{ ansibleaiconnect_postgres_pass }}
     user_data_collection:
-      feedback_enabled: false
-      transcripts_enabled: false
+      feedback_enabled: {{ chatbot_feedback_enabled | default(false) | bool | lower }}
+{% if chatbot_feedback_enabled | default(false) | bool %}
+      feedback_storage: /.llama/data/user-data/feedback
+{% endif %}
+      transcripts_enabled: {{ chatbot_transcripts_enabled | default(false) | bool | lower }}
+{% if chatbot_transcripts_enabled | default(false) | bool %}
+      transcripts_storage: /.llama/data/user-data/transcripts
+{% endif %}
     customization:
       system_prompt_path: /.llama/distributions/ansible-chatbot/system-prompts/default.txt
 {% if _chatbot_byok_image is defined %}

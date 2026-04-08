@@ -171,6 +171,10 @@ spec:
             mountPath: /.llama/distributions/llama-stack/config
           - name: ansible-chatbot-system-prompt
             mountPath: /.llama/distributions/ansible-chatbot/system-prompts
+{% if chatbot_transcripts_enabled | default(false) | bool or chatbot_feedback_enabled | default(false) | bool %}
+          - name: ansible-chatbot-user-data
+            mountPath: /.llama/data/user-data
+{% endif %}
 {% if is_openshift %}
           - name: lm-stack-tls-certs
             mountPath: /app-root/certs/
@@ -308,6 +312,16 @@ spec:
         - name: ansible-chatbot-byok-storage
           emptyDir:
             sizeLimit: '{{ _chatbot_byok_storage_size }}'
+{% endif %}
+{% if chatbot_transcripts_enabled | default(false) | bool or chatbot_feedback_enabled | default(false) | bool %}
+        - name: ansible-chatbot-user-data
+{% if chatbot_user_data_storage_class is defined and chatbot_user_data_storage_class | length %}
+          persistentVolumeClaim:
+            claimName: '{{ ansible_operator_meta.name }}-chatbot-user-data'
+{% else %}
+          emptyDir:
+            sizeLimit: '{{ chatbot_user_data_storage_size | default("1Gi") }}'
+{% endif %}
 {% endif %}
 {% if is_openshift %}
         - name: lm-stack-tls-certs
