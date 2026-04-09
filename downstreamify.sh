@@ -4,7 +4,7 @@ set -eux
 
 # -- Set Variables
 
-AAP_XY_VERSION=${AAP_XY_VERSION:-2.6}
+AAP_XY_VERSION=${AAP_XY_VERSION:-2.7}
 AAP_XY=$(echo $AAP_XY_VERSION | sed -e 's/\.//g')
 
 # -- General replaces section
