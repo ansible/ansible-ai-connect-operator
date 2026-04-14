@@ -26,6 +26,12 @@
     - ingress_type | lower == 'route'
     - route_tls_secret | length
 
+- name: Configure telemetry HMAC key
+  ansible.builtin.include_tasks: telemetry_hmac_configuration.yml
+
+- name: Configure installer ID
+  ansible.builtin.include_tasks: installer_id_configuration.yml
+
 - name: Deploy MCP Server API service
   ansible.builtin.include_tasks: deploy_mcpserver_api.yml
 

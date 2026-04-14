@@ -126,6 +126,23 @@ service_annotations: ''
 
 
 # ========================================
+# Internal Email Domains
+# ----------------------------------------
+# Comma-separated list of email domains considered "internal" for user_type classification.
+internal_email_domains: 'redhat.com,ibm.com,ansible.com'
+# ----------------------------------------
+
+
+# ========================================
+# Telemetry HMAC Key
+# ----------------------------------------
+# Secret to lookup that provides the telemetry HMAC key for pseudonym generation.
+# If empty, a secret will be auto-generated on first deployment.
+telemetry_hmac_secret: ''
+# ----------------------------------------
+
+
+# ========================================
 # Custom CA Certificates
 # ----------------------------------------
 # Secret to lookup that provides the custom CA trusted bundle

@@ -1,0 +1,19 @@
+---
+- name: Check for existing ConfigMap with INSTALLER_ID
+  kubernetes.core.k8s_info:
+    kind: ConfigMap
+    namespace: '{{ ansible_operator_meta.namespace }}'
+    name: '{{ ansible_operator_meta.name }}-{{ deployment_type }}-env-properties'
+  register: _existing_configmap
+
+- name: Extract existing INSTALLER_ID if present
+  ansible.builtin.set_fact:
+    __installer_id: "{{ _existing_configmap['resources'][0]['data']['INSTALLER_ID'] }}"
+  when:
+    - _existing_configmap['resources'] | default([]) | length
+    - "'INSTALLER_ID' in _existing_configmap['resources'][0]['data']"
+
+- name: Generate new INSTALLER_ID if not present
+  ansible.builtin.set_fact:
+    __installer_id: "{{ lookup('password', '/dev/null length=36 chars=hexdigits') | lower | regex_replace('(.{8})(.{4})(.{4})(.{4})(.{12})', '\\1-\\2-\\3-\\4-\\5') }}"
+  when: __installer_id is not defined
