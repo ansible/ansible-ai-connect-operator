@@ -30,6 +30,7 @@ jobs:
     runs-on: ubuntu-24.04
     env:
       REGISTRY: "quay.io/ansible"
+      CONTAINER_TOOL: "docker"
 
     steps:
       # ===============================

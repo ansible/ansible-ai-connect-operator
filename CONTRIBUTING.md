@@ -1,65 +1,44 @@
-# Contributing
+# Contributing to Ansible AI Connect Operator
 
-## Development Environment
+Hi there! We're excited to have you as a contributor.
 
-There are a couple ways to make and test changes to an Ansible operator. The easiest way is to build and deploy the operator from your branch using the make targets. This is closed to how the operator will be used, and is what is documented below. However, it may be useful to run the AnsibleAIConnect Operator roles directly on your local machine for faster iteration. This involves a bit more set up, and is described in the [Debugging docs](./docs/debugging.md).
+Have questions about this document or anything not covered here? Please file an issue at [https://github.com/ansible/ansible-ai-connect-operator/issues](https://github.com/ansible/ansible-ai-connect-operator/issues).
 
-First, you need to have a k8s cluster up. If you don't already have a k8s cluster, you can use minikube to start a lightweight k8s cluster locally by following these [minikube test cluster docs](./docs/minikube-test-cluster.md).
+## Things to know prior to submitting code
 
-### Build Operator Image
+- All code submissions are done through pull requests against the `main` branch.
+- Take care to make sure no merge commits are in the submission, and use `git rebase` vs `git merge` for this reason.
+- If collaborating with someone else on the same branch, consider using `--force-with-lease` instead of `--force`. This will prevent you from accidentally overwriting commits pushed by someone else. For more information, see [git push --force-with-lease](https://git-scm.com/docs/git-push#git-push---force-with-leaseltrefnamegt).
+- We ask all of our community members and contributors to adhere to the [Ansible code of conduct](http://docs.ansible.com/ansible/latest/community/code_of_conduct.html). If you have questions, or need assistance, please reach out to our community team at [codeofconduct@ansible.com](mailto:codeofconduct@ansible.com).
 
-Clone the ansible-ai-connect-operator
+## Setting up your development environment
 
+See [docs/development.md](docs/development.md) for prerequisites, build/deploy instructions, and available Makefile targets.
+
+For faster iteration, you can also run the Ansible AI Connect Operator roles directly on your local machine. See the [Debugging docs](docs/debugging.md) for details.
+
+## Submitting your work
+
+1. From your fork's `main` branch, create a new branch to stage your changes.
+```sh
+git checkout -b <branch-name>
 ```
-git clone git@github.com:ansible/ansible-ai-connect-operator.git
+2. Make your changes.
+3. Test your changes (see [Testing](#testing) below).
+4. Commit your changes.
+```sh
+git add <FILES>
+git commit -m "My message here"
 ```
+5. Create your [pull request](https://github.com/ansible/ansible-ai-connect-operator/pulls).
 
-Create an image repo in your user called `ansible-ai-connect-operator` on [quay.io](https://quay.io) or your preferred image registry. 
+## Testing
 
-Build & push the operator image
+All changes must be tested before submission:
 
-```
-export QUAY_USER=username
-export TAG=feature-branch
-make docker-build docker-push IMG=quay.io/$QUAY_USER/ansible-ai-connect-operator:$TAG
-```
+- **Linting** (required for all PRs): `make lint`
+- See the [Testing section in docs/development.md](docs/development.md#testing) for details on running tests locally.
 
-> **Note** If you are using an ARM host (e.g., Apple Silicon), you may need to use `docker-buildx` or `podman-buildx` instead of the standard docker build commands.
+## Reporting Issues
 
-### Deploy AnsibleAIConnect Operator
-
-1. Log in to your K8s or Openshift cluster.
-
-```
-kubectl login <cluster-url>
-```
-
-2. Run the `make deploy` target
-
-```
-NAMESPACE=ansibleaiconnect IMG=quay.io/$QUAY_USER/ansible-ai-connect-operator:$TAG make deploy
-```
-> **Note** The `latest` tag on the quay.io/ansible/ansible-ai-connect-operator repo is the latest _released_ (tagged) version and the `main` tag is built from the HEAD of the `main` branch. To deploy with the latest code in `main` branch, check out the main branch, and use `IMG=quay.io/ansible/ansible-ai-connect-operator:main` instead.
-
-### Create an AnsibleAIConnect CR
-
-Create a yaml file defining the `AnsibleAIConnect` custom resource
-
-```yaml
-# aiconnect.yaml
-apiVersion: aiconnect.ansible.com/v1alpha1
-kind: AnsibleAIConnect
-metadata:
-  name: my-aiconnect
-  namespace: ansibleaiconnect
-spec:
-  auth_config_secret_name: 'auth-configuration-secret'
-  model_config_secret_name: 'model-configuration-secret'
-  chatbot_config_secret_name: 'chatbot-configuration-secret'
-```
-
-3. Now apply this yaml
-
-```bash
-$ kubectl apply -f aiconnect.yaml
-```
+We welcome your feedback, and encourage you to file an issue when you run into a problem at [https://github.com/ansible/ansible-ai-connect-operator/issues](https://github.com/ansible/ansible-ai-connect-operator/issues).

@@ -28,6 +28,7 @@ jobs:
     needs: [get_operator_versions, get_service_version, get_chatbot_version, get_mcpserver_version]
     env:
       REGISTRY: "quay.io/ansible"
+      CONTAINER_TOOL: "docker"
 
     steps:
       # ===============================
