@@ -31,3 +31,69 @@
         - service_host_response.status == 200
         - service_host_response.json.status == 'ok'
         fail_msg: /check endpoint did not return expected response. Expected HTTP200, OK.
+
+    - name: Get telemetry HMAC key secret
+      kubernetes.core.k8s_info:
+        kind: Secret
+        name: ansiblemcpconnect-sample-telemetry-hmac-secret
+        namespace: '{{ namespace }}'
+      register: telemetry_hmac_secret
+
+    - name: Assert telemetry HMAC key secret exists
+      ansible.builtin.assert:
+        that:
+          - telemetry_hmac_secret.resources | length == 1
+        fail_msg: Telemetry HMAC key secret was not created.
+
+    - name: Assert telemetry HMAC key secret contains expected key
+      ansible.builtin.assert:
+        that:
+          - "'telemetry_hmac_key' in telemetry_hmac_secret.resources[0].data"
+        fail_msg: Telemetry HMAC key secret does not contain 'telemetry_hmac_key' data key.
+
+    - name: Assert telemetry HMAC key is 64 characters (256-bit hex)
+      ansible.builtin.assert:
+        that:
+          - (telemetry_hmac_secret.resources[0].data.telemetry_hmac_key | b64decode | length) == 64
+        fail_msg: Telemetry HMAC key is not 64 characters long.
+
+    - name: Get MCP Server deployment
+      kubernetes.core.k8s_info:
+        kind: Deployment
+        namespace: '{{ namespace }}'
+        label_selectors:
+          - app.kubernetes.io/name = ansiblemcpconnect-sample
+      register: mcpserver_deployment
+
+    - name: Assert TELEMETRY_HMAC_KEY env var is set in deployment
+      ansible.builtin.assert:
+        that:
+          - mcpserver_deployment.resources[0].spec.template.spec.containers[0].env | selectattr('name', 'equalto', 'TELEMETRY_HMAC_KEY') | list | length > 0
+        fail_msg: TELEMETRY_HMAC_KEY environment variable is not set in MCP Server deployment.
+
+    - name: Get MCP Server ConfigMap
+      kubernetes.core.k8s_info:
+        kind: ConfigMap
+        name: ansiblemcpconnect-sample-ansible-mcp-connect-env-properties
+        namespace: '{{ namespace }}'
+      register: mcpserver_configmap
+
+    - name: Assert ConfigMap exists
+      ansible.builtin.assert:
+        that:
+          - mcpserver_configmap.resources | length == 1
+        fail_msg: MCP Server ConfigMap was not created.
+
+    - name: Assert INSTALLER_ID is set in ConfigMap
+      ansible.builtin.assert:
+        that:
+          - "'INSTALLER_ID' in mcpserver_configmap.resources[0].data"
+          - mcpserver_configmap.resources[0].data.INSTALLER_ID | length > 0
+        fail_msg: INSTALLER_ID is not set in MCP Server ConfigMap.
+
+    - name: Assert INTERNAL_EMAIL_DOMAINS is set in ConfigMap
+      ansible.builtin.assert:
+        that:
+          - "'INTERNAL_EMAIL_DOMAINS' in mcpserver_configmap.resources[0].data"
+          - "'redhat.com' in mcpserver_configmap.resources[0].data.INTERNAL_EMAIL_DOMAINS"
+        fail_msg: INTERNAL_EMAIL_DOMAINS is not set correctly in MCP Server ConfigMap.
