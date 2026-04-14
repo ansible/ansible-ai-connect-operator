@@ -52,7 +52,7 @@ OPERATOR_SDK_VERSION ?= v1.40.0
 CONTAINER_TOOL ?= podman
 
 # Image URL to use all building/pushing image targets
-# IMG ?= $(IMAGE_TAG_BASE):$(VERSION)  # Set in operator.mk
+IMG ?= $(IMAGE_TAG_BASE):$(VERSION)
 
 .PHONY: all
 all: docker-build

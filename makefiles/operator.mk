@@ -6,7 +6,7 @@
 
 VERSION ?= $(shell git describe --tags 2>/dev/null || echo 0.1.0)
 IMAGE_TAG_BASE ?= quay.io/ansible/ansible-ai-connect
-IMG ?= $(IMAGE_TAG_BASE)-operator:$(VERSION)
+IMG = $(IMAGE_TAG_BASE)-operator:$(VERSION)
 NAMESPACE ?= ansible-ai-connect
 DEPLOYMENT_NAME ?= ansible-ai-connect-operator-controller-manager
 
