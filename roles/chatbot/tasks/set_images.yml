@@ -55,7 +55,7 @@
 
     - name: Set Chatbot BYOK score_multiplier
       ansible.builtin.set_fact:
-        _chatbot_byok_score_multiplier: "{{ chatbot_extra_settings['chatbot_byok_score_multiplier'] | default(1.2) | float }}"
+        _chatbot_byok_score_multiplier: "{{ chatbot_extra_settings['chatbot_byok_score_multiplier'] | default(1.5) | float }}"
 # =======================================
 
 # =======================================
