@@ -1,5 +1,5 @@
 # Adds namespace to all resources.
-namespace: ansible-ai-connect-operator-system
+namespace: ansible-ai-connect
 
 # Value of this field is prepended to the
 # names of all resources, e.g. a deployment named

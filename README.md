@@ -41,7 +41,7 @@ Currently, it can handle fresh installs and upgrades.
 
 ## Contributing
 
-Please visit [our contributing guide](./CONTRIBUTING.md) which has details about how to set up your development environment.
+Please visit our [contributing guidelines](./CONTRIBUTING.md) and [development guide](./docs/development.md) for information on how to set up your environment, build and deploy the operator, and submit changes.
 
 ### Prerequisites
 
