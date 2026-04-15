@@ -31,7 +31,7 @@ data:
           provider_type: remote::azure
           config:
             api_key: ${env.PROVIDER_TOKEN}
-            api_base: ${env.PROVIDER_URL}
+            base_url: ${env.PROVIDER_URL}
             api_type: null
 {% elif chatbot_llm_provider_type == "rhoai_vllm" %}
           provider_type: remote::vllm
