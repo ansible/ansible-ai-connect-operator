@@ -78,6 +78,17 @@
           URL: "https://{{ route_url['resources'][0]['status']['ingress'][0]['host'] }}"
   when: ingress_type | lower == 'route'
 
+- block:
+    - name: Update URL status for ingress type none
+      operator_sdk.util.k8s_status:
+        api_version: '{{ api_version }}'
+        kind: "{{ kind }}"
+        name: "{{ ansible_operator_meta.name }}"
+        namespace: "{{ ansible_operator_meta.namespace }}"
+        status:
+          URL: "https://{{ hostname }}"
+  when: ingress_type | lower == 'none'
+
 # ============================================
 # Retrieve and update Chatbot status
 # --------------------------------------------
