@@ -1,0 +1,15 @@
+---
+apiVersion: aiconnect.ansible.com/v1alpha1
+kind: AnsibleAIConnect
+metadata:
+  name: ansibleaiconnect-azure-openai-test
+  namespace: {{ namespace }}
+spec:
+  auth_config_secret_name: 'auth-configuration-secret'
+  model_config_secret_name: 'model-configuration-secret'
+  chatbot_config_secret_name: '{{ chatbot_secret_name }}'
+  ingress_type: Route
+  service_type: NodePort
+  image_pull_policy: '{{ operator_pull_policy }}'
+  api:
+    image: {{ operator_image }}
