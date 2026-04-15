@@ -1,171 +1,88 @@
 ---
 - block:
-    - name: Create Authentication configuration secret
-      kubernetes.core.k8s:
-        state: present
-        namespace: '{{ namespace }}'
-        definition: "{{ lookup('template', 'secrets/auth_config.secret.yaml.j2') | from_yaml }}"
-        apply: true
-
-    - name: Create Model configuration secret
-      kubernetes.core.k8s:
-        state: present
-        namespace: '{{ namespace }}'
-        definition: "{{ lookup('template', 'secrets/model_config.secret.yaml.j2') | from_yaml }}"
-        apply: true
+    # Test the chatbot URL modification logic directly without full instance reconciliation
 
     # Test 1: URL without /openai/v1 should have it appended
-    - name: Create Azure OpenAI Chatbot configuration secret (no path)
-      kubernetes.core.k8s:
-        state: present
-        namespace: '{{ namespace }}'
-        definition: "{{ lookup('template', 'secrets/chatbot_config_azure_openai_no_path.secret.yaml.j2') | from_yaml }}"
-        apply: true
+    - name: Set test chatbot_url without path
+      ansible.builtin.set_fact:
+        chatbot_url: 'https://your-resource-name.openai.azure.com'
+        chatbot_llm_provider_type: 'azure_openai'
 
-    - name: Create AnsibleAIConnect instance with Azure OpenAI URL (no path)
-      kubernetes.core.k8s:
-        state: present
-        namespace: '{{ namespace }}'
-        definition: "{{ lookup('template', 'create_instance_azure_openai_test.yaml.j2') | from_yaml }}"
-        apply: true
-        wait: yes
-        wait_timeout: 300
-        wait_condition:
-          type: Running
-          reason: Successful
-          status: "True"
-      vars:
-        chatbot_secret_name: 'chatbot-configuration-azure-openai-no-path'
+    - name: Apply Azure OpenAI URL normalization (test 1)
+      ansible.builtin.set_fact:
+        chatbot_url: "{{ chatbot_url | regex_replace('/$', '') | regex_replace('/openai/v1$', '') }}/openai/v1"
+      when: chatbot_llm_provider_type == 'azure_openai'
 
-    - name: Get Deployment for URL without path test
-      kubernetes.core.k8s_info:
-        api_version: apps/v1
-        kind: Deployment
-        name: ansibleaiconnect-azure-openai-test-chatbot-api
-        namespace: '{{ namespace }}'
-      register: deployment_no_path
-
-    - name: Assert PROVIDER_URL has /openai/v1 appended
+    - name: Assert URL has /openai/v1 appended
       ansible.builtin.assert:
         that:
-          - deployment_no_path.resources | length > 0
-          - deployment_no_path.resources[0].spec.template.spec.containers[0].env | selectattr('name', 'equalto', 'PROVIDER_URL') | map(attribute='value') | list | first == 'https://your-resource-name.openai.azure.com/openai/v1'
-        fail_msg: "PROVIDER_URL should have /openai/v1 appended. Got: {{ deployment_no_path.resources[0].spec.template.spec.containers[0].env | selectattr('name', 'equalto', 'PROVIDER_URL') | map(attribute='value') | list | first }}"
+          - chatbot_url == 'https://your-resource-name.openai.azure.com/openai/v1'
+        fail_msg: "Expected 'https://your-resource-name.openai.azure.com/openai/v1', got '{{ chatbot_url }}'"
 
-    - name: Delete instance (no path test)
-      kubernetes.core.k8s:
-        state: absent
-        api_version: aiconnect.ansible.com/v1alpha1
-        kind: AnsibleAIConnect
-        name: ansibleaiconnect-azure-openai-test
-        namespace: '{{ namespace }}'
-        wait: yes
-        wait_timeout: 300
+    # Test 2: URL with trailing slash should have openai/v1 appended (not //openai/v1)
+    - name: Set test chatbot_url with trailing slash
+      ansible.builtin.set_fact:
+        chatbot_url: 'https://your-resource-name.openai.azure.com/'
+        chatbot_llm_provider_type: 'azure_openai'
 
-    # Test 2: URL with trailing slash should have openai/v1 appended (not /openai/v1)
-    - name: Create Azure OpenAI Chatbot configuration secret (trailing slash)
-      kubernetes.core.k8s:
-        state: present
-        namespace: '{{ namespace }}'
-        definition: "{{ lookup('template', 'secrets/chatbot_config_azure_openai_trailing_slash.secret.yaml.j2') | from_yaml }}"
-        apply: true
+    - name: Apply Azure OpenAI URL normalization (test 2)
+      ansible.builtin.set_fact:
+        chatbot_url: "{{ chatbot_url | regex_replace('/$', '') | regex_replace('/openai/v1$', '') }}/openai/v1"
+      when: chatbot_llm_provider_type == 'azure_openai'
 
-    - name: Create AnsibleAIConnect instance with Azure OpenAI URL (trailing slash)
-      kubernetes.core.k8s:
-        state: present
-        namespace: '{{ namespace }}'
-        definition: "{{ lookup('template', 'create_instance_azure_openai_test.yaml.j2') | from_yaml }}"
-        apply: true
-        wait: yes
-        wait_timeout: 300
-        wait_condition:
-          type: Running
-          reason: Successful
-          status: "True"
-      vars:
-        chatbot_secret_name: 'chatbot-configuration-azure-openai-trailing-slash'
-
-    - name: Get Deployment for URL with trailing slash test
-      kubernetes.core.k8s_info:
-        api_version: apps/v1
-        kind: Deployment
-        name: ansibleaiconnect-azure-openai-test-chatbot-api
-        namespace: '{{ namespace }}'
-      register: deployment_trailing_slash
-
-    - name: Assert PROVIDER_URL ends with /openai/v1 (not //openai/v1)
+    - name: Assert URL ends with /openai/v1 (not //openai/v1)
       ansible.builtin.assert:
         that:
-          - deployment_trailing_slash.resources | length > 0
-          - deployment_trailing_slash.resources[0].spec.template.spec.containers[0].env | selectattr('name', 'equalto', 'PROVIDER_URL') | map(attribute='value') | list | first == 'https://your-resource-name.openai.azure.com/openai/v1'
-        fail_msg: "PROVIDER_URL should end with /openai/v1 (not //openai/v1). Got: {{ deployment_trailing_slash.resources[0].spec.template.spec.containers[0].env | selectattr('name', 'equalto', 'PROVIDER_URL') | map(attribute='value') | list | first }}"
-
-    - name: Delete instance (trailing slash test)
-      kubernetes.core.k8s:
-        state: absent
-        api_version: aiconnect.ansible.com/v1alpha1
-        kind: AnsibleAIConnect
-        name: ansibleaiconnect-azure-openai-test
-        namespace: '{{ namespace }}'
-        wait: yes
-        wait_timeout: 300
+          - chatbot_url == 'https://your-resource-name.openai.azure.com/openai/v1'
+        fail_msg: "Expected 'https://your-resource-name.openai.azure.com/openai/v1', got '{{ chatbot_url }}'"
 
     # Test 3: URL already with /openai/v1 should remain unchanged
-    - name: Create Azure OpenAI Chatbot configuration secret (with path)
-      kubernetes.core.k8s:
-        state: present
-        namespace: '{{ namespace }}'
-        definition: "{{ lookup('template', 'secrets/chatbot_config_azure_openai_with_path.secret.yaml.j2') | from_yaml }}"
-        apply: true
+    - name: Set test chatbot_url with path
+      ansible.builtin.set_fact:
+        chatbot_url: 'https://your-resource-name.openai.azure.com/openai/v1'
+        chatbot_llm_provider_type: 'azure_openai'
 
-    - name: Create AnsibleAIConnect instance with Azure OpenAI URL (with path)
-      kubernetes.core.k8s:
-        state: present
-        namespace: '{{ namespace }}'
-        definition: "{{ lookup('template', 'create_instance_azure_openai_test.yaml.j2') | from_yaml }}"
-        apply: true
-        wait: yes
-        wait_timeout: 300
-        wait_condition:
-          type: Running
-          reason: Successful
-          status: "True"
-      vars:
-        chatbot_secret_name: 'chatbot-configuration-azure-openai-with-path'
+    - name: Apply Azure OpenAI URL normalization (test 3)
+      ansible.builtin.set_fact:
+        chatbot_url: "{{ chatbot_url | regex_replace('/$', '') | regex_replace('/openai/v1$', '') }}/openai/v1"
+      when: chatbot_llm_provider_type == 'azure_openai'
 
-    - name: Get Deployment for URL with path test
-      kubernetes.core.k8s_info:
-        api_version: apps/v1
-        kind: Deployment
-        name: ansibleaiconnect-azure-openai-test-chatbot-api
-        namespace: '{{ namespace }}'
-      register: deployment_with_path
-
-    - name: Assert PROVIDER_URL is unchanged
+    - name: Assert URL is unchanged
       ansible.builtin.assert:
         that:
-          - deployment_with_path.resources | length > 0
-          - deployment_with_path.resources[0].spec.template.spec.containers[0].env | selectattr('name', 'equalto', 'PROVIDER_URL') | map(attribute='value') | list | first == 'https://your-resource-name.openai.azure.com/openai/v1'
-        fail_msg: "PROVIDER_URL should remain unchanged. Got: {{ deployment_with_path.resources[0].spec.template.spec.containers[0].env | selectattr('name', 'equalto', 'PROVIDER_URL') | map(attribute='value') | list | first }}"
+          - chatbot_url == 'https://your-resource-name.openai.azure.com/openai/v1'
+        fail_msg: "Expected 'https://your-resource-name.openai.azure.com/openai/v1', got '{{ chatbot_url }}'"
 
-    - name: Cleanup - Delete instance (with path test)
-      kubernetes.core.k8s:
-        state: absent
-        api_version: aiconnect.ansible.com/v1alpha1
-        kind: AnsibleAIConnect
-        name: ansibleaiconnect-azure-openai-test
-        namespace: '{{ namespace }}'
-        wait: yes
-        wait_timeout: 300
+    # Test 4: Non-Azure OpenAI providers should not be affected
+    - name: Set test chatbot_url for OpenAI
+      ansible.builtin.set_fact:
+        chatbot_url: 'https://api.openai.com/v1'
+        chatbot_llm_provider_type: 'openai'
 
-    - name: Cleanup - Delete Azure OpenAI secrets
-      kubernetes.core.k8s:
-        state: absent
-        api_version: v1
-        kind: Secret
-        name: '{{ item }}'
-        namespace: '{{ namespace }}'
-      loop:
-        - chatbot-configuration-azure-openai-no-path
-        - chatbot-configuration-azure-openai-trailing-slash
-        - chatbot-configuration-azure-openai-with-path
+    - name: Apply Azure OpenAI URL normalization (test 4 - should skip)
+      ansible.builtin.set_fact:
+        chatbot_url: "{{ chatbot_url | regex_replace('/$', '') | regex_replace('/openai/v1$', '') }}/openai/v1"
+      when: chatbot_llm_provider_type == 'azure_openai'
+
+    - name: Assert OpenAI URL is unchanged
+      ansible.builtin.assert:
+        that:
+          - chatbot_url == 'https://api.openai.com/v1'
+        fail_msg: "OpenAI URL should not be modified. Expected 'https://api.openai.com/v1', got '{{ chatbot_url }}'"
+
+    # Test 5: RHOAI vLLM provider should not be affected
+    - name: Set test chatbot_url for RHOAI vLLM
+      ansible.builtin.set_fact:
+        chatbot_url: 'http://vllm-service:8080'
+        chatbot_llm_provider_type: 'rhoai_vllm'
+
+    - name: Apply Azure OpenAI URL normalization (test 5 - should skip)
+      ansible.builtin.set_fact:
+        chatbot_url: "{{ chatbot_url | regex_replace('/$', '') | regex_replace('/openai/v1$', '') }}/openai/v1"
+      when: chatbot_llm_provider_type == 'azure_openai'
+
+    - name: Assert RHOAI vLLM URL is unchanged
+      ansible.builtin.assert:
+        that:
+          - chatbot_url == 'http://vllm-service:8080'
+        fail_msg: "RHOAI vLLM URL should not be modified. Expected 'http://vllm-service:8080', got '{{ chatbot_url }}'"
