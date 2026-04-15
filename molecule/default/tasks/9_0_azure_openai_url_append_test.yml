@@ -1,0 +1,88 @@
+---
+- block:
+    # Test the chatbot URL modification logic directly without full instance reconciliation
+
+    # Test 1: URL without /openai/v1 should have it appended
+    - name: Set test chatbot_url without path
+      ansible.builtin.set_fact:
+        chatbot_url: 'https://your-resource-name.openai.azure.com'
+        chatbot_llm_provider_type: 'azure_openai'
+
+    - name: Apply Azure OpenAI URL normalization (test 1)
+      ansible.builtin.set_fact:
+        chatbot_url: "{{ chatbot_url | regex_replace('/$', '') | regex_replace('/openai/v1$', '') }}/openai/v1"
+      when: chatbot_llm_provider_type == 'azure_openai'
+
+    - name: Assert URL has /openai/v1 appended
+      ansible.builtin.assert:
+        that:
+          - chatbot_url == 'https://your-resource-name.openai.azure.com/openai/v1'
+        fail_msg: "Expected 'https://your-resource-name.openai.azure.com/openai/v1', got '{{ chatbot_url }}'"
+
+    # Test 2: URL with trailing slash should have openai/v1 appended (not //openai/v1)
+    - name: Set test chatbot_url with trailing slash
+      ansible.builtin.set_fact:
+        chatbot_url: 'https://your-resource-name.openai.azure.com/'
+        chatbot_llm_provider_type: 'azure_openai'
+
+    - name: Apply Azure OpenAI URL normalization (test 2)
+      ansible.builtin.set_fact:
+        chatbot_url: "{{ chatbot_url | regex_replace('/$', '') | regex_replace('/openai/v1$', '') }}/openai/v1"
+      when: chatbot_llm_provider_type == 'azure_openai'
+
+    - name: Assert URL ends with /openai/v1 (not //openai/v1)
+      ansible.builtin.assert:
+        that:
+          - chatbot_url == 'https://your-resource-name.openai.azure.com/openai/v1'
+        fail_msg: "Expected 'https://your-resource-name.openai.azure.com/openai/v1', got '{{ chatbot_url }}'"
+
+    # Test 3: URL already with /openai/v1 should remain unchanged
+    - name: Set test chatbot_url with path
+      ansible.builtin.set_fact:
+        chatbot_url: 'https://your-resource-name.openai.azure.com/openai/v1'
+        chatbot_llm_provider_type: 'azure_openai'
+
+    - name: Apply Azure OpenAI URL normalization (test 3)
+      ansible.builtin.set_fact:
+        chatbot_url: "{{ chatbot_url | regex_replace('/$', '') | regex_replace('/openai/v1$', '') }}/openai/v1"
+      when: chatbot_llm_provider_type == 'azure_openai'
+
+    - name: Assert URL is unchanged
+      ansible.builtin.assert:
+        that:
+          - chatbot_url == 'https://your-resource-name.openai.azure.com/openai/v1'
+        fail_msg: "Expected 'https://your-resource-name.openai.azure.com/openai/v1', got '{{ chatbot_url }}'"
+
+    # Test 4: Non-Azure OpenAI providers should not be affected
+    - name: Set test chatbot_url for OpenAI
+      ansible.builtin.set_fact:
+        chatbot_url: 'https://api.openai.com/v1'
+        chatbot_llm_provider_type: 'openai'
+
+    - name: Apply Azure OpenAI URL normalization (test 4 - should skip)
+      ansible.builtin.set_fact:
+        chatbot_url: "{{ chatbot_url | regex_replace('/$', '') | regex_replace('/openai/v1$', '') }}/openai/v1"
+      when: chatbot_llm_provider_type == 'azure_openai'
+
+    - name: Assert OpenAI URL is unchanged
+      ansible.builtin.assert:
+        that:
+          - chatbot_url == 'https://api.openai.com/v1'
+        fail_msg: "OpenAI URL should not be modified. Expected 'https://api.openai.com/v1', got '{{ chatbot_url }}'"
+
+    # Test 5: RHOAI vLLM provider should not be affected
+    - name: Set test chatbot_url for RHOAI vLLM
+      ansible.builtin.set_fact:
+        chatbot_url: 'http://vllm-service:8080'
+        chatbot_llm_provider_type: 'rhoai_vllm'
+
+    - name: Apply Azure OpenAI URL normalization (test 5 - should skip)
+      ansible.builtin.set_fact:
+        chatbot_url: "{{ chatbot_url | regex_replace('/$', '') | regex_replace('/openai/v1$', '') }}/openai/v1"
+      when: chatbot_llm_provider_type == 'azure_openai'
+
+    - name: Assert RHOAI vLLM URL is unchanged
+      ansible.builtin.assert:
+        that:
+          - chatbot_url == 'http://vllm-service:8080'
+        fail_msg: "RHOAI vLLM URL should not be modified. Expected 'http://vllm-service:8080', got '{{ chatbot_url }}'"
