@@ -170,6 +170,12 @@ rules:
       - ansiblemcpconnects
       - ansiblemcpconnects/status
       - ansiblemcpconnects/finalizers
+      - ansiblemcpconnectbackups
+      - ansiblemcpconnectbackups/status
+      - ansiblemcpconnectbackups/finalizers
+      - ansiblemcpconnectrestores
+      - ansiblemcpconnectrestores/status
+      - ansiblemcpconnectrestores/finalizers
     verbs:
       - create
       - delete

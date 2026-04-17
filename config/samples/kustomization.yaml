@@ -2,4 +2,6 @@
 resources:
 - aiconnect_v1alpha1_ansibleaiconnect.yaml
 - mcpconnect_v1alpha1_ansiblemcpconnect.yaml
+- mcpconnect_v1alpha1_ansiblemcpconnectbackup.yaml
+- mcpconnect_v1alpha1_ansiblemcpconnectrestore.yaml
 #+kubebuilder:scaffold:manifestskustomizesamples

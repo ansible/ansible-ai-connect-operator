@@ -1,0 +1,14 @@
+apiVersion: mcpconnect.ansible.com/v1alpha1
+kind: AnsibleMCPConnectRestore
+metadata:
+  labels:
+    app.kubernetes.io/name: ansiblemcpconnectrestore
+    app.kubernetes.io/instance: ansiblemcpconnectrestore-sample
+    app.kubernetes.io/part-of: ansible-ai-connect-operator
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/created-by: ansible-ai-connect-operator
+  name: ansiblemcpconnectrestore-sample
+spec:
+  deployment_name: ansiblemcpconnect-sample
+  backup_name: ansiblemcpconnectbackup-sample
+  no_log: true

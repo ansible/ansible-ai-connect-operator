@@ -1,0 +1,214 @@
+---
+- block:
+    # ========================
+    # Record original values
+    # ========================
+    - name: Get original HMAC key secret
+      kubernetes.core.k8s_info:
+        kind: Secret
+        name: ansiblemcpconnect-sample-telemetry-hmac-secret
+        namespace: '{{ namespace }}'
+      register: original_hmac_secret
+
+    - name: Assert original HMAC key exists
+      ansible.builtin.assert:
+        that:
+          - original_hmac_secret.resources | length == 1
+        fail_msg: Original HMAC key secret not found.
+
+    - name: Record original HMAC key value
+      ansible.builtin.set_fact:
+        original_hmac_key: "{{ original_hmac_secret.resources[0].data.telemetry_hmac_key }}"
+
+    - name: Get original ConfigMap
+      kubernetes.core.k8s_info:
+        kind: ConfigMap
+        name: ansiblemcpconnect-sample-ansible-mcp-connect-env-properties
+        namespace: '{{ namespace }}'
+      register: original_configmap
+
+    - name: Assert original ConfigMap exists
+      ansible.builtin.assert:
+        that:
+          - original_configmap.resources | length == 1
+        fail_msg: Original MCP ConfigMap not found.
+
+    - name: Record original INSTALLER_ID
+      ansible.builtin.set_fact:
+        original_installer_id: "{{ original_configmap.resources[0].data.INSTALLER_ID }}"
+
+    # ========================
+    # Create backup
+    # ========================
+    - name: Create MCP backup CR
+      kubernetes.core.k8s:
+        state: present
+        definition:
+          apiVersion: mcpconnect.ansible.com/v1alpha1
+          kind: AnsibleMCPConnectBackup
+          metadata:
+            name: molecule-backup-test
+            namespace: '{{ namespace }}'
+          spec:
+            deployment_name: ansiblemcpconnect-sample
+            no_log: false
+
+    - name: Wait for backup to complete
+      kubernetes.core.k8s_info:
+        api_version: mcpconnect.ansible.com/v1alpha1
+        kind: AnsibleMCPConnectBackup
+        name: molecule-backup-test
+        namespace: '{{ namespace }}'
+      register: backup_status
+      until:
+        - backup_status.resources | length > 0
+        - backup_status.resources[0].status is defined
+        - backup_status.resources[0].status.backupDirectory is defined
+        - backup_status.resources[0].status.backupDirectory | length > 0
+      retries: 30
+      delay: 10
+
+    - name: Assert backup completed successfully
+      ansible.builtin.assert:
+        that:
+          - backup_status.resources[0].status.backupDirectory | length > 0
+          - backup_status.resources[0].status.backupClaim | length > 0
+        fail_msg: Backup did not complete successfully.
+
+    # ========================
+    # Delete resources
+    # ========================
+    - name: Delete HMAC key secret
+      kubernetes.core.k8s:
+        kind: Secret
+        name: ansiblemcpconnect-sample-telemetry-hmac-secret
+        namespace: '{{ namespace }}'
+        state: absent
+
+    - name: Delete ConfigMap
+      kubernetes.core.k8s:
+        kind: ConfigMap
+        name: ansiblemcpconnect-sample-ansible-mcp-connect-env-properties
+        namespace: '{{ namespace }}'
+        state: absent
+
+    - name: Verify HMAC key secret is deleted
+      kubernetes.core.k8s_info:
+        kind: Secret
+        name: ansiblemcpconnect-sample-telemetry-hmac-secret
+        namespace: '{{ namespace }}'
+      register: deleted_hmac
+      failed_when: deleted_hmac.resources | length > 0
+
+    - name: Verify ConfigMap is deleted
+      kubernetes.core.k8s_info:
+        kind: ConfigMap
+        name: ansiblemcpconnect-sample-ansible-mcp-connect-env-properties
+        namespace: '{{ namespace }}'
+      register: deleted_configmap
+      failed_when: deleted_configmap.resources | length > 0
+
+    # ========================
+    # Restore from backup
+    # ========================
+    - name: Create MCP restore CR
+      kubernetes.core.k8s:
+        state: present
+        definition:
+          apiVersion: mcpconnect.ansible.com/v1alpha1
+          kind: AnsibleMCPConnectRestore
+          metadata:
+            name: molecule-restore-test
+            namespace: '{{ namespace }}'
+          spec:
+            deployment_name: ansiblemcpconnect-sample
+            backup_name: molecule-backup-test
+            no_log: false
+
+    - name: Wait for restore to complete
+      kubernetes.core.k8s_info:
+        api_version: mcpconnect.ansible.com/v1alpha1
+        kind: AnsibleMCPConnectRestore
+        name: molecule-restore-test
+        namespace: '{{ namespace }}'
+      register: restore_status
+      until:
+        - restore_status.resources | length > 0
+        - restore_status.resources[0].status is defined
+        - restore_status.resources[0].status.restoreComplete is defined
+        - restore_status.resources[0].status.restoreComplete | bool
+      retries: 30
+      delay: 10
+
+    - name: Assert restore completed successfully
+      ansible.builtin.assert:
+        that:
+          - restore_status.resources[0].status.restoreComplete | bool
+        fail_msg: Restore did not complete successfully.
+
+    # ========================
+    # Verify restored values
+    # ========================
+    - name: Get restored HMAC key secret
+      kubernetes.core.k8s_info:
+        kind: Secret
+        name: ansiblemcpconnect-sample-telemetry-hmac-secret
+        namespace: '{{ namespace }}'
+      register: restored_hmac_secret
+
+    - name: Assert restored HMAC key exists
+      ansible.builtin.assert:
+        that:
+          - restored_hmac_secret.resources | length == 1
+        fail_msg: Restored HMAC key secret not found.
+
+    - name: Assert restored HMAC key matches original
+      ansible.builtin.assert:
+        that:
+          - restored_hmac_secret.resources[0].data.telemetry_hmac_key == original_hmac_key
+        fail_msg: Restored HMAC key does not match original value.
+
+    - name: Get restored ConfigMap
+      kubernetes.core.k8s_info:
+        kind: ConfigMap
+        name: ansiblemcpconnect-sample-ansible-mcp-connect-env-properties
+        namespace: '{{ namespace }}'
+      register: restored_configmap
+
+    - name: Assert restored ConfigMap exists
+      ansible.builtin.assert:
+        that:
+          - restored_configmap.resources | length == 1
+        fail_msg: Restored ConfigMap not found.
+
+    - name: Assert restored INSTALLER_ID matches original
+      ansible.builtin.assert:
+        that:
+          - restored_configmap.resources[0].data.INSTALLER_ID == original_installer_id
+        fail_msg: Restored INSTALLER_ID does not match original value.
+
+    # ========================
+    # Cleanup
+    # ========================
+    - name: Delete restore CR
+      kubernetes.core.k8s:
+        api_version: mcpconnect.ansible.com/v1alpha1
+        kind: AnsibleMCPConnectRestore
+        name: molecule-restore-test
+        namespace: '{{ namespace }}'
+        state: absent
+
+    - name: Delete backup CR
+      kubernetes.core.k8s:
+        api_version: mcpconnect.ansible.com/v1alpha1
+        kind: AnsibleMCPConnectBackup
+        name: molecule-backup-test
+        namespace: '{{ namespace }}'
+        state: absent
+
+    - name: Delete backup PVC
+      kubernetes.core.k8s:
+        kind: PersistentVolumeClaim
+        name: ansiblemcpconnect-sample-backup-claim
+        namespace: '{{ namespace }}'
+        state: absent

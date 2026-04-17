@@ -1,0 +1,28 @@
+---
+- name: Get MCP Server ConfigMap by label
+  kubernetes.core.k8s_info:
+    version: v1
+    kind: ConfigMap
+    namespace: '{{ ansible_operator_meta.namespace }}'
+    label_selectors:
+      - "app.kubernetes.io/name={{ deployment_name }}"
+  register: _mcp_configmaps
+  no_log: "{{ no_log }}"
+
+- block:
+    - name: Set MCP ConfigMap backup data
+      set_fact:
+        mcp_backup_vars:
+          configmap_name: "{{ _mcp_configmaps['resources'][0]['metadata']['name'] }}"
+          configmap_data: "{{ _mcp_configmaps['resources'][0]['data'] }}"
+      no_log: "{{ no_log }}"
+
+    - name: Write MCP backup vars to pvc
+      kubernetes.core.k8s_cp:
+        namespace: "{{ backup_pvc_namespace }}"
+        pod: "{{ ansible_operator_meta.name }}-db-management"
+        remote_path: "{{ backup_dir }}/mcp_backup_vars.yml"
+        content: "{{ {'mcp_backup_vars': mcp_backup_vars} | to_yaml }}"
+      no_log: "{{ no_log }}"
+  when:
+    - _mcp_configmaps['resources'] | default([]) | length

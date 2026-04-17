@@ -89,7 +89,7 @@ spec:
         displayName: Chatbot Extra Settings
         path: chatbot_extra_settings
         x-descriptors:
-          - urn:alm:descriptor:com.tectonic.ui:fieldGroup:Advanced
+        - urn:alm:descriptor:com.tectonic.ui:fieldGroup:Advanced
       - displayName: Additional labels defined on the resource, which should be propagated
           to child resources
         path: additional_labels
@@ -658,6 +658,90 @@ spec:
         path: URL
         x-descriptors:
         - urn:alm:descriptor:org.w3:link
+      version: v1alpha1
+    - description: Back up an existing AnsibleMCPConnect deployment.
+      displayName: AnsibleMCPConnectBackup
+      kind: AnsibleMCPConnectBackup
+      name: ansiblemcpconnectbackups.mcpconnect.ansible.com
+      specDescriptors:
+      - description: Name of the AnsibleMCPConnect deployment to back up
+        displayName: Deployment Name
+        path: deployment_name
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+      - description: Name of the PVC to store the backup
+        displayName: Backup PVC
+        path: backup_pvc
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+      - description: Storage requirements for the backup PVC
+        displayName: Backup Storage Requirements
+        path: backup_storage_requirements
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+      - description: Storage class to use when creating PVC for backup
+        displayName: Backup Storage Class
+        path: backup_storage_class
+        x-descriptors:
+        - urn:alm:descriptor:io.kubernetes:StorageClass
+      - description: Delete backup data when the backup CR is deleted
+        displayName: Clean Backup on Delete
+        path: clean_backup_on_delete
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+      - displayName: No Log Configuration
+        path: no_log
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:advanced
+        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+      statusDescriptors:
+      - description: Backup directory name on the PVC
+        displayName: Backup Directory
+        path: backupDirectory
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+      - description: Backup PVC name
+        displayName: Backup Claim
+        path: backupClaim
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+      version: v1alpha1
+    - description: Restore an AnsibleMCPConnect deployment from a backup.
+      displayName: AnsibleMCPConnectRestore
+      kind: AnsibleMCPConnectRestore
+      name: ansiblemcpconnectrestores.mcpconnect.ansible.com
+      specDescriptors:
+      - description: Name of the AnsibleMCPConnect deployment to restore
+        displayName: Deployment Name
+        path: deployment_name
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+      - description: AnsibleMCPConnectBackup CR name to restore from
+        displayName: Backup Name
+        path: backup_name
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+      - description: PVC containing the backup
+        displayName: Backup PVC
+        path: backup_pvc
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+      - description: Backup directory name on the PVC
+        displayName: Backup Directory
+        path: backup_dir
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+      - displayName: No Log Configuration
+        path: no_log
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:advanced
+        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+      statusDescriptors:
+      - description: Flag indicating restore completion
+        displayName: Restore Complete
+        path: restoreComplete
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
       version: v1alpha1
   description: |
     An operator for managing the lifecycle of Ansible AI Connect and Ansible MCP Server instances.
