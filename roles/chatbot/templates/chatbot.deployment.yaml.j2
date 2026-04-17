@@ -98,6 +98,8 @@ spec:
 {% if _chatbot_byok_image is defined %}
       - name: init-byok-vector-db
         image: '{{ _chatbot_byok_image }}'
+        securityContext:
+          runAsUser: 1001
         env:
           - name: BYOK_CONFIG_CHATBOT_DIR
             value: /.llama/data/byok/distributions/ansible-chatbot
