@@ -4,4 +4,6 @@
 resources:
 - bases/aiconnect.ansible.com_ansibleaiconnects.yaml
 - bases/mcpconnect.ansible.com_ansiblemcpconnects.yaml
+- bases/mcpconnect.ansible.com_ansiblemcpconnectbackups.yaml
+- bases/mcpconnect.ansible.com_ansiblemcpconnectrestores.yaml
 #+kubebuilder:scaffold:crdkustomizeresource

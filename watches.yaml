@@ -8,4 +8,16 @@
   group: mcpserver.ansible.com
   kind: AnsibleMCPServer
   playbook: playbooks/ansiblemcpconnect.yml
+
+- version: v1alpha1
+  group: mcpconnect.ansible.com
+  kind: AnsibleMCPConnectBackup
+  role: mcpbackup
+  snakeCaseParameters: False
+
+- version: v1alpha1
+  group: mcpconnect.ansible.com
+  kind: AnsibleMCPConnectRestore
+  role: mcprestore
+  snakeCaseParameters: False
 #+kubebuilder:scaffold:watch

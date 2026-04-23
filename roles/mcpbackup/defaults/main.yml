@@ -1,0 +1,14 @@
+---
+deployment_type: 'ansible-mcp-connect'
+
+_management_pod_image: quay.io/centos/centos
+_management_pod_image_version: stream9
+
+backup_pvc: ''
+backup_pvc_namespace: '{{ ansible_operator_meta.namespace }}'
+backup_storage_requirements: '5Gi'
+backup_storage_class: ''
+clean_backup_on_delete: false
+
+no_log: true
+set_self_labels: true

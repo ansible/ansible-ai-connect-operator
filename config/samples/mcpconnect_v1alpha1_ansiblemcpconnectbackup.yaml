@@ -1,0 +1,14 @@
+apiVersion: mcpconnect.ansible.com/v1alpha1
+kind: AnsibleMCPConnectBackup
+metadata:
+  labels:
+    app.kubernetes.io/name: ansiblemcpconnectbackup
+    app.kubernetes.io/instance: ansiblemcpconnectbackup-sample
+    app.kubernetes.io/part-of: ansible-ai-connect-operator
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/created-by: ansible-ai-connect-operator
+  name: ansiblemcpconnectbackup-sample
+spec:
+  deployment_name: ansiblemcpconnect-sample
+  backup_storage_requirements: 5Gi
+  no_log: true

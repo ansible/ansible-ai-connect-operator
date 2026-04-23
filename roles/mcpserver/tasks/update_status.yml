@@ -18,7 +18,7 @@
         namespace: "{{ ansible_operator_meta.namespace }}"
         pod: "{{ mcpserver_pod_name }}"
         command: >-
-          bash -c "npm pkg get version | tr -d '\"'"
+          sh -c "npm pkg get version | tr -d '\"'"
       register: mcpserver_instance_version
       changed_when: false
 
