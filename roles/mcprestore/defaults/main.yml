@@ -1,0 +1,10 @@
+---
+deployment_type: 'ansible-mcp-connect'
+
+_management_pod_image: quay.io/centos/centos
+_management_pod_image_version: stream9
+
+backup_pvc_namespace: '{{ ansible_operator_meta.namespace }}'
+
+no_log: true
+set_self_labels: true

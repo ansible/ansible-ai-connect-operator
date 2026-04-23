@@ -1,0 +1,67 @@
+---
+- name: Delete any existing management pod
+  kubernetes.core.k8s:
+    name: "{{ ansible_operator_meta.name }}-db-management"
+    kind: Pod
+    namespace: "{{ backup_pvc_namespace }}"
+    state: absent
+    force: true
+    wait: true
+
+- name: Set default pvc name
+  set_fact:
+    _default_backup_pvc: "{{ deployment_name }}-backup-claim"
+
+- name: Set PVC to use for backup
+  set_fact:
+    backup_pvc: "{{ backup_pvc | default(_default_backup_pvc, true) }}"
+
+- name: Create PVC for backup
+  kubernetes.core.k8s:
+    kind: PersistentVolumeClaim
+    definition: "{{ lookup('template', 'backup_pvc.yml.j2') }}"
+
+- name: Remove PVC ownerReference
+  kubernetes.core.k8s:
+    definition:
+      apiVersion: v1
+      kind: PersistentVolumeClaim
+      metadata:
+        name: "{{ backup_pvc }}"
+        namespace: "{{ backup_pvc_namespace }}"
+        ownerReferences: null
+
+- name: Set default management pod image
+  ansible.builtin.set_fact:
+    _default_management_pod_image: "{{ _management_pod_image }}:{{ _management_pod_image_version }}"
+
+- name: Set management pod image URL
+  ansible.builtin.set_fact:
+    _management_pod_image: "{{ lookup('env', 'RELATED_IMAGE_ANSIBLE_MCP_MANAGEMENT') | default(_default_management_pod_image, true) }}"
+
+- name: Create management pod
+  kubernetes.core.k8s:
+    name: "{{ ansible_operator_meta.name }}-db-management"
+    kind: Pod
+    state: present
+    definition: "{{ lookup('template', 'management-pod.yml.j2') }}"
+    wait: true
+
+- name: Look up details for the MCP deployment
+  kubernetes.core.k8s_info:
+    api_version: "mcpconnect.ansible.com/v1alpha1"
+    kind: "AnsibleMCPConnect"
+    name: "{{ deployment_name }}"
+    namespace: "{{ ansible_operator_meta.namespace }}"
+  register: this_mcp
+
+- name: Set backup directory name
+  set_fact:
+    backup_dir: "/backups/mcp-openshift-backup-{{ lookup('pipe', 'date +%F-%T') }}"
+
+- name: Create backup directory
+  kubernetes.core.k8s_exec:
+    namespace: "{{ backup_pvc_namespace }}"
+    pod: "{{ ansible_operator_meta.name }}-db-management"
+    command: >-
+      sh -c "mkdir -p {{ backup_dir }}"

@@ -1,0 +1,60 @@
+---
+- name: Look up backup CR if backup_name is provided
+  kubernetes.core.k8s_info:
+    api_version: "mcpconnect.ansible.com/v1alpha1"
+    kind: "AnsibleMCPConnectBackup"
+    name: "{{ backup_name }}"
+    namespace: "{{ ansible_operator_meta.namespace }}"
+  register: _backup_cr
+  when: backup_name | default('') | length
+
+- name: Set backup PVC and directory from backup CR
+  set_fact:
+    backup_pvc: "{{ _backup_cr['resources'][0]['status']['backupClaim'] }}"
+    backup_dir: "{{ _backup_cr['resources'][0]['status']['backupDirectory'] }}"
+  when:
+    - backup_name | default('') | length
+    - _backup_cr['resources'] | default([]) | length
+
+- name: Delete any existing management pod
+  kubernetes.core.k8s:
+    name: "{{ ansible_operator_meta.name }}-db-management"
+    kind: Pod
+    namespace: "{{ backup_pvc_namespace }}"
+    state: absent
+    force: true
+    wait: true
+
+- name: Set default management pod image
+  ansible.builtin.set_fact:
+    _default_management_pod_image: "{{ _management_pod_image }}:{{ _management_pod_image_version }}"
+
+- name: Set management pod image URL
+  ansible.builtin.set_fact:
+    _management_pod_image: "{{ lookup('env', 'RELATED_IMAGE_ANSIBLE_MCP_MANAGEMENT') | default(_default_management_pod_image, true) }}"
+
+- name: Create management pod for restore
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Pod
+      metadata:
+        name: "{{ ansible_operator_meta.name }}-db-management"
+        namespace: "{{ backup_pvc_namespace }}"
+      spec:
+        containers:
+          - name: "{{ ansible_operator_meta.name }}-db-management"
+            image: '{{ _management_pod_image }}'
+            command:
+              - sleep
+              - infinity
+            volumeMounts:
+              - name: backup
+                mountPath: /backups
+        volumes:
+          - name: backup
+            persistentVolumeClaim:
+              claimName: "{{ backup_pvc }}"
+        restartPolicy: Never
+    wait: true

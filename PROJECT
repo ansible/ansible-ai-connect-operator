@@ -17,4 +17,25 @@ resources:
   group: aiconnect
   kind: AnsibleAIConnect
   version: v1alpha1
+- api:
+    crdVersion: v1
+    namespaced: true
+  domain: ansible.com
+  group: mcpconnect
+  kind: AnsibleMCPConnect
+  version: v1alpha1
+- api:
+    crdVersion: v1
+    namespaced: true
+  domain: ansible.com
+  group: mcpconnect
+  kind: AnsibleMCPConnectBackup
+  version: v1alpha1
+- api:
+    crdVersion: v1
+    namespaced: true
+  domain: ansible.com
+  group: mcpconnect
+  kind: AnsibleMCPConnectRestore
+  version: v1alpha1
 version: "3"

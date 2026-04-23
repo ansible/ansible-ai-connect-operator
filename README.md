@@ -14,6 +14,7 @@ A Kubernetes operator for Kubernetes built with [Operator SDK](https://github.co
     - [Deploying on OpenShift](#deploying-on-openshift)
     - [Deploying on `minikube`](#deploying-on-minikube)
   - [Deploy an `AnsibleMCPConnect` instance](#deploy-an-ansiblemcpconnect-instance)
+  - [Backup and Restore an `AnsibleMCPConnect` instance](#backup-and-restore-an-ansiblemcpconnect-instance)
   - [Upgrades](#upgrades)
   - [Integrating with Ansible Automation Platform and IBM watsonx Code Assistant](#integrating-with-ansible-automation-platform-and-ibm-watsonx-code-assistant)
   - [Advanced Configuration for `AnsibleAIConnect`](#advanced-configuration-for-ansibleaiconnect)
@@ -26,6 +27,7 @@ A Kubernetes operator for Kubernetes built with [Operator SDK](https://github.co
     - [Additional Advanced Configuration](#additional-advanced-configuration)
   - [Advanced Configuration for `AnsibleMCPConnect`](#advanced-configuration-for-ansiblemcpconnect)
     - [Ignore certificate errors](#ignore-certificate-errors)
+    - [Backup and Restore](#backup-and-restore-an-ansiblemcpconnect-instance)
   - [Programmatic usage of the API](docs/user-guide/programmatic-api-use.md)
   - [Maintainers Docs](#maintainers-docs)
 
@@ -33,11 +35,12 @@ A Kubernetes operator for Kubernetes built with [Operator SDK](https://github.co
 
 This operator is meant to provide a more Kubernetes-native installation method for 
 
-- Ansible AI Connect via an `AnsibleAIConnect` Custom Resource Definition (CRD) and
-- Ansible MCP Server via an `AnsibleMCPConnect` CRD.
+- Ansible AI Connect via an `AnsibleAIConnect` Custom Resource Definition (CRD),
+- Ansible MCP Server via an `AnsibleMCPConnect` CRD,
+- MCP Server Backup via an `AnsibleMCPConnectBackup` CRD, and
+- MCP Server Restore via an `AnsibleMCPConnectRestore` CRD.
 
-In the future, this operator will grow to be able to maintain the full life-cycle of deployments. 
-Currently, it can handle fresh installs and upgrades.
+The operator handles fresh installs, upgrades, and backup/restore lifecycle for the MCP Server component.
 
 ## Contributing
 
@@ -106,6 +109,56 @@ Full instructions for using a `minikube` cluster are [here](./docs/running-on-mi
 Full instructions for deploying an `AnsibleMCPConnect` using an OpenShift cluster are [here](./docs/running-on-openshift-cluster.md).
 
 Note: Deployment of an `AnsibleMCPConnect` is not tested yet.
+
+## Backup and Restore an `AnsibleMCPConnect` instance
+
+The operator supports backup and restore of MCP Server deployments through dedicated CRDs.
+
+### Creating a Backup
+
+Create an `AnsibleMCPConnectBackup` CR to back up an existing MCP Server deployment:
+
+```yaml
+apiVersion: mcpconnect.ansible.com/v1alpha1
+kind: AnsibleMCPConnectBackup
+metadata:
+  name: mcp-backup
+  namespace: aap
+spec:
+  deployment_name: my-mcp-server
+  backup_storage_requirements: 5Gi
+```
+
+The backup stores MCP Server Secrets and ConfigMap data on a PersistentVolumeClaim. Check the backup status:
+
+```bash
+kubectl get ansiblemcpconnectbackup mcp-backup -o jsonpath='{.status}'
+```
+
+### Restoring from a Backup
+
+Create an `AnsibleMCPConnectRestore` CR referencing a completed backup:
+
+```yaml
+apiVersion: mcpconnect.ansible.com/v1alpha1
+kind: AnsibleMCPConnectRestore
+metadata:
+  name: mcp-restore
+  namespace: aap
+spec:
+  deployment_name: my-mcp-server
+  backup_name: mcp-backup
+```
+
+Verify the restore completed:
+
+```bash
+kubectl get ansiblemcpconnectrestore mcp-restore -o jsonpath='{.status.restoreComplete}'
+```
+
+For full configuration options, see the role documentation:
+- [mcpbackup role](./roles/mcpbackup/README.md)
+- [mcprestore role](./roles/mcprestore/README.md)
 
 ## Integrating with Ansible Automation Platform and IBM watsonx Code Assistant
 

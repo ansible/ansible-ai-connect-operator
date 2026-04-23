@@ -1,0 +1,52 @@
+---
+- name: Check if MCP backup vars exist in backup
+  kubernetes.core.k8s_exec:
+    namespace: "{{ backup_pvc_namespace }}"
+    pod: "{{ ansible_operator_meta.name }}-db-management"
+    command: >-
+      sh -c "test -f '{{ backup_dir }}/mcp_backup_vars.yml' && echo 'exists' || echo 'missing'"
+  register: _mcp_backup_check
+
+- block:
+    - name: Create temporary MCP backup vars file
+      tempfile:
+        state: file
+        suffix: .yml
+      register: _tmp_mcp_vars
+
+    - name: Copy MCP backup vars from PVC
+      kubernetes.core.k8s_cp:
+        namespace: "{{ backup_pvc_namespace }}"
+        pod: "{{ ansible_operator_meta.name }}-db-management"
+        remote_path: "{{ backup_dir }}/mcp_backup_vars.yml"
+        local_path: "{{ _tmp_mcp_vars.path }}"
+        state: from_pod
+      no_log: "{{ no_log }}"
+
+    - name: Include MCP backup vars
+      include_vars: "{{ _tmp_mcp_vars.path }}"
+      no_log: "{{ no_log }}"
+
+    - name: Pre-create MCP ConfigMap from backup
+      kubernetes.core.k8s:
+        state: present
+        definition:
+          apiVersion: v1
+          kind: ConfigMap
+          metadata:
+            name: "{{ mcp_backup_vars.configmap_name }}"
+            namespace: "{{ ansible_operator_meta.namespace }}"
+          data: "{{ mcp_backup_vars.configmap_data }}"
+      when:
+        - mcp_backup_vars.configmap_name is defined
+        - mcp_backup_vars.configmap_data is defined
+      no_log: "{{ no_log }}"
+
+  always:
+    - name: Remove temporary MCP backup vars file
+      file:
+        path: "{{ _tmp_mcp_vars.path }}"
+        state: absent
+      when: _tmp_mcp_vars is defined
+
+  when: "'exists' in _mcp_backup_check.stdout"
