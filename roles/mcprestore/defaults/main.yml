@@ -1,8 +1,8 @@
 ---
 deployment_type: 'ansible-mcp-connect'
 
-_management_pod_image: quay.io/centos/centos
-_management_pod_image_version: stream9
+_management_pod_image: quay.io/sclorg/postgresql-15-c9s
+_management_pod_image_version: latest
 
 backup_pvc_namespace: '{{ ansible_operator_meta.namespace }}'
 
