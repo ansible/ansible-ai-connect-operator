@@ -97,3 +97,62 @@
           - "'INTERNAL_EMAIL_DOMAINS' in mcpserver_configmap.resources[0].data"
           - "'redhat.com' in mcpserver_configmap.resources[0].data.INTERNAL_EMAIL_DOMAINS"
         fail_msg: INTERNAL_EMAIL_DOMAINS is not set correctly in MCP Server ConfigMap.
+
+    # -- Idempotency test: verify re-reconciliation preserves telemetry values
+    - name: Record HMAC key before re-reconciliation
+      ansible.builtin.set_fact:
+        _hmac_key_before: '{{ telemetry_hmac_secret.resources[0].data.telemetry_hmac_key }}'
+        _installer_id_before: '{{ mcpserver_configmap.resources[0].data.INSTALLER_ID }}'
+
+    - name: Delete MCP Server pod to trigger re-reconciliation
+      kubernetes.core.k8s:
+        kind: Pod
+        namespace: '{{ namespace }}'
+        name: '{{ mcpserver_pod.resources[0].metadata.name }}'
+        state: absent
+        wait: true
+
+    - name: Wait for MCP Server pod to be recreated
+      kubernetes.core.k8s_info:
+        namespace: '{{ namespace }}'
+        kind: Pod
+        label_selectors:
+          - app.kubernetes.io/name = ansiblemcpconnect-sample
+        field_selectors:
+          - status.phase=Running
+      register: mcpserver_pod_after
+      retries: 30
+      delay: 10
+      until: mcpserver_pod_after.resources | length > 0
+
+    - name: Get telemetry HMAC key secret after re-reconciliation
+      kubernetes.core.k8s_info:
+        kind: Secret
+        name: ansiblemcpconnect-sample-telemetry-hmac-secret
+        namespace: '{{ namespace }}'
+      register: telemetry_hmac_secret_after
+
+    - name: Get MCP Server ConfigMap after re-reconciliation
+      kubernetes.core.k8s_info:
+        kind: ConfigMap
+        name: ansiblemcpconnect-sample-ansible-mcp-connect-env-properties
+        namespace: '{{ namespace }}'
+      register: mcpserver_configmap_after
+
+    - name: Assert HMAC key is unchanged after re-reconciliation
+      ansible.builtin.assert:
+        that:
+          - telemetry_hmac_secret_after.resources[0].data.telemetry_hmac_key == _hmac_key_before
+        fail_msg: >-
+          HMAC key changed after re-reconciliation.
+          Before: {{ _hmac_key_before }}
+          After: {{ telemetry_hmac_secret_after.resources[0].data.telemetry_hmac_key }}
+
+    - name: Assert INSTALLER_ID is unchanged after re-reconciliation
+      ansible.builtin.assert:
+        that:
+          - mcpserver_configmap_after.resources[0].data.INSTALLER_ID == _installer_id_before
+        fail_msg: >-
+          INSTALLER_ID changed after re-reconciliation.
+          Before: {{ _installer_id_before }}
+          After: {{ mcpserver_configmap_after.resources[0].data.INSTALLER_ID }}
