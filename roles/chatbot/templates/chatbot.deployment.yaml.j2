@@ -153,6 +153,8 @@ spec:
             value: {{ chatbot_model }}
           - name: INFERENCE_MODEL_FILTER
             value: {{ chatbot_model }}
+          - name: OPENAI_BASE_URL
+            value: {{ chatbot_url }}
         ports:
 {% if is_openshift %}
           - containerPort: 8443
