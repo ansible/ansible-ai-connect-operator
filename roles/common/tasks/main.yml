@@ -30,3 +30,9 @@
 
 - name: Patch Labels
   ansible.builtin.include_tasks: patch_labels.yml
+
+- name: Apply proxy environment ConfigMap
+  kubernetes.core.k8s:
+    apply: yes
+    definition: "{{ lookup('template', 'proxy-env.configmap.yaml.j2') }}"
+    state: "{{ 'present' if (http_proxy or https_proxy or no_proxy) else 'absent' }}"

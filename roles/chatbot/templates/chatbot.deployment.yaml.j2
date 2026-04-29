@@ -38,6 +38,9 @@ spec:
         checksum-configmap-chatbot-llama-stack-config: "{{ lookup('template', 'chatbot.configmap_llama_stack_config.yaml.j2') | sha1 }}"
         checksum-configmap-chatbot-system-prompt: "{{ lookup('template', 'chatbot.configmap_system_prompt.yaml.j2') | sha1 }}"
         checksum-secret-chatbot_config: "{{ lookup('ansible.builtin.vars', 'chatbot_config', default='')["resources"][0]["data"] | default('') | sha1 }}"
+{% if http_proxy or https_proxy or no_proxy %}
+        checksum-proxy-env-configmap: "{{ lookup('template', '../common/templates/proxy-env.configmap.yaml.j2') | sha1 }}"
+{% endif %}
     spec:
       serviceAccountName: '{{ ansible_operator_meta.name }}'
       # Pod-level security context
@@ -155,6 +158,10 @@ spec:
             value: {{ chatbot_model }}
           - name: INFERENCE_MODEL_FILTER
             value: {{ chatbot_model }}
+        envFrom:
+          - configMapRef:
+              name: '{{ ansible_operator_meta.name }}-proxy-env'
+              optional: true
         ports:
 {% if is_openshift %}
           - containerPort: 8443
@@ -218,6 +225,10 @@ spec:
             value: {{ _aap_gateway_url }}
           - name: AAP_SERVICE_URL
             value: {{ _aap_controller_url }}
+        envFrom:
+          - configMapRef:
+              name: '{{ ansible_operator_meta.name }}-proxy-env'
+              optional: true
         ports:
           - containerPort: 8004
             protocol: TCP
@@ -258,6 +269,10 @@ spec:
             value: {{ _aap_gateway_url }}
           - name: AAP_SERVICE_URL
             value: {{ _aap_lightspeed_url }}
+        envFrom:
+          - configMapRef:
+              name: '{{ ansible_operator_meta.name }}-proxy-env'
+              optional: true
         ports:
           - containerPort: 8005
             protocol: TCP

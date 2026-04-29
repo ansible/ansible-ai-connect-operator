@@ -39,6 +39,9 @@ spec:
   ] %}
         checksum-{{ template | replace('/', '-') }}: "{{ lookup('template', template + '.yaml.j2') | sha1 }}"
 {% endfor %}
+{% if http_proxy or https_proxy or no_proxy %}
+        checksum-proxy-env-configmap: "{{ lookup('template', '../common/templates/proxy-env.configmap.yaml.j2') | sha1 }}"
+{% endif %}
     spec:
       serviceAccountName: '{{ ansible_operator_meta.name }}'
 {% if image_pull_secrets | length > 0 %}
@@ -146,6 +149,9 @@ spec:
         envFrom:
           - configMapRef:
               name: "{{ ansible_operator_meta.name }}-{{ deployment_type }}-env-properties"
+          - configMapRef:
+              name: '{{ ansible_operator_meta.name }}-proxy-env'
+              optional: true
         ports:
         - containerPort: {{ default_http_port }}
           protocol: TCP
