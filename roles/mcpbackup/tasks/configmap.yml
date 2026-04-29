@@ -11,7 +11,7 @@
 
 - block:
     - name: Set MCP ConfigMap backup data
-      set_fact:
+      ansible.builtin.set_fact:
         mcp_backup_vars:
           configmap_name: "{{ _mcp_configmaps['resources'][0]['metadata']['name'] }}"
           configmap_data: "{{ _mcp_configmaps['resources'][0]['data'] }}"
