@@ -772,7 +772,8 @@ spec:
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:advanced
         - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
-      - displayName: MCP Spec Overrides
+      - description: Overrides for the AnsibleMCPConnect spec during restore
+        displayName: MCP Spec Overrides
         path: spec_overrides
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:advanced

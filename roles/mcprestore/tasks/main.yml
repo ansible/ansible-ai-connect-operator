@@ -10,7 +10,7 @@
 - block:
     - name: Combine spec_overrides with spec
       ansible.builtin.set_fact:
-        spec: "{{ spec | default({}) | combine(spec_overrides) }}"
+        spec: "{{ spec | default({}) | combine(spec_overrides, recursive=True) }}"
       no_log: "{{ no_log }}"
 
     - ansible.builtin.include_tasks: init.yml
