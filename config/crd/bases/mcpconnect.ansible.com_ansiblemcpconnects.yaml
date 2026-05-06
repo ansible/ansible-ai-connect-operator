@@ -477,15 +477,6 @@ spec:
               bundle_cacert_secret:
                 description: Secret where the trusted Certificate Authority Bundle is stored
                 type: string
-              http_proxy:
-                description: HTTP proxy URL to configure on AnsibleMCPConnect containers
-                type: string
-              https_proxy:
-                description: HTTPS proxy URL to configure on AnsibleMCPConnect containers
-                type: string
-              no_proxy:
-                description: Comma-separated list of hosts that bypass the proxy on AnsibleMCPConnect containers
-                type: string
               set_self_labels:
                 description: Maintain some of the recommended `app.kubernetes.io/*` labels on the resource (self)
                 type: boolean

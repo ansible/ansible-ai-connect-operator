@@ -1027,15 +1027,6 @@ spec:
               bundle_cacert_secret:
                 description: Secret where the trusted Certificate Authority Bundle is stored
                 type: string
-              http_proxy:
-                description: HTTP proxy URL to configure on AnsibleAIConnect containers
-                type: string
-              https_proxy:
-                description: HTTPS proxy URL to configure on AnsibleAIConnect containers
-                type: string
-              no_proxy:
-                description: Comma-separated list of hosts that bypass the proxy on AnsibleAIConnect containers
-                type: string
               db_fields_encryption_secret:
                 description: Secret where the DB fields encryption key can be found. If not specified, one will be generated.
                 type: string
