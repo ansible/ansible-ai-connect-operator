@@ -16,6 +16,7 @@
     - ansible.builtin.include_tasks: init.yml
     - ansible.builtin.include_tasks: secrets.yml
     - ansible.builtin.include_tasks: configmap.yml
+    - ansible.builtin.include_tasks: create_cr.yml
     - ansible.builtin.include_tasks: cleanup.yml
     - ansible.builtin.include_tasks: update_status.yml
 
