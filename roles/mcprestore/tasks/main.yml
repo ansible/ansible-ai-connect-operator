@@ -8,11 +8,17 @@
   register: this_restore
 
 - block:
-    - include_tasks: init.yml
-    - include_tasks: secrets.yml
-    - include_tasks: configmap.yml
-    - include_tasks: cleanup.yml
-    - include_tasks: update_status.yml
+    - name: Combine spec_overrides with spec
+      ansible.builtin.set_fact:
+        spec: "{{ spec | default({}) | combine(spec_overrides, recursive=True) }}"
+      no_log: "{{ no_log }}"
+
+    - ansible.builtin.include_tasks: init.yml
+    - ansible.builtin.include_tasks: secrets.yml
+    - ansible.builtin.include_tasks: configmap.yml
+    - ansible.builtin.include_tasks: create_cr.yml
+    - ansible.builtin.include_tasks: cleanup.yml
+    - ansible.builtin.include_tasks: update_status.yml
 
   when:
     - this_restore['resources'][0]['status']['restoreComplete'] is not defined

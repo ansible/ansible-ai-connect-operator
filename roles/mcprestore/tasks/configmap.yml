@@ -9,7 +9,7 @@
 
 - block:
     - name: Create temporary MCP backup vars file
-      tempfile:
+      ansible.builtin.tempfile:
         state: file
         suffix: .yml
       register: _tmp_mcp_vars
@@ -24,7 +24,7 @@
       no_log: "{{ no_log }}"
 
     - name: Include MCP backup vars
-      include_vars: "{{ _tmp_mcp_vars.path }}"
+      ansible.builtin.include_vars: "{{ _tmp_mcp_vars.path }}"
       no_log: "{{ no_log }}"
 
     - name: Pre-create MCP ConfigMap from backup
@@ -44,7 +44,7 @@
 
   always:
     - name: Remove temporary MCP backup vars file
-      file:
+      ansible.builtin.file:
         path: "{{ _tmp_mcp_vars.path }}"
         state: absent
       when: _tmp_mcp_vars is defined
