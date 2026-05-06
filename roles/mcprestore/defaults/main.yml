@@ -8,3 +8,4 @@ backup_pvc_namespace: '{{ ansible_operator_meta.namespace }}'
 
 no_log: true
 set_self_labels: true
+spec_overrides: {}

@@ -1,0 +1,50 @@
+---
+- block:
+    - name: Determine public_base_url for restored deployment
+      ansible.builtin.set_fact:
+        public_base_url: >-
+          {{
+            spec_overrides.public_base_url | default(
+              mcp_backup_vars.configmap_data.BASE_URL | default('')
+            )
+          }}
+      no_log: "{{ no_log }}"
+
+    - name: Fail if public_base_url is not available
+      ansible.builtin.fail:
+        msg: |
+          Cannot create AnsibleMCPConnect CR: public_base_url is required but not found.
+          Please provide it in spec_overrides.public_base_url or ensure backup data contains BASE_URL.
+      when: public_base_url == ''
+
+    - name: Build base AnsibleMCPConnect spec
+      ansible.builtin.set_fact:
+        base_mcp_spec:
+          public_base_url: "{{ public_base_url }}"
+          no_log: "{{ no_log }}"
+          set_self_labels: "{{ set_self_labels }}"
+      no_log: "{{ no_log }}"
+
+    - name: Merge spec_overrides into base spec
+      ansible.builtin.set_fact:
+        final_mcp_spec: "{{ base_mcp_spec | combine(spec_overrides, recursive=True) }}"
+      no_log: "{{ no_log }}"
+
+    - name: Create AnsibleMCPConnect CR from restore
+      kubernetes.core.k8s:
+        state: present
+        definition:
+          apiVersion: mcpconnect.ansible.com/v1alpha1
+          kind: AnsibleMCPConnect
+          metadata:
+            name: "{{ deployment_name }}"
+            namespace: "{{ ansible_operator_meta.namespace }}"
+            labels:
+              app.kubernetes.io/name: "{{ deployment_name }}"
+              app.kubernetes.io/part-of: ansible-mcp-connect
+              app.kubernetes.io/managed-by: ansible-mcp-connect-operator
+              app.kubernetes.io/created-by: mcprestore
+          spec: "{{ final_mcp_spec }}"
+      no_log: "{{ no_log }}"
+
+  when: mcp_backup_vars is defined

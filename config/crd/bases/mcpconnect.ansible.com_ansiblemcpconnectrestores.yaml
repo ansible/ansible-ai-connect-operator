@@ -57,6 +57,10 @@ spec:
                 description: Maintain recommended labels
                 type: boolean
                 default: true
+              spec_overrides:
+                description: Overrides for the AnsibleMCPConnect spec
+                type: object
+                x-kubernetes-preserve-unknown-fields: true
           status:
             type: object
             properties:

@@ -736,6 +736,11 @@ spec:
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:advanced
         - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+      - description: Overrides for the AnsibleMCPConnect spec during restore
+        displayName: MCP Spec Overrides
+        path: spec_overrides
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:advanced
       statusDescriptors:
       - description: Flag indicating restore completion
         displayName: Restore Complete

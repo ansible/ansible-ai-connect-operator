@@ -9,11 +9,11 @@
     wait: true
 
 - name: Set default pvc name
-  set_fact:
+  ansible.builtin.set_fact:
     _default_backup_pvc: "{{ deployment_name }}-backup-claim"
 
 - name: Set PVC to use for backup
-  set_fact:
+  ansible.builtin.set_fact:
     backup_pvc: "{{ backup_pvc | default(_default_backup_pvc, true) }}"
 
 - name: Create PVC for backup
@@ -56,7 +56,7 @@
   register: this_mcp
 
 - name: Set backup directory name
-  set_fact:
+  ansible.builtin.set_fact:
     backup_dir: "/backups/mcp-openshift-backup-{{ lookup('pipe', 'date +%F-%T') }}"
 
 - name: Create backup directory

@@ -8,11 +8,11 @@
   register: this_backup
 
 - block:
-    - include_tasks: init.yml
-    - include_tasks: secrets.yml
-    - include_tasks: configmap.yml
-    - include_tasks: cleanup.yml
-    - include_tasks: update_status.yml
+    - ansible.builtin.include_tasks: init.yml
+    - ansible.builtin.include_tasks: secrets.yml
+    - ansible.builtin.include_tasks: configmap.yml
+    - ansible.builtin.include_tasks: cleanup.yml
+    - ansible.builtin.include_tasks: update_status.yml
 
   when:
     - this_backup['resources'][0]['status']['backupDirectory'] is not defined

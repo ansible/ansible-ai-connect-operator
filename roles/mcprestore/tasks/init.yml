@@ -9,7 +9,7 @@
   when: backup_name | default('') | length
 
 - name: Set backup PVC and directory from backup CR
-  set_fact:
+  ansible.builtin.set_fact:
     backup_pvc: "{{ _backup_cr['resources'][0]['status']['backupClaim'] }}"
     backup_dir: "{{ _backup_cr['resources'][0]['status']['backupDirectory'] }}"
   when:
