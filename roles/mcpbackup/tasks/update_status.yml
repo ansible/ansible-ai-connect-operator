@@ -1,8 +1,8 @@
 ---
 - name: Update backup status
   operator_sdk.util.k8s_status:
-    api_version: "mcpconnect.ansible.com/v1alpha1"
-    kind: "AnsibleMCPConnectBackup"
+    api_version: "mcpserver.ansible.com/v1alpha1"
+    kind: "AnsibleMCPServerBackup"
     name: "{{ ansible_operator_meta.name }}"
     namespace: "{{ ansible_operator_meta.namespace }}"
     status:

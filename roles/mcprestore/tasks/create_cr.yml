@@ -13,11 +13,11 @@
     - name: Fail if public_base_url is not available
       ansible.builtin.fail:
         msg: |
-          Cannot create AnsibleMCPConnect CR: public_base_url is required but not found.
+          Cannot create AnsibleMCPServer CR: public_base_url is required but not found.
           Please provide it in spec_overrides.public_base_url or ensure backup data contains BASE_URL.
       when: public_base_url == ''
 
-    - name: Build base AnsibleMCPConnect spec
+    - name: Build base AnsibleMCPServer spec
       ansible.builtin.set_fact:
         base_mcp_spec:
           public_base_url: "{{ public_base_url }}"
@@ -30,12 +30,12 @@
         final_mcp_spec: "{{ base_mcp_spec | combine(spec_overrides, recursive=True) }}"
       no_log: "{{ no_log }}"
 
-    - name: Create AnsibleMCPConnect CR from restore
+    - name: Create AnsibleMCPServer CR from restore
       kubernetes.core.k8s:
         state: present
         definition:
-          apiVersion: mcpconnect.ansible.com/v1alpha1
-          kind: AnsibleMCPConnect
+          apiVersion: mcpserver.ansible.com/v1alpha1
+          kind: AnsibleMCPServer
           metadata:
             name: "{{ deployment_name }}"
             namespace: "{{ ansible_operator_meta.namespace }}"

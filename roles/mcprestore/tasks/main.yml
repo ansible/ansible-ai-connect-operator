@@ -1,8 +1,8 @@
 ---
 - name: Look up details for this restore object
   kubernetes.core.k8s_info:
-    api_version: "mcpconnect.ansible.com/v1alpha1"
-    kind: "AnsibleMCPConnectRestore"
+    api_version: "mcpserver.ansible.com/v1alpha1"
+    kind: "AnsibleMCPServerRestore"
     name: "{{ ansible_operator_meta.name }}"
     namespace: "{{ ansible_operator_meta.namespace }}"
   register: this_restore

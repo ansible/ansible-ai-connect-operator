@@ -1,5 +1,5 @@
 ---
-deployment_type: 'ansible-mcp-connect'
+deployment_type: 'ansible-mcp-server'
 
 _management_pod_image: quay.io/centos/centos
 _management_pod_image_version: stream9

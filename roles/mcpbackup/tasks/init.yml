@@ -49,8 +49,8 @@
 
 - name: Look up details for the MCP deployment
   kubernetes.core.k8s_info:
-    api_version: "mcpconnect.ansible.com/v1alpha1"
-    kind: "AnsibleMCPConnect"
+    api_version: "mcpserver.ansible.com/v1alpha1"
+    kind: "AnsibleMCPServer"
     name: "{{ deployment_name }}"
     namespace: "{{ ansible_operator_meta.namespace }}"
   register: this_mcp

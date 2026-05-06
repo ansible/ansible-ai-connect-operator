@@ -1,8 +1,8 @@
 ---
 - name: Update restore status
   operator_sdk.util.k8s_status:
-    api_version: "mcpconnect.ansible.com/v1alpha1"
-    kind: "AnsibleMCPConnectRestore"
+    api_version: "mcpserver.ansible.com/v1alpha1"
+    kind: "AnsibleMCPServerRestore"
     name: "{{ ansible_operator_meta.name }}"
     namespace: "{{ ansible_operator_meta.namespace }}"
     status:

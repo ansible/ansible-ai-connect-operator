@@ -77,6 +77,8 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: metadata.namespace
+          - name: RELATED_IMAGE_ANSIBLE_MCP_MANAGEMENT
+            value: quay.io/sclorg/postgresql-15-c9s:latest
           - name: RELATED_IMAGE_ANSIBLE_MCP_SERVER
             value: quay.io/ttakamiy/aap-mcp-server:latest
           - name: RELATED_IMAGE_ANSIBLE_AI_CONNECT

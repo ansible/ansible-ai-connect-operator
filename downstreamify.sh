@@ -43,6 +43,8 @@ sed -i -e "s/ansible-ai-connect/ansible-lightspeed/g" ./roles/common/defaults/ma
                                   #  ./roles/restore/vars/main.yml \ ;
 
 sed -i -e "s/ansible-mcp-connect/ansible-mcp-server/g" ./roles/mcpserver/defaults/main.yml\
+                                   ./roles/mcpbackup/defaults/main.yml \
+                                   ./roles/mcprestore/defaults/main.yml \
                                    ./roles/mcpserver/tasks/main.yml ;
 
 # -- Set Fully Qualified Domain Names for k8s modules
@@ -82,6 +84,12 @@ if ! grep -qF 'name: RELATED_IMAGE_ANSIBLE_MCP_SERVER' config/manager/manager.ya
   sed -i -e "/fieldPath: metadata.namespace/a \\
           - name: RELATED_IMAGE_ANSIBLE_MCP_SERVER\n\
             value: quay.io/ttakamiy/aap-mcp-server:latest" config/manager/manager.yaml
+fi
+
+if ! grep -qF 'name: RELATED_IMAGE_ANSIBLE_MCP_MANAGEMENT' config/manager/manager.yaml; then
+  sed -i -e "/fieldPath: metadata.namespace/a \\
+          - name: RELATED_IMAGE_ANSIBLE_MCP_MANAGEMENT\n\
+            value: quay.io/sclorg/postgresql-15-c9s:latest" config/manager/manager.yaml
 fi
 
 # -- Inject Downstream Settings Variables
