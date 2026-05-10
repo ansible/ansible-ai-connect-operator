@@ -118,6 +118,21 @@ spec:
               chatbot_config_secret_name:
                 description: "Secret where the chatbot configuration can be found"
                 type: string
+              chatbot_transcripts_enabled:
+                description: "Enable file-based conversation transcript exports in the chatbot. Transcripts are written as JSON files to an ephemeral volume. Conversation metadata is always persisted in the database regardless of this setting. Default: false"
+                type: boolean
+                default: false
+              chatbot_feedback_enabled:
+                description: "Enable user feedback collection in the chatbot. Feedback is written as JSON files to an ephemeral volume. Default: false"
+                type: boolean
+                default: false
+              chatbot_user_data_storage_class:
+                description: "Storage class for the chatbot transcript and feedback file PVC. When set, a PersistentVolumeClaim is created for persistent file exports. When empty, an emptyDir volume is used."
+                type: string
+              chatbot_user_data_storage_size:
+                description: "Size of the chatbot transcript and feedback file volume. Used as PVC request when storage class is set, or emptyDir sizeLimit otherwise. Default: 1Gi"
+                type: string
+                default: "1Gi"
               chatbot_extra_settings:
                 type: object
                 description: "Chatbot Dynamic dictionary for extra settings"

@@ -40,6 +40,21 @@ _chatbot_mcp_lightspeed_image_version: "{{ lookup('env', 'DEFAULT_CHATBOT_MCP_LI
 # Configuration for Chatbot provider
 # ----------------------------------------
 chatbot_config_secret_name: ''
+
+# ----------------------------------------
+# User data collection settings
+# ----------------------------------------
+chatbot_transcripts_enabled: false
+chatbot_feedback_enabled: false
+
+# ----------------------------------------
+# Transcript/feedback file storage
+# ----------------------------------------
+# When chatbot_user_data_storage_class is set, a PVC is created for
+# persistent file-based transcript and feedback exports.
+# Otherwise an emptyDir volume is used.
+chatbot_user_data_storage_class: ''
+chatbot_user_data_storage_size: '1Gi'
 # ========================================
 
 
