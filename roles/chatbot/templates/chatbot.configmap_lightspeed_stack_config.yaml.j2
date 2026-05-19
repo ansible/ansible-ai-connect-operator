@@ -10,7 +10,7 @@ metadata:
     checksum-secret-chatbot_config: "{{ lookup('ansible.builtin.vars', 'chatbot_config', default='')["resources"][0]["data"] | default('') | sha1 }}"
 data:
   lightspeed-stack.yaml: |
-    name: Ansible Lightspeed Intelligent Assistant
+    name: {{ chatbot_product_name }}
     service:
       host: "*"
 {% if is_openshift %}
