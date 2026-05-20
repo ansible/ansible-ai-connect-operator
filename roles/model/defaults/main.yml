@@ -47,6 +47,7 @@ auth_config_secret_name: ''
 # Configuration for Model provider
 # ----------------------------------------
 model_config_secret_name: ''
+chatbot_product_name: 'Automation Intelligent Assistant'
 # ========================================
 
 

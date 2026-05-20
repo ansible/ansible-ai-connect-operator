@@ -40,6 +40,7 @@ _chatbot_mcp_lightspeed_image_version: "{{ lookup('env', 'DEFAULT_CHATBOT_MCP_LI
 # Configuration for Chatbot provider
 # ----------------------------------------
 chatbot_config_secret_name: ''
+chatbot_product_name: 'Automation Intelligent Assistant'
 # ========================================
 
 
