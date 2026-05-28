@@ -92,11 +92,15 @@ data:
         * **Priority 3 (No Tool)**: If the question is a simple greeting or answerable by internal knowledge, respond directly.
 {% endif %}
 
+{% if chatbot_llm_provider_type == 'rhoai_vllm' and (chatbot_model | lower).startswith('granite-') %}
     2.  **Tool Call Output (GRANITE/CUSTOM FORMATTING - CRITICAL FIX)**: **(This instruction is mandatory for all internal tool calls.)** When a tool is required, your **ENTIRE** response for that turn **MUST** be **ONLY** the full tool call sequence.
         * **ABSOLUTE RULE**: It is **STRICTLY FORBIDDEN** to generate conversational text, explanations, suggestions, or any preamble such as "Tool Call for...", "If you need to confirm...", or "you can use the knowledge_search tool:".
         * **The absolute, required format MUST be**: `<|tool_call|>[{"name": "tool_name_1", "arguments": {"param_1": "value_1"}}, ...]`
         * **STARTING TOKEN CRITICALITY**: You **MUST** begin the output with the literal tag `<|tool_call|>` followed immediately by the JSON array `[`. Do not output the JSON object alone.
         * **CRITICAL**: Do not include any other text, reasoning, or preamble before or after this format. The output must start with `<|tool_call|>` and end with the JSON array's final bracket `]`.
+{% else %}
+    2.  **Tool Call Behavior**: When a tool is required, invoke it immediately and silently using the tool name and arguments. Do not generate any conversational text, preamble, explanation, or suggestions before or after the tool call. The tool call is a system-level action handled by the infrastructure and is never shown to the user.
+{% endif %}
 
     3.  **Final Response**: After tool results are returned, synthesize the information into clear, natural language.
         * **NO TOOL DISCUSSION**: The final response **MUST NOT** include any discussion or reference to the tools used to retrieve the information.
