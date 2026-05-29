@@ -78,6 +78,42 @@
           URL: "https://{{ route_url['resources'][0]['status']['ingress'][0]['host'] }}"
   when: ingress_type | lower == 'route'
 
+- name: Update URL status for ingress with hostname
+  operator_sdk.util.k8s_status:
+    api_version: '{{ api_version }}'
+    kind: "{{ kind }}"
+    name: "{{ ansible_operator_meta.name }}"
+    namespace: "{{ ansible_operator_meta.namespace }}"
+    status:
+      URL: "http{{ 's' if ingress_tls_secret else '' }}://{{ hostname }}"
+  when:
+    - ingress_type | lower == 'ingress'
+    - hostname | length > 0
+
+- name: Update URL status from service
+  operator_sdk.util.k8s_status:
+    api_version: '{{ api_version }}'
+    kind: "{{ kind }}"
+    name: "{{ ansible_operator_meta.name }}"
+    namespace: "{{ ansible_operator_meta.namespace }}"
+    status:
+      URL: "http://{{ ansible_operator_meta.name }}-api.{{ ansible_operator_meta.namespace }}.svc.cluster.local"
+  when:
+    - ingress_type | lower in ['ingress', 'none']
+    - hostname | length == 0
+
+- name: Update URL status for non-ingress deployment with hostname
+  operator_sdk.util.k8s_status:
+    api_version: '{{ api_version }}'
+    kind: "{{ kind }}"
+    name: "{{ ansible_operator_meta.name }}"
+    namespace: "{{ ansible_operator_meta.namespace }}"
+    status:
+      URL: "http://{{ hostname }}"
+  when:
+    - ingress_type | lower == 'none'
+    - hostname | length > 0
+
 # ============================================
 # Retrieve and update Chatbot status
 # --------------------------------------------

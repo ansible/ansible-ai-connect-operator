@@ -1,0 +1,58 @@
+---
+# Validates that status.URL is populated on both AnsibleAIConnect and
+# AnsibleMCPConnect custom resources regardless of ingress_type.
+# The test instances use ingress_type: Ingress without a hostname,
+# so the URL should fall back to the cluster-internal service address.
+
+- block:
+    - name: Retrieve AnsibleAIConnect instance
+      kubernetes.core.k8s_info:
+        api_version: aiconnect.ansible.com/v1alpha1
+        kind: AnsibleAIConnect
+        name: ansibleaiconnect-sample
+        namespace: '{{ namespace }}'
+      register: aiconnect_instance
+
+    - name: Assert AnsibleAIConnect status.URL is defined and not empty
+      ansible.builtin.assert:
+        that:
+          - aiconnect_instance.resources[0].status.URL is defined
+          - aiconnect_instance.resources[0].status.URL | length > 0
+        fail_msg: >-
+          AnsibleAIConnect status.URL is not populated.
+          This field must always be set so that the gateway operator
+          can detect readiness without blocking indefinitely.
+
+    - name: Assert AnsibleAIConnect status.URL is a valid service URL
+      ansible.builtin.assert:
+        that:
+          - aiconnect_instance.resources[0].status.URL is match('^https?://')
+        fail_msg: >-
+          AnsibleAIConnect status.URL '{{ aiconnect_instance.resources[0].status.URL }}'
+          does not start with http:// or https://.
+
+    - name: Retrieve AnsibleMCPConnect instance
+      kubernetes.core.k8s_info:
+        api_version: mcpconnect.ansible.com/v1alpha1
+        kind: AnsibleMCPConnect
+        name: ansiblemcpconnect-sample
+        namespace: '{{ namespace }}'
+      register: mcpconnect_instance
+
+    - name: Assert AnsibleMCPConnect status.URL is defined and not empty
+      ansible.builtin.assert:
+        that:
+          - mcpconnect_instance.resources[0].status.URL is defined
+          - mcpconnect_instance.resources[0].status.URL | length > 0
+        fail_msg: >-
+          AnsibleMCPConnect status.URL is not populated.
+          This field must always be set so that the gateway operator
+          can detect readiness without blocking indefinitely.
+
+    - name: Assert AnsibleMCPConnect status.URL is a valid service URL
+      ansible.builtin.assert:
+        that:
+          - mcpconnect_instance.resources[0].status.URL is match('^https?://')
+        fail_msg: >-
+          AnsibleMCPConnect status.URL '{{ mcpconnect_instance.resources[0].status.URL }}'
+          does not start with http:// or https://.
