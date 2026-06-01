@@ -1,0 +1,69 @@
+---
+# Auto-discover OpenShift router CA certificate secret
+# This task runs only on OpenShift when bundle_cacert_secret is not explicitly set
+
+- name: Search for router CA certificate secrets in openshift-ingress namespace
+  kubernetes.core.k8s_info:
+    kind: Secret
+    namespace: openshift-ingress
+    label_selectors:
+      - ingresscontroller.operator.openshift.io/owning-ingresscontroller=default
+  register: ingress_secrets
+  ignore_errors: yes
+  no_log: "{{ no_log }}"
+
+- name: Filter for TLS type secrets with certificate data
+  ansible.builtin.set_fact:
+    router_tls_secrets: "{{ ingress_secrets.resources | selectattr('type', 'equalto', 'kubernetes.io/tls') | selectattr('data', 'defined') | selectattr('data.tls.crt', 'defined') | list }}"
+  when:
+    - ingress_secrets is defined
+    - ingress_secrets.resources is defined
+    - ingress_secrets.resources | length > 0
+  no_log: "{{ no_log }}"
+
+- name: Set discovered router certificate
+  ansible.builtin.set_fact:
+    discovered_router_cert: "{{ router_tls_secrets[0].data['tls.crt'] }}"
+    discovered_router_secret_name: "{{ router_tls_secrets[0].metadata.name }}"
+  when:
+    - router_tls_secrets is defined
+    - router_tls_secrets | length > 0
+  no_log: "{{ no_log }}"
+
+- name: Create custom CA bundle secret in operator namespace
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Secret
+      metadata:
+        name: "{{ ansible_operator_meta.name }}-router-ca"
+        namespace: "{{ ansible_operator_meta.namespace }}"
+        labels:
+          app.kubernetes.io/name: "{{ ansible_operator_meta.name }}"
+          app.kubernetes.io/managed-by: "{{ deployment_type }}-operator"
+          app.kubernetes.io/component: "{{ deployment_type }}"
+        annotations:
+          ansible-mcp-connect/auto-discovered: "true"
+          ansible-mcp-connect/source-secret: "{{ discovered_router_secret_name }}"
+          ansible-mcp-connect/source-namespace: "openshift-ingress"
+      type: Opaque
+      data:
+        bundle-ca.crt: "{{ discovered_router_cert }}"
+  when:
+    - discovered_router_cert is defined
+  no_log: "{{ no_log }}"
+
+- name: Set bundle_cacert_secret to auto-discovered value
+  ansible.builtin.set_fact:
+    bundle_cacert_secret: "{{ ansible_operator_meta.name }}-router-ca"
+  when:
+    - discovered_router_cert is defined
+
+- name: Log auto-discovery result
+  ansible.builtin.debug:
+    msg: "Auto-discovered OpenShift router CA certificate from secret {{ discovered_router_secret_name }}. Created secret: {{ bundle_cacert_secret }}"
+  when:
+    - discovered_router_cert is defined
+    - discovered_router_secret_name is defined
+    - not no_log | bool

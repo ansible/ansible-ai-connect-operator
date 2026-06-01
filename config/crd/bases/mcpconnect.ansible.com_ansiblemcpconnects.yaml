@@ -475,7 +475,7 @@ spec:
                 description: Service annotations
                 type: string
               bundle_cacert_secret:
-                description: Secret where the trusted Certificate Authority Bundle is stored
+                description: Secret where the trusted Certificate Authority Bundle is stored. On OpenShift, if not specified, the operator will automatically discover and use the router CA certificate.
                 type: string
               set_self_labels:
                 description: Maintain some of the recommended `app.kubernetes.io/*` labels on the resource (self)

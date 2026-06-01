@@ -15,6 +15,12 @@
 - name: Set AnsibleMCPConnect service images
   ansible.builtin.include_tasks: set_images.yml
 
+- name: Auto-discover OpenShift CA certificate
+  ansible.builtin.include_tasks: auto_discover_openshift_ca.yml
+  when:
+    - is_openshift | bool
+    - not bundle_cacert_secret | length
+
 - name: Set Bundle Certificate Authority
   ansible.builtin.include_tasks: set_bundle_cacert.yml
   when:

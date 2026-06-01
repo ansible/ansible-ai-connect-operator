@@ -146,6 +146,8 @@ telemetry_hmac_secret: ''
 # Custom CA Certificates
 # ----------------------------------------
 # Secret to lookup that provides the custom CA trusted bundle
+# On OpenShift: if empty, automatically discovers and uses the router CA certificate
+# On Kubernetes: if empty, no custom CA bundle is used
 bundle_cacert_secret: ''
 # ----------------------------------------
 

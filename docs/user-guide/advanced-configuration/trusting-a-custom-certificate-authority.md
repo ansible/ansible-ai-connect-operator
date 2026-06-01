@@ -2,18 +2,36 @@
 
 In cases which you need to trust a custom Certificate Authority, there are few variables you can customize for the `ansible-ai-connect-operator`.
 
-Trusting a custom Certificate Authority allows the `AnsibleAIConnect` instance to access network services configured with SSL certificates issued locally, such as cloning a project from an internal Git server via HTTPS. If it is needed, you will likely see errors like this when doing project syncs:
+Trusting a custom Certificate Authority allows the `AnsibleAIConnect` and `AnsibleMCPConnect` instances to access network services configured with SSL certificates issued locally, such as cloning a project from an internal Git server via HTTPS or validating tokens against AAP with self-signed certificates. If it is needed, you will likely see errors like this:
 
 ```bash
 fatal: unable to access 'https://private.repo./mine/ansible-rulebook.git': SSL certificate problem: unable to get local issuer certificate
 ```
 
+or for MCP Server:
+
+```bash
+Error: self-signed certificate in certificate chain
+    code: 'SELF_SIGNED_CERT_IN_CHAIN'
+```
 
 | Name                             | Description                              | Default |
 |----------------------------------|------------------------------------------|---------|
 | `bundle_cacert_secret`           | Certificate Authority secret name        | ''      |
 
 Please note the `ansible-ai-connect-operator` will look for the data field `bundle-ca.crt` in the specified `bundle_cacert_secret` secret.
+
+### OpenShift Auto-Discovery
+
+**New in this release:** When deploying `AnsibleMCPConnect` on OpenShift, the operator automatically discovers and trusts the cluster's router CA certificate if `bundle_cacert_secret` is not explicitly set. This eliminates the need for manual configuration in most OpenShift environments.
+
+The auto-discovery feature:
+- Only runs on OpenShift clusters (detected via route.openshift.io API group)
+- Searches for the default ingress controller's TLS certificate in the `openshift-ingress` namespace
+- Creates a copy of the certificate in the operator's namespace
+- Automatically configures the MCP server deployment to trust the certificate
+
+To disable auto-discovery or use a different certificate, explicitly set `bundle_cacert_secret` to your preferred secret name.
 
 
 

@@ -1,0 +1,147 @@
+---
+# Test CA bundle configuration for MCP Server
+# This test verifies that:
+# 1. When bundle_cacert_secret is explicitly set, it's used
+# 2. CA bundle is properly mounted in the deployment
+# 3. Environment variables are set correctly
+
+- block:
+    - name: Create test CA bundle secret
+      kubernetes.core.k8s:
+        state: present
+        definition:
+          apiVersion: v1
+          kind: Secret
+          metadata:
+            name: test-ca-bundle
+            namespace: '{{ namespace }}'
+          type: Opaque
+          stringData:
+            bundle-ca.crt: |
+              -----BEGIN CERTIFICATE-----
+              MIICvDCCAaQCCQDCU8KlN7vD9TANBgkqhkiG9w0BAQsFADAgMR4wHAYDVQQDDBV0
+              ZXN0LWNhLmV4YW1wbGUubG9jYWwwHhcNMjYwMTAxMDAwMDAwWhcNMjcwMTAxMDAw
+              MDAwWjAgMR4wHAYDVQQDDBV0ZXN0LWNhLmV4YW1wbGUubG9jYWwwggEiMA0GCSqG
+              SIb3DQEBAQUAA4IBDwAwggEKAoIBAQC7VJTUt9Us8cKjMzEfYyjiWA4R4/M2bS1+
+              fWIcPm2W6T6T6tnK1pzN8z1+fWYg8t7VMX1/kTLbP9OhNH9L1uPw3L6PnY3sNGDf
+              XT7w4HLfqT3kJYVLw4bDLt9d1E1D5R1F2Y6Y7cB5xS9lY8N7nN8VlK5tM8V0X9Df
+              L8tT9F3Qw2nN8T1tQT1dE1E9L1f8T6N7vN2vF1wN1D1Z1F1N1T1E1L1L1P1O1H1N
+              1L1u1P1w3L6P1n1Y3s1N1G1D1f1X1T7w4H1L1f1q1T3k1J1Y1V1L1w4b1D1L1t9d
+              1E1D5R1F2Y6Y7c1B5x1S9l1Y8N7n1N8V1l1K5t1M8V0X9D1f1L8t1T9F3Q1w2n1N
+              8T1t1QT1d1E1E9L1f8T6N7v1N2v1F1w1N1D1Z1F1N1T1E1L1L1P1O1H1N1L1uAgMB
+              AAEwDQYJKoZIhvcNAQELBQADggEBAC7VJTUt9Us8cKjMzEfYyjiWA4R4/M2bS1+f
+              -----END CERTIFICATE-----
+
+    - name: Create MCP Server instance with explicit CA bundle
+      kubernetes.core.k8s:
+        state: present
+        definition:
+          apiVersion: mcpconnect.ansible.com/v1alpha1
+          kind: AnsibleMCPConnect
+          metadata:
+            name: ansiblemcpconnect-ca-test
+            namespace: '{{ namespace }}'
+          spec:
+            public_base_url: 'https://test.example.com'
+            bundle_cacert_secret: 'test-ca-bundle'
+
+    - name: Wait for MCP Server deployment with CA bundle
+      kubernetes.core.k8s_info:
+        kind: Deployment
+        namespace: '{{ namespace }}'
+        name: ansiblemcpconnect-ca-test
+      register: mcpserver_deployment_ca
+      retries: 30
+      delay: 10
+      until:
+        - mcpserver_deployment_ca.resources is defined
+        - mcpserver_deployment_ca.resources | length > 0
+
+    - name: Get deployment spec
+      ansible.builtin.set_fact:
+        deployment_spec: '{{ mcpserver_deployment_ca.resources[0].spec.template.spec }}'
+
+    - name: Assert CA bundle volume is mounted
+      ansible.builtin.assert:
+        that:
+          - deployment_spec.volumes | selectattr('name', 'equalto', 'ansiblemcpconnect-ca-test-bundle-cacert') | list | length > 0
+        fail_msg: CA bundle volume is not defined in deployment
+
+    - name: Assert CA bundle volume references correct secret
+      ansible.builtin.assert:
+        that:
+          - (deployment_spec.volumes | selectattr('name', 'equalto', 'ansiblemcpconnect-ca-test-bundle-cacert') | first).secret.secretName == 'test-ca-bundle'
+        fail_msg: CA bundle volume does not reference the correct secret
+
+    - name: Assert init container has CA bundle volume mount
+      ansible.builtin.assert:
+        that:
+          - deployment_spec.initContainers | length > 0
+          - deployment_spec.initContainers[0].volumeMounts | selectattr('name', 'equalto', 'ansiblemcpconnect-ca-test-bundle-cacert') | list | length > 0
+        fail_msg: Init container does not have CA bundle volume mount
+
+    - name: Assert init container mounts bundle-ca.crt to correct path
+      ansible.builtin.assert:
+        that:
+          - (deployment_spec.initContainers[0].volumeMounts | selectattr('name', 'equalto', 'ansiblemcpconnect-ca-test-bundle-cacert') | first).mountPath == '/etc/pki/ca-trust/source/anchors/bundle-ca.crt'
+        fail_msg: Init container CA bundle mount path is incorrect
+
+    - name: Assert main container has CA environment variables
+      ansible.builtin.assert:
+        that:
+          - deployment_spec.containers[0].env | selectattr('name', 'equalto', 'COMBINED_CA_BUNDLE_PATH') | list | length > 0
+          - deployment_spec.containers[0].env | selectattr('name', 'equalto', 'REQUESTS_CA_BUNDLE') | list | length > 0
+          - deployment_spec.containers[0].env | selectattr('name', 'equalto', 'SSL_CERT_FILE') | list | length > 0
+        fail_msg: Required CA bundle environment variables are not set
+
+    - name: Assert CA environment variables point to combined bundle
+      ansible.builtin.assert:
+        that:
+          - (deployment_spec.containers[0].env | selectattr('name', 'equalto', 'COMBINED_CA_BUNDLE_PATH') | first).value == '/etc/ssl/combined-ca/ca-bundle.crt'
+          - (deployment_spec.containers[0].env | selectattr('name', 'equalto', 'REQUESTS_CA_BUNDLE') | first).value == '/etc/ssl/combined-ca/ca-bundle.crt'
+          - (deployment_spec.containers[0].env | selectattr('name', 'equalto', 'SSL_CERT_FILE') | first).value == '/etc/ssl/combined-ca/ca-bundle.crt'
+        fail_msg: CA bundle environment variables do not point to the correct path
+
+    - name: Wait for MCP Server pod to be ready
+      kubernetes.core.k8s_info:
+        namespace: '{{ namespace }}'
+        kind: Pod
+        label_selectors:
+          - app.kubernetes.io/name = ansiblemcpconnect-ca-test
+        field_selectors:
+          - status.phase=Running
+      register: mcpserver_pod_ca
+      retries: 30
+      delay: 10
+      until:
+        - mcpserver_pod_ca.resources is defined
+        - mcpserver_pod_ca.resources | length > 0
+        - mcpserver_pod_ca.resources[0].status.containerStatuses is defined
+        - mcpserver_pod_ca.resources[0].status.containerStatuses | length > 0
+        - mcpserver_pod_ca.resources[0].status.containerStatuses[0].ready == true
+
+    - name: Verify init container completed successfully
+      ansible.builtin.assert:
+        that:
+          - mcpserver_pod_ca.resources[0].status.initContainerStatuses is defined
+          - mcpserver_pod_ca.resources[0].status.initContainerStatuses | length > 0
+          - mcpserver_pod_ca.resources[0].status.initContainerStatuses[0].state.terminated is defined
+          - mcpserver_pod_ca.resources[0].status.initContainerStatuses[0].state.terminated.exitCode == 0
+        fail_msg: Init container did not complete successfully
+
+    - name: Clean up test resources
+      kubernetes.core.k8s:
+        state: absent
+        api_version: mcpconnect.ansible.com/v1alpha1
+        kind: AnsibleMCPConnect
+        name: ansiblemcpconnect-ca-test
+        namespace: '{{ namespace }}'
+        wait: yes
+
+    - name: Clean up test CA bundle secret
+      kubernetes.core.k8s:
+        state: absent
+        api_version: v1
+        kind: Secret
+        name: test-ca-bundle
+        namespace: '{{ namespace }}'
