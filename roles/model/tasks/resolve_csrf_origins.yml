@@ -1,0 +1,31 @@
+---
+- name: Look up existing Route host
+  kubernetes.core.k8s_info:
+    api_version: '{{ route_api_version }}'
+    kind: Route
+    namespace: '{{ ansible_operator_meta.namespace }}'
+    name: '{{ ansible_operator_meta.name }}'
+  register: _existing_route
+  when: ingress_type | lower == 'route'
+
+- name: Set CSRF trusted origins
+  ansible.builtin.set_fact:
+    _csrf_trusted_origins: >-
+      {%- set origins = [] -%}
+      {%- if ingress_type | lower == 'route' -%}
+        {%- if route_host | length -%}
+          {%- set _ = origins.append('https://' + route_host) -%}
+        {%- elif _existing_route.resources | default([]) | length > 0
+                and _existing_route.resources[0].status is defined
+                and _existing_route.resources[0].status.ingress is defined
+                and _existing_route.resources[0].status.ingress | length > 0 -%}
+          {%- set _ = origins.append('https://' + _existing_route.resources[0].status.ingress[0].host) -%}
+        {%- endif -%}
+      {%- elif ingress_type | lower == 'ingress' and hostname | length -%}
+        {%- if ingress_tls_secret | length -%}
+          {%- set _ = origins.append('https://' + hostname) -%}
+        {%- else -%}
+          {%- set _ = origins.append('https://' + hostname) -%}
+        {%- endif -%}
+      {%- endif -%}
+      {{ origins | join(',') }}
