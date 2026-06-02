@@ -59,11 +59,26 @@ jobs:
             -Dsonar.projectKey=${{ env.REPO_OWNER }}_${{ env.REPO_NAME }}
             -Dsonar.organization=${{ env.REPO_OWNER }}
 
-      # Note: Currently there are no coverage reports generated for Ansible/YAML files.
-      # This step is configured to support future coverage data and DORA metrics tracking.
-      # When coverage data becomes available, add specific file paths to the upload step.
+      # Generate minimal coverage report for Codecov onboarding
+      # This ensures the repository appears as "onboarded" in Codecov dashboard
+      # for management tracking and DORA metrics, even without actual coverage data yet.
+      # When real coverage data becomes available from Ansible/YAML tests, replace this step.
+      - name: Generate placeholder coverage report
+        run: |
+          cat > coverage.xml << 'EOF'
+          <?xml version="1.0" ?>
+          <coverage version="1.0">
+            <packages>
+              <package name="ansible-ai-connect-operator" line-rate="0.0" branch-rate="0.0" complexity="0">
+                <classes></classes>
+              </package>
+            </packages>
+          </coverage>
+          EOF
+
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@0f8570b1a125f4937846a11fcfa3bcd548bd8c97 # v4.6.0
         with:
+          files: ./coverage.xml
+          flags: ansible-operator
           fail_ci_if_error: false
-          disable_search: true
