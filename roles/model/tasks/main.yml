@@ -45,6 +45,9 @@
     - ingress_type | lower == 'route'
     - route_tls_secret | length
 
+- name: Resolve CSRF trusted origins
+  ansible.builtin.include_tasks: resolve_csrf_origins.yml
+
 - name: Deploy Model API service
   ansible.builtin.include_tasks: deploy_model_api.yml
 

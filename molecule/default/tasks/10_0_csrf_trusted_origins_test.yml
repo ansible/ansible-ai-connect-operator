@@ -1,0 +1,30 @@
+---
+- block:
+    - name: Get ConfigMap details
+      kubernetes.core.k8s_info:
+        namespace: '{{ namespace }}'
+        kind: ConfigMap
+        name: ansibleaiconnect-sample-ansible-ai-connect-env-properties
+      register: aiconnect_configmap
+
+    - name: Assert CSRF_TRUSTED_ORIGINS is set in ConfigMap
+      ansible.builtin.assert:
+        that:
+          - "'CSRF_TRUSTED_ORIGINS' in aiconnect_configmap.resources[0].data"
+        fail_msg: ConfigMap does not contain CSRF_TRUSTED_ORIGINS
+
+    - name: Assert CSRF_TRUSTED_ORIGINS contains the Lightspeed origin
+      ansible.builtin.assert:
+        that:
+          - "'http://test.example.com' in (aiconnect_configmap.resources[0].data.CSRF_TRUSTED_ORIGINS | split(','))"
+        fail_msg: >-
+          CSRF_TRUSTED_ORIGINS does not contain 'http://test.example.com',
+          got '{{ aiconnect_configmap.resources[0].data.CSRF_TRUSTED_ORIGINS }}'
+
+    - name: Assert CSRF_TRUSTED_ORIGINS contains the gateway origin
+      ansible.builtin.assert:
+        that:
+          - "'https://my-aap-gateway.example.com' in (aiconnect_configmap.resources[0].data.CSRF_TRUSTED_ORIGINS | split(','))"
+        fail_msg: >-
+          CSRF_TRUSTED_ORIGINS does not contain 'https://my-aap-gateway.example.com',
+          got '{{ aiconnect_configmap.resources[0].data.CSRF_TRUSTED_ORIGINS }}'

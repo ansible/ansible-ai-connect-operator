@@ -1,0 +1,51 @@
+---
+- name: Look up existing Route host
+  kubernetes.core.k8s_info:
+    api_version: '{{ route_api_version }}'
+    kind: Route
+    namespace: '{{ ansible_operator_meta.namespace }}'
+    name: '{{ ansible_operator_meta.name }}'
+  register: _existing_route
+  when: ingress_type | lower == 'route'
+
+- name: Set CSRF trusted origins
+  ansible.builtin.set_fact:
+    _csrf_trusted_origins: >-
+      {%- set origins = [] -%}
+      {%- if ingress_type | lower == 'route' -%}
+        {%- if route_host | length -%}
+          {%- set _ = origins.append('https://' + route_host) -%}
+        {%- elif _existing_route.resources | default([]) | length > 0
+                and _existing_route.resources[0].status is defined
+                and _existing_route.resources[0].status.ingress is defined
+                and _existing_route.resources[0].status.ingress | length > 0 -%}
+          {%- set _ = origins.append('https://' + _existing_route.resources[0].status.ingress[0].host) -%}
+        {%- endif -%}
+      {%- elif ingress_type | lower == 'ingress' and hostname | length -%}
+        {%- set scheme = 'https' if ingress_tls_secret | length else 'http' -%}
+        {%- set _ = origins.append(scheme + '://' + hostname) -%}
+      {%- endif -%}
+      {%- if auth_config is defined
+              and auth_config.resources | default([]) | length > 0
+              and auth_config.resources[0].data.auth_api_url is defined -%}
+        {%- set gateway_url = auth_config.resources[0].data.auth_api_url | b64decode -%}
+        {%- set gw_scheme = gateway_url | urlsplit('scheme') -%}
+        {%- set gw_netloc = gateway_url | urlsplit('netloc') -%}
+        {%- if gw_scheme and gw_netloc -%}
+          {%- set gw_origin = gw_scheme + '://' + gw_netloc -%}
+          {%- if gw_origin not in origins -%}
+            {%- set _ = origins.append(gw_origin) -%}
+          {%- endif -%}
+        {%- endif -%}
+      {%- endif -%}
+      {%- if _aap_gateway_url is defined and _aap_gateway_url | length -%}
+        {%- set gw2_scheme = _aap_gateway_url | urlsplit('scheme') -%}
+        {%- set gw2_netloc = _aap_gateway_url | urlsplit('netloc') -%}
+        {%- if gw2_scheme and gw2_netloc -%}
+          {%- set gw2_origin = gw2_scheme + '://' + gw2_netloc -%}
+          {%- if gw2_origin not in origins -%}
+            {%- set _ = origins.append(gw2_origin) -%}
+          {%- endif -%}
+        {%- endif -%}
+      {%- endif -%}
+      {{- origins | join(',') -}}
