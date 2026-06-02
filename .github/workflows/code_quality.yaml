@@ -1,4 +1,4 @@
-name: SonarCloud Analysis
+name: Code Quality and Coverage
 
 on:
   push:
@@ -11,8 +11,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  sonarcloud:
-    name: SonarCloud Scan
+  code_quality:
+    name: SonarCloud and Codecov Analysis
     runs-on: ubuntu-latest
 
     # Only run for ansible organization
@@ -58,3 +58,22 @@ jobs:
           args: >
             -Dsonar.projectKey=${{ env.REPO_OWNER }}_${{ env.REPO_NAME }}
             -Dsonar.organization=${{ env.REPO_OWNER }}
+
+      - name: Verify CODECOV_TOKEN is set
+        if: github.event.pull_request.head.repo.full_name == github.repository || github.event_name != 'pull_request'
+        run: test -n "$CODECOV_TOKEN" || { echo "CODECOV_TOKEN is empty — check secrets.CODECOV_TOKEN"; exit 1; }
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
+      # Note: Currently there are no coverage reports generated for Ansible/YAML files.
+      # This step is configured to support future coverage data and DORA metrics tracking.
+      # When coverage data becomes available, add specific file paths to the upload step.
+      - name: Upload coverage to Codecov
+        # Skip for fork PRs where secrets are not available
+        if: github.event.pull_request.head.repo.full_name == github.repository || github.event_name != 'pull_request'
+        uses: codecov/codecov-action@0f8570b1a125f4937846a11fcfa3bcd548bd8c97 # v4.6.0
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          url: ${{ vars.CODECOV_URL }}
+          fail_ci_if_error: false
+          disable_search: true
