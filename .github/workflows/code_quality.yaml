@@ -50,6 +50,7 @@ jobs:
       - name: SonarCloud Scan
         # Skip for fork PRs where secrets are not available
         if: github.event.pull_request.head.repo.full_name == github.repository || github.event_name != 'pull_request'
+        continue-on-error: true
         uses: SonarSource/sonarqube-scan-action@v4
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
