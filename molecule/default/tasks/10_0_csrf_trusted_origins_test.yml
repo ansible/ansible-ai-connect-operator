@@ -16,7 +16,7 @@
     - name: Assert CSRF_TRUSTED_ORIGINS contains the Lightspeed origin
       ansible.builtin.assert:
         that:
-          - "'http://test.example.com' in aiconnect_configmap.resources[0].data.CSRF_TRUSTED_ORIGINS"
+          - "'http://test.example.com' in (aiconnect_configmap.resources[0].data.CSRF_TRUSTED_ORIGINS | split(','))"
         fail_msg: >-
           CSRF_TRUSTED_ORIGINS does not contain 'http://test.example.com',
           got '{{ aiconnect_configmap.resources[0].data.CSRF_TRUSTED_ORIGINS }}'
@@ -24,7 +24,7 @@
     - name: Assert CSRF_TRUSTED_ORIGINS contains the gateway origin
       ansible.builtin.assert:
         that:
-          - "'https://my-aap-gateway.example.com' in aiconnect_configmap.resources[0].data.CSRF_TRUSTED_ORIGINS"
+          - "'https://my-aap-gateway.example.com' in (aiconnect_configmap.resources[0].data.CSRF_TRUSTED_ORIGINS | split(','))"
         fail_msg: >-
           CSRF_TRUSTED_ORIGINS does not contain 'https://my-aap-gateway.example.com',
           got '{{ aiconnect_configmap.resources[0].data.CSRF_TRUSTED_ORIGINS }}'

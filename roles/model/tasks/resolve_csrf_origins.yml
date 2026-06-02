@@ -48,4 +48,4 @@
           {%- endif -%}
         {%- endif -%}
       {%- endif -%}
-      {{ origins | join(',') }}
+      {{- origins | join(',') -}}

@@ -36,7 +36,7 @@ data:
   PYTHONUNBUFFERED: "1"
 
 {% if _csrf_trusted_origins | default('') | length and not (extra_settings | default([]) | map(attribute='setting') | map('upper') | select('equalto', 'CSRF_TRUSTED_ORIGINS') | list | length) %}
-  CSRF_TRUSTED_ORIGINS: "{{ _csrf_trusted_origins }}"
+  CSRF_TRUSTED_ORIGINS: "{{ _csrf_trusted_origins | trim }}"
 {% endif %}
 
   # Custom user variables
