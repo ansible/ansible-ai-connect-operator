@@ -38,16 +38,3 @@ Then run this to apply it:
 ```
 kustomize build . | kubectl apply -f -
 ```
-
-#### PostgreSQL Upgrade Considerations
-
-If there is a PostgreSQL major version upgrade, after the data directory on the `PersistentVolumeClaim` is migrated to the new version, the old `PersistentVolumeClaim` is kept by default.
-
-This provides the ability to roll back if needed, but can take up extra storage space in your cluster unnecessarily. By default, the Postgres `PersistentVolumeClaim` from the previous version will remain unless you manually remove it, or have the `database.postgres_keep_pvc_after_upgrade` parameter set to `false`. You can configure it to be deleted automatically
-after a successful upgrade by setting the following variable on the `AnsibleAIConnect` specification.
-
-```yaml
-  spec:
-    database:
-        postgres_keep_pvc_after_upgrade: false
-```
