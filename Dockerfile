@@ -1,7 +1,7 @@
-FROM quay.io/operator-framework/ansible-operator:v1.40.0
+FROM quay.io/operator-framework/ansible-operator:v1.42.2
 
 USER root
-RUN dnf update --disableplugin=subscription-manager --security --bugfix -y
+RUN microdnf update -y
 USER 1001
 
 ARG DEFAULT_AI_CONNECT_VERSION
