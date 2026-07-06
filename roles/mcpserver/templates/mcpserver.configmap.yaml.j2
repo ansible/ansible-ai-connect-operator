@@ -9,6 +9,9 @@ metadata:
     {{ lookup("template", "../common/templates/labels/common.yaml.j2") | indent(width=4) | trim }}
 data:
   BASE_URL: "{{ public_base_url }}"
+{% if _mcp_server_url | default('') | length %}
+  MCP_SERVER_URL: "{{ _mcp_server_url }}"
+{% endif %}
   INSTALLER_ID: "{{ __installer_id }}"
   INTERNAL_EMAIL_DOMAINS: "{{ internal_email_domains }}"
 {% if allow_write_operations is defined %}

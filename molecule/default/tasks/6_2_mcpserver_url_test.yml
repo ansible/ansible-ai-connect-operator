@@ -1,0 +1,22 @@
+---
+- block:
+    - name: Get MCP Server ConfigMap
+      kubernetes.core.k8s_info:
+        namespace: '{{ namespace }}'
+        kind: ConfigMap
+        name: ansiblemcpconnect-sample-ansible-mcp-connect-env-properties
+      register: mcpserver_configmap
+
+    - name: Assert MCP_SERVER_URL is set in ConfigMap
+      ansible.builtin.assert:
+        that:
+          - "'MCP_SERVER_URL' in mcpserver_configmap.resources[0].data"
+        fail_msg: ConfigMap does not contain MCP_SERVER_URL
+
+    - name: Assert MCP_SERVER_URL contains the expected origin
+      ansible.builtin.assert:
+        that:
+          - "mcpserver_configmap.resources[0].data.MCP_SERVER_URL == 'http://mcp.test.example.com'"
+        fail_msg: >-
+          MCP_SERVER_URL does not match expected value 'http://mcp.test.example.com',
+          got '{{ mcpserver_configmap.resources[0].data.MCP_SERVER_URL }}'
