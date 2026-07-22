@@ -31,6 +31,13 @@
 - name: Patch Labels
   ansible.builtin.include_tasks: patch_labels.yml
 
+- name: Set gateway hostname for NO_PROXY exclusion
+  ansible.builtin.set_fact:
+    _gateway_hostname: >-
+      {{ extra_settings | default([]) | selectattr('setting', 'equalto', 'ANSIBLE_BASE_JWT_KEY')
+         | map(attribute='value') | select | list | first | default('')
+         | urlsplit('hostname') }}
+
 - name: Apply proxy environment ConfigMap
   kubernetes.core.k8s:
     apply: yes
