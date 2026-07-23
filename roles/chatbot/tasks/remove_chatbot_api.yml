@@ -46,10 +46,3 @@
     name: '{{ ansible_operator_meta.name }}-chatbot-api'
     namespace: '{{ ansible_operator_meta.namespace }}'
     wait: yes
-
-- name: Remove Chatbot PVC
-  kubernetes.core.k8s:
-    state: absent
-    kind: PersistentVolumeClaim
-    name: "{{ ansible_operator_meta.name }}-chatbot-pvc"
-    namespace: "{{ ansible_operator_meta.namespace }}"
