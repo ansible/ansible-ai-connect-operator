@@ -34,8 +34,8 @@
 - name: Set gateway hostname for NO_PROXY exclusion
   ansible.builtin.set_fact:
     _gateway_hostname: >-
-      {{ extra_settings | default([]) | selectattr('setting', 'equalto', 'ANSIBLE_BASE_JWT_KEY')
-         | map(attribute='value') | select | list | first | default('')
+      {{ (extra_settings | default([]) | selectattr('setting', 'equalto', 'ANSIBLE_BASE_JWT_KEY')
+         | map(attribute='value') | select | list | first | default(public_base_url | default('')))
          | urlsplit('hostname') }}
 
 - name: Apply proxy environment ConfigMap
