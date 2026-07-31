@@ -254,7 +254,6 @@ spec:
         ports:
           - containerPort: 8004
             protocol: TCP
-        # No HTTP health endpoint in ansible-mcp-controller; TCP is the best available check.
         readinessProbe:
           tcpSocket:
             port: 8004
@@ -313,7 +312,6 @@ spec:
         ports:
           - containerPort: 8005
             protocol: TCP
-        # No HTTP health endpoint in ansible-mcp-lightspeed; TCP is the best available check.
         readinessProbe:
           tcpSocket:
             port: 8005
