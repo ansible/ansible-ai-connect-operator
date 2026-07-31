@@ -156,21 +156,15 @@ spec:
         - containerPort: {{ default_http_port }}
           protocol: TCP
         readinessProbe:
-          httpGet:
-            path: /api/v1/health
+          tcpSocket:
             port: {{ default_http_port }}
           initialDelaySeconds: 15
           periodSeconds: 10
-          failureThreshold: 3
-          timeoutSeconds: 5
         livenessProbe:
-          httpGet:
-            path: /api/v1/health
+          tcpSocket:
             port: {{ default_http_port }}
           initialDelaySeconds: 15
           periodSeconds: 10
-          failureThreshold: 5
-          timeoutSeconds: 5
         volumeMounts:
 {% if bundle_ca_crt or is_openshift %}
             - name: combined-ca-bundle
