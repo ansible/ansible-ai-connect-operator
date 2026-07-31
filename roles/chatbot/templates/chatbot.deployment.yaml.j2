@@ -169,6 +169,58 @@ spec:
           - containerPort: 8080
 {% endif %}
             protocol: TCP
+{#
+  /liveness and /readiness require Bearer API-key auth (api-key-token).
+  httpGet cannot supply that secret safely, and api-key-token does not honor
+  skip_for_health_probes, so use an exec probe that reads CHATBOT_API_KEY.
+#}
+        startupProbe:
+          exec:
+            command:
+              - /bin/sh
+              - -c
+{% if is_openshift %}
+              - >-
+                $PYTHON -c 'import os,ssl,urllib.request; urllib.request.urlopen(urllib.request.Request("https://127.0.0.1:8443/liveness", headers={"Authorization": "Bearer " + os.environ["CHATBOT_API_KEY"]}), context=ssl._create_unverified_context())'
+{% else %}
+              - >-
+                $PYTHON -c 'import os,urllib.request; urllib.request.urlopen(urllib.request.Request("http://127.0.0.1:8080/liveness", headers={"Authorization": "Bearer " + os.environ["CHATBOT_API_KEY"]}))'
+{% endif %}
+          failureThreshold: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+        readinessProbe:
+          exec:
+            command:
+              - /bin/sh
+              - -c
+{% if is_openshift %}
+              - >-
+                $PYTHON -c 'import os,ssl,urllib.request; urllib.request.urlopen(urllib.request.Request("https://127.0.0.1:8443/readiness", headers={"Authorization": "Bearer " + os.environ["CHATBOT_API_KEY"]}), context=ssl._create_unverified_context())'
+{% else %}
+              - >-
+                $PYTHON -c 'import os,urllib.request; urllib.request.urlopen(urllib.request.Request("http://127.0.0.1:8080/readiness", headers={"Authorization": "Bearer " + os.environ["CHATBOT_API_KEY"]}))'
+{% endif %}
+          initialDelaySeconds: 15
+          periodSeconds: 10
+          failureThreshold: 3
+          timeoutSeconds: 5
+        livenessProbe:
+          exec:
+            command:
+              - /bin/sh
+              - -c
+{% if is_openshift %}
+              - >-
+                $PYTHON -c 'import os,ssl,urllib.request; urllib.request.urlopen(urllib.request.Request("https://127.0.0.1:8443/liveness", headers={"Authorization": "Bearer " + os.environ["CHATBOT_API_KEY"]}), context=ssl._create_unverified_context())'
+{% else %}
+              - >-
+                $PYTHON -c 'import os,urllib.request; urllib.request.urlopen(urllib.request.Request("http://127.0.0.1:8080/liveness", headers={"Authorization": "Bearer " + os.environ["CHATBOT_API_KEY"]}))'
+{% endif %}
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          failureThreshold: 5
+          timeoutSeconds: 5
         volumeMounts:
           - name: ansible-chatbot-storage
             mountPath: /.llama/data
@@ -232,6 +284,21 @@ spec:
         ports:
           - containerPort: 8004
             protocol: TCP
+        # No HTTP health endpoint in ansible-mcp-controller; TCP is the best available check.
+        readinessProbe:
+          tcpSocket:
+            port: 8004
+          initialDelaySeconds: 15
+          periodSeconds: 10
+          failureThreshold: 3
+          timeoutSeconds: 5
+        livenessProbe:
+          tcpSocket:
+            port: 8004
+          initialDelaySeconds: 15
+          periodSeconds: 10
+          failureThreshold: 5
+          timeoutSeconds: 5
         securityContext:
           runAsNonRoot: true
           allowPrivilegeEscalation: false
@@ -276,6 +343,21 @@ spec:
         ports:
           - containerPort: 8005
             protocol: TCP
+        # No HTTP health endpoint in ansible-mcp-lightspeed; TCP is the best available check.
+        readinessProbe:
+          tcpSocket:
+            port: 8005
+          initialDelaySeconds: 15
+          periodSeconds: 10
+          failureThreshold: 3
+          timeoutSeconds: 5
+        livenessProbe:
+          tcpSocket:
+            port: 8005
+          initialDelaySeconds: 15
+          periodSeconds: 10
+          failureThreshold: 5
+          timeoutSeconds: 5
         securityContext:
           runAsNonRoot: true
           allowPrivilegeEscalation: false
