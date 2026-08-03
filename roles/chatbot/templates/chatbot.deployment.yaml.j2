@@ -169,25 +169,44 @@ spec:
           - containerPort: 8080
 {% endif %}
             protocol: TCP
-        readinessProbe:
-          tcpSocket:
+        startupProbe:
+          httpGet:
+            path: /liveness
 {% if is_openshift %}
             port: 8443
+            scheme: HTTPS
 {% else %}
             port: 8080
+            scheme: HTTP
 {% endif %}
-          initialDelaySeconds: 15
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          failureThreshold: 30
+          timeoutSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /readiness
+{% if is_openshift %}
+            port: 8443
+            scheme: HTTPS
+{% else %}
+            port: 8080
+            scheme: HTTP
+{% endif %}
+          initialDelaySeconds: 5
           periodSeconds: 10
           failureThreshold: 3
-          timeoutSeconds: 5
+          timeoutSeconds: 10
         livenessProbe:
-          tcpSocket:
+          httpGet:
+            path: /liveness
 {% if is_openshift %}
             port: 8443
+            scheme: HTTPS
 {% else %}
             port: 8080
+            scheme: HTTP
 {% endif %}
-          initialDelaySeconds: 30
           periodSeconds: 10
           failureThreshold: 5
           timeoutSeconds: 5
