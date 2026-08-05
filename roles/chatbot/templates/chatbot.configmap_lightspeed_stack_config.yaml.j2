@@ -47,7 +47,6 @@ data:
 {% endif %}
     authentication:
       module: "api-key-token"
-      skip_for_health_probes: true
       api_key_config:
         api_key: ${env.CHATBOT_API_KEY}
 {% if _aap_gateway_url is defined or _aap_controller_url is defined %}
