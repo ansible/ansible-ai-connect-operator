@@ -169,6 +169,47 @@ spec:
           - containerPort: 8080
 {% endif %}
             protocol: TCP
+        startupProbe:
+          exec:
+            command:
+              - sh
+              - -c
+{% if is_openshift %}
+              - "curl -sk -o /dev/null -w '%{http_code}' https://localhost:8443/liveness | grep -qE '^(200|401)$'"
+{% else %}
+              - "curl -s -o /dev/null -w '%{http_code}' http://localhost:8080/liveness | grep -qE '^(200|401)$'"
+{% endif %}
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          failureThreshold: 30
+          timeoutSeconds: 5
+        readinessProbe:
+          exec:
+            command:
+              - sh
+              - -c
+{% if is_openshift %}
+              - "curl -sk -o /dev/null -w '%{http_code}' https://localhost:8443/readiness | grep -qE '^(200|401)$'"
+{% else %}
+              - "curl -s -o /dev/null -w '%{http_code}' http://localhost:8080/readiness | grep -qE '^(200|401)$'"
+{% endif %}
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          failureThreshold: 3
+          timeoutSeconds: 10
+        livenessProbe:
+          exec:
+            command:
+              - sh
+              - -c
+{% if is_openshift %}
+              - "curl -sk -o /dev/null -w '%{http_code}' https://localhost:8443/liveness | grep -qE '^(200|401)$'"
+{% else %}
+              - "curl -s -o /dev/null -w '%{http_code}' http://localhost:8080/liveness | grep -qE '^(200|401)$'"
+{% endif %}
+          periodSeconds: 10
+          failureThreshold: 5
+          timeoutSeconds: 5
         volumeMounts:
           - name: ansible-chatbot-storage
             mountPath: /.llama/data
@@ -232,6 +273,20 @@ spec:
         ports:
           - containerPort: 8004
             protocol: TCP
+        readinessProbe:
+          tcpSocket:
+            port: 8004
+          initialDelaySeconds: 15
+          periodSeconds: 10
+          failureThreshold: 3
+          timeoutSeconds: 5
+        livenessProbe:
+          tcpSocket:
+            port: 8004
+          initialDelaySeconds: 15
+          periodSeconds: 10
+          failureThreshold: 5
+          timeoutSeconds: 5
         securityContext:
           runAsNonRoot: true
           allowPrivilegeEscalation: false
@@ -276,6 +331,20 @@ spec:
         ports:
           - containerPort: 8005
             protocol: TCP
+        readinessProbe:
+          tcpSocket:
+            port: 8005
+          initialDelaySeconds: 15
+          periodSeconds: 10
+          failureThreshold: 3
+          timeoutSeconds: 5
+        livenessProbe:
+          tcpSocket:
+            port: 8005
+          initialDelaySeconds: 15
+          periodSeconds: 10
+          failureThreshold: 5
+          timeoutSeconds: 5
         securityContext:
           runAsNonRoot: true
           allowPrivilegeEscalation: false
