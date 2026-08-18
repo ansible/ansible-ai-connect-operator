@@ -1,0 +1,60 @@
+# Allow policy for MCP Server pods.
+# Ingress: OCP router, gateway, and other AAP operator-managed pods on the MCP port.
+# Egress: unrestricted — MCP Server connects to external tool endpoints whose
+# destinations are user-configured and cannot be enumerated at policy time.
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: '{{ ansible_operator_meta.name }}-mcpserver'
+  namespace: '{{ ansible_operator_meta.namespace }}'
+  labels:
+    {{ lookup("template", "../common/templates/labels/common.yaml.j2") | indent(4) | trim }}
+    app.kubernetes.io/component: '{{ deployment_type }}'
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: '{{ ansible_operator_meta.name }}'
+      app.kubernetes.io/managed-by: '{{ deployment_type }}-operator'
+      app.kubernetes.io/component: '{{ deployment_type }}'
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              policy-group.network.openshift.io/ingress: ""
+        - namespaceSelector:
+            matchLabels:
+              network.openshift.io/policy-group: ingress
+      ports:
+        - protocol: TCP
+          port: {{ default_http_port }}
+    - from:
+        - podSelector:
+            matchExpressions:
+              - key: app.kubernetes.io/managed-by
+                operator: In
+                values:
+                  - '{{ deployment_type }}-operator'
+                  - 'aap-operator'
+                  - 'aap-gateway-operator'
+                  - 'ansible-ai-connect-operator'
+        - podSelector:
+            matchLabels:
+              control-plane: controller-manager
+      ports:
+        - protocol: TCP
+          port: {{ default_http_port }}
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: openshift-dns
+      ports:
+        - protocol: TCP
+          port: 5353
+        - protocol: UDP
+          port: 5353
+    - {}

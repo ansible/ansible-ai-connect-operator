@@ -1,0 +1,26 @@
+---
+- name: Apply default deny NetworkPolicy for AnsibleAIConnect operand pods
+  kubernetes.core.k8s:
+    state: present
+    apply: true
+    definition: "{{ lookup('template', 'networking/default-deny.networkpolicy.yaml.j2') }}"
+
+- name: Apply Model API NetworkPolicy
+  kubernetes.core.k8s:
+    state: present
+    apply: true
+    definition: "{{ lookup('template', 'networking/model-api.networkpolicy.yaml.j2') }}"
+
+- name: Apply Chatbot NetworkPolicy
+  kubernetes.core.k8s:
+    state: present
+    apply: true
+    definition: "{{ lookup('template', 'networking/chatbot.networkpolicy.yaml.j2') }}"
+  when: chatbot_config_secret_name | default('') | length > 0
+
+- name: Apply PostgreSQL NetworkPolicy
+  kubernetes.core.k8s:
+    state: present
+    apply: true
+    definition: "{{ lookup('template', 'networking/postgres.networkpolicy.yaml.j2') }}"
+  when: managed_database | default(false) | bool

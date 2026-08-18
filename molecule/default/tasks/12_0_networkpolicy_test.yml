@@ -1,0 +1,75 @@
+---
+- name: Validate AnsibleAIConnect NetworkPolicies
+  block:
+    - name: Get default-deny NetworkPolicy
+      kubernetes.core.k8s_info:
+        namespace: '{{ namespace }}'
+        api_version: networking.k8s.io/v1
+        kind: NetworkPolicy
+        name: ansibleaiconnect-sample-default-deny
+      register: np_default_deny
+
+    - name: Assert default-deny NetworkPolicy exists and has correct spec
+      ansible.builtin.assert:
+        that:
+          - np_default_deny.resources | length == 1
+          - "'Ingress' in np_default_deny.resources[0].spec.policyTypes"
+          - "'Egress' in np_default_deny.resources[0].spec.policyTypes"
+          - np_default_deny.resources[0].spec.ingress is not defined
+          - np_default_deny.resources[0].spec.egress is not defined
+          - np_default_deny.resources[0].spec.podSelector.matchExpressions is defined
+        fail_msg: "default-deny NetworkPolicy is missing or misconfigured"
+
+    - name: Get Model API NetworkPolicy
+      kubernetes.core.k8s_info:
+        namespace: '{{ namespace }}'
+        api_version: networking.k8s.io/v1
+        kind: NetworkPolicy
+        name: ansibleaiconnect-sample-api
+      register: np_api
+
+    - name: Assert Model API NetworkPolicy exists with Ingress and Egress
+      ansible.builtin.assert:
+        that:
+          - np_api.resources | length == 1
+          - "'Ingress' in np_api.resources[0].spec.policyTypes"
+          - "'Egress' in np_api.resources[0].spec.policyTypes"
+          - np_api.resources[0].spec.ingress | length > 0
+          - np_api.resources[0].spec.egress | length > 0
+        fail_msg: "Model API NetworkPolicy is missing or misconfigured"
+
+    - name: Get PostgreSQL NetworkPolicy
+      kubernetes.core.k8s_info:
+        namespace: '{{ namespace }}'
+        api_version: networking.k8s.io/v1
+        kind: NetworkPolicy
+        name: ansibleaiconnect-sample-postgres-15
+      register: np_postgres
+
+    - name: Assert PostgreSQL NetworkPolicy exists (managed database)
+      ansible.builtin.assert:
+        that:
+          - np_postgres.resources | length == 1
+          - "'Ingress' in np_postgres.resources[0].spec.policyTypes"
+          - "'Egress' in np_postgres.resources[0].spec.policyTypes"
+          - np_postgres.resources[0].spec.ingress | length > 0
+          - np_postgres.resources[0].spec.egress | length > 0
+        fail_msg: "PostgreSQL NetworkPolicy is missing or misconfigured"
+
+    - name: Collect all NetworkPolicy names
+      kubernetes.core.k8s_info:
+        namespace: '{{ namespace }}'
+        api_version: networking.k8s.io/v1
+        kind: NetworkPolicy
+      register: all_network_policies
+
+    - name: Assert expected number of AI Connect NetworkPolicies exist
+      vars:
+        ai_nps: >-
+          {{ all_network_policies.resources
+             | selectattr('metadata.name', 'match', '^ansibleaiconnect-sample-')
+             | list }}
+      ansible.builtin.assert:
+        that:
+          - ai_nps | length >= 3
+        fail_msg: "Expected at least 3 AI Connect NetworkPolicies, got {{ ai_nps | length }}"
