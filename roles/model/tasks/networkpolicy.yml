@@ -1,4 +1,8 @@
 ---
+- name: Load postgres vars for NP template rendering
+  ansible.builtin.include_vars:
+    file: '{{ role_path }}/../postgres/vars/main.yml'
+
 - name: Apply default deny NetworkPolicy for AnsibleAIConnect operand pods
   kubernetes.core.k8s:
     state: present
@@ -18,11 +22,27 @@
     definition: "{{ lookup('template', 'networking/chatbot.networkpolicy.yaml.j2') }}"
   when: chatbot_config_secret_name | default('') | length > 0
 
+- name: Remove stale Chatbot NetworkPolicy when chatbot is disabled
+  kubernetes.core.k8s:
+    state: absent
+    api_version: networking.k8s.io/v1
+    kind: NetworkPolicy
+    name: '{{ ansible_operator_meta.name }}-chatbot'
+    namespace: '{{ ansible_operator_meta.namespace }}'
+  when: chatbot_config_secret_name | default('') | length == 0
+
 - name: Apply PostgreSQL NetworkPolicy
-  vars:
-    supported_pg_version: 15
   kubernetes.core.k8s:
     state: present
     apply: true
     definition: "{{ lookup('template', 'networking/postgres.networkpolicy.yaml.j2') }}"
   when: managed_database | default(false) | bool
+
+- name: Remove stale PostgreSQL NetworkPolicy when using external database
+  kubernetes.core.k8s:
+    state: absent
+    api_version: networking.k8s.io/v1
+    kind: NetworkPolicy
+    name: '{{ ansible_operator_meta.name }}-postgres-{{ supported_pg_version }}'
+    namespace: '{{ ansible_operator_meta.namespace }}'
+  when: not (managed_database | default(false) | bool)

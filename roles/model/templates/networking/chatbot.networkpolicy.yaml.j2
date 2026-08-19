@@ -35,7 +35,7 @@ spec:
             matchLabels:
               control-plane: controller-manager
       ports:
-{% if is_openshift | default(true) %}
+{% if is_openshift %}
         - protocol: TCP
           port: 8443
 {% else %}

@@ -15,8 +15,8 @@
           - np_default_deny.resources | length == 1
           - "'Ingress' in np_default_deny.resources[0].spec.policyTypes"
           - "'Egress' in np_default_deny.resources[0].spec.policyTypes"
-          - np_default_deny.resources[0].spec.ingress is not defined
-          - np_default_deny.resources[0].spec.egress is not defined
+          - np_default_deny.resources[0].spec.ingress | default([]) | length == 0
+          - np_default_deny.resources[0].spec.egress | default([]) | length == 0
           - np_default_deny.resources[0].spec.podSelector.matchExpressions is defined
         fail_msg: "default-deny NetworkPolicy is missing or misconfigured"
 
@@ -73,3 +73,42 @@
         that:
           - ai_nps | length >= 3
         fail_msg: "Expected at least 3 AI Connect NetworkPolicies, got {{ ai_nps | length }}"
+
+- name: Validate AnsibleMCPConnect NetworkPolicies
+  block:
+    - name: Get MCP Server default-deny NetworkPolicy
+      kubernetes.core.k8s_info:
+        namespace: '{{ namespace }}'
+        api_version: networking.k8s.io/v1
+        kind: NetworkPolicy
+        name: ansiblemcpconnect-sample-default-deny
+      register: np_mcp_default_deny
+
+    - name: Assert MCP Server default-deny NetworkPolicy exists and has correct spec
+      ansible.builtin.assert:
+        that:
+          - np_mcp_default_deny.resources | length == 1
+          - "'Ingress' in np_mcp_default_deny.resources[0].spec.policyTypes"
+          - "'Egress' in np_mcp_default_deny.resources[0].spec.policyTypes"
+          - np_mcp_default_deny.resources[0].spec.ingress | default([]) | length == 0
+          - np_mcp_default_deny.resources[0].spec.egress | default([]) | length == 0
+          - np_mcp_default_deny.resources[0].spec.podSelector.matchExpressions is defined
+        fail_msg: "MCP Server default-deny NetworkPolicy is missing or misconfigured"
+
+    - name: Get MCP Server NetworkPolicy
+      kubernetes.core.k8s_info:
+        namespace: '{{ namespace }}'
+        api_version: networking.k8s.io/v1
+        kind: NetworkPolicy
+        name: ansiblemcpconnect-sample-mcpserver
+      register: np_mcpserver
+
+    - name: Assert MCP Server NetworkPolicy exists with Ingress and Egress
+      ansible.builtin.assert:
+        that:
+          - np_mcpserver.resources | length == 1
+          - "'Ingress' in np_mcpserver.resources[0].spec.policyTypes"
+          - "'Egress' in np_mcpserver.resources[0].spec.policyTypes"
+          - np_mcpserver.resources[0].spec.ingress | length > 0
+          - np_mcpserver.resources[0].spec.egress | length > 0
+        fail_msg: "MCP Server NetworkPolicy is missing or misconfigured"
