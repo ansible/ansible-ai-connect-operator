@@ -1,4 +1,22 @@
 ---
+- name: Wait for Gateway readiness
+  ansible.builtin.uri:
+    url: "{{ public_base_url | regex_replace('\\/$', '') }}/api/gateway/v1/ping/"
+    method: GET
+    validate_certs: false
+    timeout: 10
+    return_content: true
+  register: gateway_check
+  until:
+    - gateway_check is not failed
+    - gateway_check.status | default(0) == 200
+    - gateway_check.json.status | default('') == 'good'
+  retries: 120
+  delay: 5
+  ignore_errors: true
+  changed_when: false
+  when: public_base_url | default('') | length > 0
+
 - name: Apply Model ConfigMap resources
   kubernetes.core.k8s:
     apply: yes
