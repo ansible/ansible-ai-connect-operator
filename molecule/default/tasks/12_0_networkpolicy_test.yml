@@ -1,4 +1,8 @@
 ---
+- name: Load postgres vars for supported_pg_version
+  ansible.builtin.include_vars:
+    file: '{{ project_dir }}/roles/postgres/vars/main.yml'
+
 - name: Validate AnsibleAIConnect NetworkPolicies
   block:
     - name: Get default-deny NetworkPolicy
@@ -43,7 +47,7 @@
         namespace: '{{ namespace }}'
         api_version: networking.k8s.io/v1
         kind: NetworkPolicy
-        name: ansibleaiconnect-sample-postgres-15
+        name: 'ansibleaiconnect-sample-postgres-{{ supported_pg_version }}'
       register: np_postgres
 
     - name: Assert PostgreSQL NetworkPolicy exists (managed database)
@@ -55,6 +59,21 @@
           - np_postgres.resources[0].spec.ingress | length > 0
           - np_postgres.resources[0].spec.egress | length > 0
         fail_msg: "PostgreSQL NetworkPolicy is missing or misconfigured"
+
+    - name: Get Chatbot NetworkPolicy
+      kubernetes.core.k8s_info:
+        namespace: '{{ namespace }}'
+        api_version: networking.k8s.io/v1
+        kind: NetworkPolicy
+        name: ansibleaiconnect-sample-chatbot
+      register: np_chatbot
+
+    - name: Assert chatbot NP is absent when chatbot_config_secret_name is unset
+      ansible.builtin.assert:
+        that:
+          - np_chatbot.resources | length == 0
+        fail_msg: "Chatbot NP should be absent when chatbot_config_secret_name is unset"
+      when: chatbot_config_secret_name is not defined or not chatbot_config_secret_name
 
     - name: Collect all NetworkPolicy names
       kubernetes.core.k8s_info:
