@@ -26,6 +26,9 @@
         service_host_ip: '{{ aiconnect_api_pod.resources[0].status.hostIP }}'
         service_host_port: '{{ aiconnect_api_service.resources[0].spec.ports[0].nodePort }}'
       register: service_host_response
+      retries: 6
+      delay: 10
+      until: service_host_response.status == 200
 
     - name: Assert Health Check response
       ansible.builtin.assert:
