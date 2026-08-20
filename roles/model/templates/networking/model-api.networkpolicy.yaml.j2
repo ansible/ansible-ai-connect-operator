@@ -1,5 +1,6 @@
 # Allow policy for Model API (ansible-ai-connect-api) pods.
-# Ingress: OCP router, gateway, and other AAP operator-managed pods on port 8000.
+# Ingress: any source on port 8000 (the HTTP serving port exposed via
+#          ingress/route/NodePort) plus internal operator and gateway traffic.
 # Egress: unrestricted — Model API connects to external model providers (IBM watsonx,
 # Azure OpenAI, etc.) whose endpoints are user-configured and cannot be enumerated.
 ---
@@ -21,29 +22,7 @@ spec:
     - Ingress
     - Egress
   ingress:
-    - from:
-        - namespaceSelector:
-            matchLabels:
-              policy-group.network.openshift.io/ingress: ""
-        - namespaceSelector:
-            matchLabels:
-              network.openshift.io/policy-group: ingress
-      ports:
-        - protocol: TCP
-          port: 8000
-    - from:
-        - podSelector:
-            matchExpressions:
-              - key: app.kubernetes.io/managed-by
-                operator: In
-                values:
-                  - '{{ deployment_type }}-operator'
-                  - 'aap-operator'
-                  - 'aap-gateway-operator'
-        - podSelector:
-            matchLabels:
-              control-plane: controller-manager
-      ports:
+    - ports:
         - protocol: TCP
           port: 8000
   egress:

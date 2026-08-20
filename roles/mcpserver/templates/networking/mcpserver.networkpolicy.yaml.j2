@@ -1,5 +1,6 @@
 # Allow policy for MCP Server pods.
-# Ingress: OCP router, gateway, and other AAP operator-managed pods on the MCP port.
+# Ingress: any source on the HTTP serving port (exposed via ingress/route/NodePort)
+#          plus internal operator and gateway traffic.
 # Egress: unrestricted — MCP Server connects to external tool endpoints whose
 # destinations are user-configured and cannot be enumerated at policy time.
 ---
@@ -21,30 +22,7 @@ spec:
     - Ingress
     - Egress
   ingress:
-    - from:
-        - namespaceSelector:
-            matchLabels:
-              policy-group.network.openshift.io/ingress: ""
-        - namespaceSelector:
-            matchLabels:
-              network.openshift.io/policy-group: ingress
-      ports:
-        - protocol: TCP
-          port: {{ default_http_port }}
-    - from:
-        - podSelector:
-            matchExpressions:
-              - key: app.kubernetes.io/managed-by
-                operator: In
-                values:
-                  - '{{ deployment_type }}-operator'
-                  - 'aap-operator'
-                  - 'aap-gateway-operator'
-                  - 'ansible-ai-connect-operator'
-        - podSelector:
-            matchLabels:
-              control-plane: controller-manager
-      ports:
+    - ports:
         - protocol: TCP
           port: {{ default_http_port }}
   egress:
