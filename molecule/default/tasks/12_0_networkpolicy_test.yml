@@ -59,6 +59,14 @@
           - np_postgres.resources[0].spec.ingress | length > 0
           - np_postgres.resources[0].spec.egress | length > 0
         fail_msg: "PostgreSQL NetworkPolicy is missing or misconfigured"
+      when: managed_database | default(true) | bool
+
+    - name: Assert PostgreSQL NP is absent when managed_database is false
+      ansible.builtin.assert:
+        that:
+          - np_postgres.resources | length == 0
+        fail_msg: "Postgres NP should be absent when managed_database is false"
+      when: not (managed_database | default(true) | bool)
 
     - name: Get Chatbot NetworkPolicy
       kubernetes.core.k8s_info:

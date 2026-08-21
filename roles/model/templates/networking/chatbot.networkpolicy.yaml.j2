@@ -33,6 +33,7 @@ spec:
                   - 'aap-gateway-operator'
         - podSelector:
             matchLabels:
+              app.kubernetes.io/managed-by: '{{ deployment_type }}-operator'
               control-plane: controller-manager
       ports:
 {% if is_openshift %}
