@@ -1,0 +1,47 @@
+# Allow policy for the managed PostgreSQL StatefulSet pods.
+# Ingress: from AI Connect pods (model-api, chatbot) on port 5432.
+# Egress: DNS only — postgres has no need for external connectivity.
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: '{{ ansible_operator_meta.name }}-postgres-{{ supported_pg_version }}'
+  namespace: '{{ ansible_operator_meta.namespace }}'
+  labels:
+    {{ lookup("template", "../common/templates/labels/common.yaml.j2") | indent(4) | trim }}
+    app.kubernetes.io/component: database
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: 'postgres-{{ supported_pg_version }}'
+      app.kubernetes.io/instance: 'postgres-{{ supported_pg_version }}-{{ ansible_operator_meta.name }}'
+      app.kubernetes.io/component: database
+      app.kubernetes.io/managed-by: '{{ deployment_type }}-operator'
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - podSelector:
+            matchExpressions:
+              - key: app.kubernetes.io/managed-by
+                operator: In
+                values:
+                  - '{{ deployment_type }}-operator'
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/managed-by: '{{ deployment_type }}-operator'
+              control-plane: controller-manager
+      ports:
+        - protocol: TCP
+          port: 5432
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: openshift-dns
+      ports:
+        - protocol: TCP
+          port: 5353
+        - protocol: UDP
+          port: 5353

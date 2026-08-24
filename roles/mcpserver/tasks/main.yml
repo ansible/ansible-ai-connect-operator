@@ -35,6 +35,9 @@
 - name: Resolve MCP server URL
   ansible.builtin.include_tasks: resolve_mcp_server_url.yml
 
+- name: Apply NetworkPolicies for AnsibleMCPConnect operand pods
+  ansible.builtin.include_tasks: networkpolicy.yml
+
 - name: Deploy MCP Server API service
   ansible.builtin.include_tasks: deploy_mcpserver_api.yml
 

@@ -1,0 +1,56 @@
+# Allow policy for Chatbot API pods.
+# Chatbot is internal-only (headless Service, no Ingress/Route).
+# Ingress: from other AI Connect pods (model-api calls chatbot).
+# Egress: unrestricted — chatbot connects to external LLM providers and
+# MCP servers whose endpoints are user-configured.
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: '{{ ansible_operator_meta.name }}-chatbot'
+  namespace: '{{ ansible_operator_meta.namespace }}'
+  labels:
+    {{ lookup("template", "../common/templates/labels/common.yaml.j2") | indent(4) | trim }}
+    app.kubernetes.io/component: '{{ deployment_type }}-chatbot-api'
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: '{{ ansible_operator_meta.name }}'
+      app.kubernetes.io/managed-by: '{{ deployment_type }}-operator'
+      app.kubernetes.io/component: '{{ deployment_type }}-chatbot-api'
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - podSelector:
+            matchExpressions:
+              - key: app.kubernetes.io/managed-by
+                operator: In
+                values:
+                  - '{{ deployment_type }}-operator'
+                  - 'aap-operator'
+                  - 'aap-gateway-operator'
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/managed-by: '{{ deployment_type }}-operator'
+              control-plane: controller-manager
+      ports:
+{% if is_openshift %}
+        - protocol: TCP
+          port: 8443
+{% else %}
+        - protocol: TCP
+          port: 8080
+{% endif %}
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: openshift-dns
+      ports:
+        - protocol: TCP
+          port: 5353
+        - protocol: UDP
+          port: 5353
+    - {}

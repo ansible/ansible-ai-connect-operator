@@ -29,6 +29,7 @@
             - tasks/9_0_azure_openai_url_append_test.yml
             - tasks/10_0_csrf_trusted_origins_test.yml
             - tasks/11_0_url_status_test.yml
+            - tasks/12_0_networkpolicy_test.yml
           tags:
             - always
       rescue:
