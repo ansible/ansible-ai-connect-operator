@@ -44,6 +44,10 @@ spec:
 {% endif %}
     spec:
       serviceAccountName: '{{ ansible_operator_meta.name }}'
+      # Disable Kubernetes service-link env injection. A Service named "mcp" in
+      # the namespace would otherwise inject MCP_PORT=tcp://<ip>:<port>, clobbering
+      # the backend's listen port and causing NGINX 502s. See AAP-90657.
+      enableServiceLinks: false
 {% if image_pull_secrets | length > 0 %}
       imagePullSecrets:
 {% for secret in image_pull_secrets %}
