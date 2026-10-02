@@ -4,20 +4,24 @@
   group: aiconnect.ansible.com
   kind: AnsibleAIConnect
   playbook: playbooks/ansibleaiconnect.yml
+  markUnsafe: true
 - version: v1alpha1
   group: mcpconnect.ansible.com
   kind: AnsibleMCPConnect
   playbook: playbooks/ansiblemcpconnect.yml
+  markUnsafe: true
 
 - version: v1alpha1
   group: mcpconnect.ansible.com
   kind: AnsibleMCPConnectBackup
   role: mcpbackup
   snakeCaseParameters: False
+  markUnsafe: true
 
 - version: v1alpha1
   group: mcpconnect.ansible.com
   kind: AnsibleMCPConnectRestore
   role: mcprestore
   snakeCaseParameters: False
+  markUnsafe: true
 #+kubebuilder:scaffold:watch
