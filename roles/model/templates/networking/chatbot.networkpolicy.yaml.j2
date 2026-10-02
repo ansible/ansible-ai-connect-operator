@@ -22,6 +22,12 @@ spec:
     - Ingress
     - Egress
   ingress:
+    # Allow traffic from AAP component pods and the operator
+    # controller-manager. The manager pod carries only control-plane:
+    # controller-manager (see config/manager/manager.yaml), not
+    # app.kubernetes.io/managed-by. namespaceSelector: {} + podSelector (same
+    # list item = AND) allows it to reach the chatbot when it runs in a
+    # separate namespace.
     - from:
         - podSelector:
             matchExpressions:
@@ -31,9 +37,9 @@ spec:
                   - '{{ deployment_type }}-operator'
                   - 'aap-operator'
                   - 'aap-gateway-operator'
-        - podSelector:
+        - namespaceSelector: {}
+          podSelector:
             matchLabels:
-              app.kubernetes.io/managed-by: '{{ deployment_type }}-operator'
               control-plane: controller-manager
       ports:
 {% if is_openshift %}
