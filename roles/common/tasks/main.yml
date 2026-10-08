@@ -38,6 +38,33 @@
          | map(attribute='value') | select | list | first | default(public_base_url | default('')))
          | urlsplit('hostname') }}
 
+- name: Pre-read Chatbot configuration secret for NO_PROXY exclusion
+  kubernetes.core.k8s_info:
+    kind: Secret
+    namespace: '{{ ansible_operator_meta.namespace }}'
+    name: '{{ chatbot_config_secret_name }}'
+  register: _chatbot_secret_for_proxy
+  no_log: "{{ no_log }}"
+  when: chatbot_config_secret_name | default('') | length > 0
+
+- name: Set Chatbot AAP gateway hostname for NO_PROXY exclusion
+  ansible.builtin.set_fact:
+    _aap_gateway_hostname: "{{ _chatbot_secret_for_proxy['resources'][0]['data'].aap_gateway_url | b64decode | urlsplit('hostname') }}"
+  no_log: "{{ no_log }}"
+  when:
+    - chatbot_config_secret_name | default('') | length > 0
+    - _chatbot_secret_for_proxy['resources'] | default([]) | length > 0
+    - _chatbot_secret_for_proxy['resources'][0]['data'].aap_gateway_url is defined
+
+- name: Set Chatbot AAP controller hostname for NO_PROXY exclusion
+  ansible.builtin.set_fact:
+    _aap_controller_hostname: "{{ _chatbot_secret_for_proxy['resources'][0]['data'].aap_controller_url | b64decode | urlsplit('hostname') }}"
+  no_log: "{{ no_log }}"
+  when:
+    - chatbot_config_secret_name | default('') | length > 0
+    - _chatbot_secret_for_proxy['resources'] | default([]) | length > 0
+    - _chatbot_secret_for_proxy['resources'][0]['data'].aap_controller_url is defined
+
 - name: Apply proxy environment ConfigMap
   kubernetes.core.k8s:
     apply: yes
