@@ -1,0 +1,62 @@
+---
+- block:
+    - name: Idle the MCP Server
+      kubernetes.core.k8s:
+        state: present
+        definition:
+          apiVersion: mcpconnect.ansible.com/v1alpha1
+          kind: AnsibleMCPConnect
+          metadata:
+            name: ansiblemcpconnect-sample
+            namespace: '{{ namespace }}'
+          spec:
+            idle_deployment: true
+
+    - name: Wait for the MCP Server Deployment to scale down
+      kubernetes.core.k8s_info:
+        namespace: '{{ namespace }}'
+        kind: Deployment
+        name: ansiblemcpconnect-sample
+      register: idled_deployment
+      until:
+        - idled_deployment.resources | length > 0
+        - idled_deployment.resources[0].spec.replicas == 0
+        - idled_deployment.resources[0].status.replicas | default(0) == 0
+      retries: 30
+      delay: 10
+
+    - name: Assert no MCP Server Pods remain
+      kubernetes.core.k8s_info:
+        namespace: '{{ namespace }}'
+        kind: Pod
+        label_selectors:
+          - app.kubernetes.io/name = ansiblemcpconnect-sample
+      register: idled_pods
+      until: idled_pods.resources | length == 0
+      retries: 30
+      delay: 10
+
+    - name: Un-idle the MCP Server
+      kubernetes.core.k8s:
+        state: present
+        definition:
+          apiVersion: mcpconnect.ansible.com/v1alpha1
+          kind: AnsibleMCPConnect
+          metadata:
+            name: ansiblemcpconnect-sample
+            namespace: '{{ namespace }}'
+          spec:
+            idle_deployment: false
+
+    - name: Wait for the MCP Server Deployment to scale back up
+      kubernetes.core.k8s_info:
+        namespace: '{{ namespace }}'
+        kind: Deployment
+        name: ansiblemcpconnect-sample
+      register: unidled_deployment
+      until:
+        - unidled_deployment.resources | length > 0
+        - unidled_deployment.resources[0].spec.replicas > 0
+        - unidled_deployment.resources[0].status.readyReplicas | default(0) > 0
+      retries: 60
+      delay: 10

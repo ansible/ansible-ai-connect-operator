@@ -12,6 +12,10 @@
     api_version: 'mcpconnect.ansible.com/v1alpha1'
     deployment_type: 'ansible-mcp-connect'
 
+- name: Idle AnsibleMCPConnect
+  ansible.builtin.include_tasks: idle_deployment.yml
+  when: idle_deployment | bool
+
 - name: Set AnsibleMCPConnect service images
   ansible.builtin.include_tasks: set_images.yml
 

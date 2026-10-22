@@ -226,5 +226,6 @@ Key configuration options for the `AnsibleMCPConnect` include:
 - `image_pull_secrets`: List of secrets for pulling container images from private registries
 - `api.replicas`: Number of pod replicas (default: 1)
 - `api.resource_requirements`: CPU and memory limits/requests
+- `idle_deployment`: Scale the deployment down to zero replicas to put the MCP Server into an idle state (default: `false`)
 
 For a complete list of configuration options, see the [mcpserver role documentation](../roles/mcpserver/README.md).

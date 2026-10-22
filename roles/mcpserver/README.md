@@ -70,6 +70,12 @@ Role Variables
 
 - `bundle_cacert_secret`: Secret containing custom CA trusted bundle (optional)
 
+### Idle Deployment
+
+- `idle_deployment`: Scale the MCP Server deployment down to zero replicas to put it into an idle state (default: `false`)
+
+  Set this to `true` to idle the MCP Server alongside the other AAP components during a maintenance window, and back to `false` to un-idle it. While idled, the role scales the deployment to zero and stops reconciling; the HorizontalPodAutoscaler is left in place but is inert, because Kubernetes disables autoscaling for a target with zero replicas.
+
 Dependencies
 ------------
 
@@ -122,12 +128,13 @@ The role performs the following tasks in order:
 
 1. Combines default and custom variables for each component
 2. Configures the cluster using the common role
-3. Sets MCP Server service images
-4. Sets bundle certificate authority (if configured)
-5. Loads Route TLS certificate (if using OpenShift routes with TLS)
-6. Deploys MCP Server API service (ConfigMap, Service, Deployment, Ingress/Route)
-7. Sets up HorizontalPodAutoscaler
-8. Updates status variables
+3. Idles the deployment and ends the play (only when `idle_deployment` is `true`)
+4. Sets MCP Server service images
+5. Sets bundle certificate authority (if configured)
+6. Loads Route TLS certificate (if using OpenShift routes with TLS)
+7. Deploys MCP Server API service (ConfigMap, Service, Deployment, Ingress/Route)
+8. Sets up HorizontalPodAutoscaler
+9. Updates status variables
 
 License
 -------
