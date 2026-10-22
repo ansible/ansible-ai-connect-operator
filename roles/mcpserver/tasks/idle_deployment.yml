@@ -8,7 +8,7 @@
 
 - name: Scale down MCP Server Deployment
   kubernetes.core.k8s:
-    state: present
+    state: patched
     wait: true
     definition:
       apiVersion: apps/v1
