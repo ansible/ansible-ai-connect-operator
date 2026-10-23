@@ -637,6 +637,13 @@ spec:
         - urn:alm:descriptor:com.tectonic.ui:advanced
         - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
         - urn:alm:descriptor:com.tectonic.ui:hidden
+      - description: Scale down deployments to put the MCP Server into an idle state
+        displayName: Idle MCP Server
+        path: idle_deployment
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:advanced
+        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+        - urn:alm:descriptor:com.tectonic.ui:hidden
       statusDescriptors:
       - description: Image of the instance deployed
         displayName: Image

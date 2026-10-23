@@ -1,0 +1,23 @@
+---
+# Scale the MCP Server down to zero replicas so the AAP CR can idle/un-idle it
+# together with the other components during a maintenance window.
+#
+# The HorizontalPodAutoscaler is intentionally left in place: Kubernetes
+# disables autoscaling for a target whose .spec.replicas is 0, so the HPA
+# cannot wake the deployment back up while it is idled.
+
+- name: Scale down MCP Server Deployment
+  kubernetes.core.k8s:
+    state: patched
+    wait: true
+    definition:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: '{{ ansible_operator_meta.name }}'
+        namespace: '{{ ansible_operator_meta.namespace }}'
+      spec:
+        replicas: 0
+
+- name: End Playbook
+  ansible.builtin.meta: end_play

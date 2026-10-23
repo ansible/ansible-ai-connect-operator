@@ -160,6 +160,13 @@ no_proxy: "{{ lookup('env', 'no_proxy') or lookup('env', 'NO_PROXY') or '' }}"
 # ========================================
 
 # ========================================
+# Idle deployment
+# ----------------------------------------
+# idle_deployment - Scale down deployments to put the MCP Server into an idle state
+idle_deployment: false
+# ========================================
+
+# ========================================
 # Unused by AnsibleMCPConnect
 # ----------------------------------------
 # ipv6_disabled: false
