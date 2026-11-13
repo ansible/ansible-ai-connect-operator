@@ -70,3 +70,6 @@
     apply: yes
     definition: "{{ lookup('template', 'proxy-env.configmap.yaml.j2') }}"
     state: "{{ 'present' if (http_proxy or https_proxy or no_proxy) else 'absent' }}"
+
+- name: Strip last-applied-configuration from operator-managed secrets
+  ansible.builtin.include_tasks: strip_secret_last_applied.yml

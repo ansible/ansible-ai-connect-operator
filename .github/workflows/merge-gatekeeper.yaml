@@ -18,4 +18,6 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           interval: 60
-          timeout: 1200
+          # Kind molecule is regularly ~18-22m; leftover-strip coverage
+          # added another reconcile. 20m was racing a green molecule job.
+          timeout: 2400
