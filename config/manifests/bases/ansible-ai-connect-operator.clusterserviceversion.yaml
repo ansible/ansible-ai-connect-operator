@@ -176,6 +176,11 @@ spec:
         path: chatbot_api.topology_spread_constraints
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:advanced
+      - description: Resource requirements for all init containers.
+        displayName: Init container resource requirements
+        path: init_container_resource_requirements
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:resourceRequirements
       - displayName: PostgreSQL Database configuration
         path: database
         x-descriptors:
