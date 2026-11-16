@@ -19,10 +19,13 @@ a private image, so a Docker config containing a credential with **pull** access
 repository is required. Use a read-only Quay robot account for this, not your personal
 login.
 
-Login with the robot credentials and let the tool write the config:
+Login with the robot credentials. Point `--authfile` at the Docker config so the
+`DOCKER_CONFIG_JSON` step below reads the file you just wrote (Podman's default auth
+file is `${XDG_RUNTIME_DIR}/containers/auth.json`, not `~/.docker/config.json`):
 
 ```
-podman login --username 'ansible+<robot>' quay.io     # prompts for the robot token
+podman login --authfile ~/.docker/config.json \
+  --username 'ansible+<robot>' quay.io     # prompts for the robot token
 ```
 
 That writes the credential to `~/.docker/config.json`; encode that file for the variable:

@@ -50,8 +50,13 @@ jobs:
         # separate static copy of someone's ~/.docker/config.json as a repository secret.
         run: |
           AUTH=$(printf '%s' "${QUAY_USER}:${QUAY_TOKEN}" | base64 -w0)
-          printf '{"auths":{"quay.io":{"auth":"%s"}}}' "$AUTH" | base64 -w0 \
-            | sed 's/^/DOCKER_CONFIG_JSON=/' >> "$GITHUB_ENV"
+          CONFIG=$(printf '{"auths":{"quay.io":{"auth":"%s"}}}' "$AUTH" | base64 -w0)
+          # This value is derived at runtime, so it is not a registered repository
+          # secret and GitHub will not redact it by itself. Mask both forms before
+          # anything can print the Secret that carries them.
+          echo "::add-mask::$AUTH"
+          echo "::add-mask::$CONFIG"
+          printf 'DOCKER_CONFIG_JSON=%s\n' "$CONFIG" >> "$GITHUB_ENV"
         env:
           QUAY_USER: ${{ secrets.QUAY_USER }}
           QUAY_TOKEN: ${{ secrets.QUAY_TOKEN }}
