@@ -9,7 +9,7 @@
       ansible.builtin.fail:
         msg: |
           You must specify the DOCKER_CONFIG_JSON environment variable in order to run the
-          'default' scenario
+          'kind' scenario
       when: not docker_config_json
 
     - name: Create test kind cluster

@@ -14,7 +14,18 @@ pip install kubernetes
 
 ## Configure required environment variables
 
-The `DOCKER_CONFIG_JSON` value should be obtained from your local `.docker/config.json` file.
+The scenarios deploy pods that pull `quay.io/ansible/ansible-ai-connect-service`, which is
+a private image, so a Docker config containing a credential with **pull** access to that
+repository is required. Use a read-only Quay robot account for this, not your personal
+login.
+
+Login with the robot credentials and let the tool write the config:
+
+```
+podman login --username 'ansible+<robot>' quay.io     # prompts for the robot token
+```
+
+That writes the credential to `~/.docker/config.json`; encode that file for the variable:
 
 ```
 export DOCKER_CONFIG_JSON=`base64 --wrap=0 ~/.docker/config.json`
@@ -25,6 +36,9 @@ export DOCKER_CONFIG_JSON=`base64 --wrap=0 ~/.docker/config.json`
 ```
 export DOCKER_CONFIG_JSON=`base64 -i ~/.docker/config.json`
 ```
+
+CI does not use a separate secret for this: the Molecule workflows derive the config from
+the `QUAY_USER`/`QUAY_TOKEN` robot credentials the publish workflows already use.
 
 ## Using `minikube`
 

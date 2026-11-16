@@ -10,7 +10,6 @@ jobs:
     env:
       OPERATOR_IMAGE: ${{ vars.TESTING_OPERATOR_IMAGE }}
       OPERATOR_PULL_POLICY: ${{ vars.TESTING_OPERATOR_PULL_POLICY }}
-      DOCKER_CONFIG_JSON: ${{ secrets.TESTING_DOCKER_CONFIG_JSON }}
       DOCKER_API_VERSION: "1.44"
 
     steps:
@@ -37,6 +36,19 @@ jobs:
     - name: Install Collections
       run: |
         ansible-galaxy collection install -r molecule/requirements.yml
+
+    - name: Compose the Quay pull credential
+      # The scenarios create a kubernetes.io/dockerconfigjson secret so the pods can pull
+      # quay.io/ansible/ansible-ai-connect-service, which is private. Derive it from the
+      # robot account the publish workflows already use, rather than keeping a separate
+      # static copy of someone's ~/.docker/config.json as a repository secret.
+      run: |
+        AUTH=$(printf '%s' "${QUAY_USER}:${QUAY_TOKEN}" | base64 -w0)
+        printf '{"auths":{"quay.io":{"auth":"%s"}}}' "$AUTH" | base64 -w0 \
+          | sed 's/^/DOCKER_CONFIG_JSON=/' >> "$GITHUB_ENV"
+      env:
+        QUAY_USER: ${{ secrets.QUAY_USER }}
+        QUAY_TOKEN: ${{ secrets.QUAY_TOKEN }}
 
     - name: Run Molecule
       env:
