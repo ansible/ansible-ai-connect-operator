@@ -46,9 +46,11 @@
             - api_version: apps/v1
               kind: Deployment
             - api_version: v1
-              kind: Secret
-            - api_version: v1
               kind: ConfigMap
+          # Secrets are deliberately not gathered here: this playbook runs in a public
+          # repository, and printing them would write redhat-operators-pull-secret (and
+          # the other credentials the tests create) into the workflow log. See
+          # tasks/13_0_secret_last_applied_test.yml for what is asserted about Secrets.
           register: debug_resources
           tags:
             - always
