@@ -15,14 +15,6 @@
     namespace: '{{ ansible_operator_meta.namespace }}'
     wait: yes
 
-- name: Remove Chatbot System Prompt ConfigMap resources
-  kubernetes.core.k8s:
-    state: absent
-    kind: ConfigMap
-    name: '{{ ansible_operator_meta.name }}-{{ deployment_type }}-system-prompt'
-    namespace: '{{ ansible_operator_meta.namespace }}'
-    wait: yes
-
 - name: Remove Chatbot API Key Secret resource
   kubernetes.core.k8s:
     state: absent

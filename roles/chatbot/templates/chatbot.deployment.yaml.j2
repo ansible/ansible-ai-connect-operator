@@ -36,7 +36,6 @@ spec:
         kubectl.kubernetes.io/default-container: 'ansible-chatbot'
         checksum-configmap-chatbot-lightspeed-stack-config: "{{ lookup('template', 'chatbot.configmap_lightspeed_stack_config.yaml.j2') | sha1 }}"
         checksum-configmap-chatbot-llama-stack-config: "{{ lookup('template', 'chatbot.configmap_llama_stack_config.yaml.j2') | sha1 }}"
-        checksum-configmap-chatbot-system-prompt: "{{ lookup('template', 'chatbot.configmap_system_prompt.yaml.j2') | sha1 }}"
         checksum-secret-chatbot_config: "{{ lookup('ansible.builtin.vars', 'chatbot_config', default='')["resources"][0]["data"] | default('') | sha1 }}"
 {% if http_proxy or https_proxy or no_proxy %}
         checksum-proxy-env-configmap: "{{ lookup('template', '../common/templates/proxy-env.configmap.yaml.j2') | sha1 }}"
@@ -158,6 +157,14 @@ spec:
             value: {{ chatbot_model }}
           - name: INFERENCE_MODEL_FILTER
             value: {{ chatbot_model }}
+          - name: CHATBOT_LLM_PROVIDER_TYPE
+            value: {{ chatbot_llm_provider_type }}
+          - name: CHATBOT_PRODUCT_NAME
+            value: {{ chatbot_product_name }}
+{% if _chatbot_byok_image is defined %}
+          - name: CHATBOT_BYOK_ENABLED
+            value: "true"
+{% endif %}
         envFrom:
           - configMapRef:
               name: '{{ ansible_operator_meta.name }}-proxy-env'
@@ -221,8 +228,6 @@ spec:
             mountPath: /.llama/distributions/ansible-chatbot/config
           - name: ansible-chatbot-llama-stack-config
             mountPath: /.llama/distributions/llama-stack/config
-          - name: ansible-chatbot-system-prompt
-            mountPath: /.llama/distributions/ansible-chatbot/system-prompts
 {% if is_openshift %}
           - name: lm-stack-tls-certs
             mountPath: /app-root/certs/
@@ -386,12 +391,6 @@ spec:
             items:
               - key: ansible-chatbot-run.yaml
                 path: ansible-chatbot-run.yaml
-        - name: ansible-chatbot-system-prompt
-          configMap:
-            name: '{{ ansible_operator_meta.name }}-{{ deployment_type }}-system-prompt'
-            items:
-              - key: DEFAULT_SYSTEM_PROMPT
-                path: default.txt
 {% if _chatbot_byok_image is defined %}
         - name: ansible-chatbot-byok-storage
           emptyDir:
