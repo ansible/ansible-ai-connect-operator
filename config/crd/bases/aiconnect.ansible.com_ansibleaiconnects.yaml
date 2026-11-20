@@ -1027,7 +1027,7 @@ spec:
                 description: Secret where the trusted Certificate Authority Bundle is stored
                 type: string
               init_container_resource_requirements:
-                description: Resource requirements for all init containers
+                description: Resource requirements for the chatbot init containers
                 properties:
                   requests:
                     properties:

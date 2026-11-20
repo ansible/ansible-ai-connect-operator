@@ -15,7 +15,7 @@ spec:
   auth_config_secret_name: 'auth-configuration-secret'
   model_config_secret_name: 'model-configuration-secret'
   chatbot_config_secret_name: 'chatbot-configuration-secret'
-  # Resource requirements for all init containers
+  # Resource requirements for the chatbot init containers
   # init_container_resource_requirements:
   #   requests:
   #     cpu: 100m

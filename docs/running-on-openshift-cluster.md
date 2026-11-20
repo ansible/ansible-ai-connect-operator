@@ -143,6 +143,28 @@ kubectl apply -f aiconnect.yaml
 $ oc get route -n <target-namespace> my-aiconnect
 ```
 
+### Chatbot init container resources
+
+When the chatbot is enabled (`chatbot_config_secret_name`), its deployment
+runs three init containers: `configure-bundle-ca-cert`, `init-rag-vector-db`,
+and `init-byok-vector-db`. Their resources can be configured independently of
+the main chatbot container with `init_container_resource_requirements`:
+
+```yaml
+spec:
+  init_container_resource_requirements:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+```
+
+Requests default to `cpu: 100m / memory: 128Mi`. Note that setting the field
+replaces the defaults as a whole — if you override it, specify both
+`requests` and `limits`.
+
 ### A note on `PersistentVolume`'s (ROSA only)
 
 **NOTE:** These instructions apply only to
