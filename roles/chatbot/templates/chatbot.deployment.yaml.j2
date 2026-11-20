@@ -77,8 +77,8 @@ spec:
           - |
             mkdir -p /etc/pki/ca-trust/extracted/{java,pem,openssl,edk2}
             update-ca-trust extract --output /etc/pki/ca-trust/extracted
-{% if combined_chatbot_api.resource_requirements is defined %}
-        resources: {{ combined_chatbot_api.resource_requirements }}
+{% if init_container_resource_requirements is defined %}
+        resources: {{ init_container_resource_requirements }}
 {% endif %}
         volumeMounts:
           - name: "ca-trust-extracted"
@@ -98,6 +98,9 @@ spec:
             mountPath: /.llama/data
         command:
           - /rag/entrypoint.sh
+{% if init_container_resource_requirements is defined %}
+        resources: {{ init_container_resource_requirements }}
+{% endif %}
 {% if _chatbot_byok_image is defined %}
       - name: init-byok-vector-db
         image: '{{ _chatbot_byok_image }}'
@@ -118,6 +121,9 @@ spec:
             mkdir -p ${BYOK_CONFIG_CHATBOT_DIR} &&
             set -o pipefail && sed -n 's/.*vector_store_id: //p' /rag/vector_db/llama-stack.yaml | tr -d '\n' > ${BYOK_CONFIG_CHATBOT_DIR}/provider_vector_db_id.ind &&
             gzip -cd /rag/vector_db/faiss_store.db.gz > ${BYOK_CONFIG_CHATBOT_DIR}/faiss_store.db
+{% if init_container_resource_requirements is defined %}
+        resources: {{ init_container_resource_requirements }}
+{% endif %}
 {% endif %}
       containers:
       - name: ansible-chatbot
