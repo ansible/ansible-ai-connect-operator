@@ -1026,6 +1026,28 @@ spec:
               bundle_cacert_secret:
                 description: Secret where the trusted Certificate Authority Bundle is stored
                 type: string
+              init_container_resource_requirements:
+                description: Resource requirements for the chatbot init containers
+                properties:
+                  requests:
+                    properties:
+                      cpu:
+                        type: string
+                      memory:
+                        type: string
+                      ephemeral-storage:
+                        type: string
+                    type: object
+                  limits:
+                    properties:
+                      cpu:
+                        type: string
+                      memory:
+                        type: string
+                      ephemeral-storage:
+                        type: string
+                    type: object
+                type: object
               db_fields_encryption_secret:
                 description: Secret where the DB fields encryption key can be found. If not specified, one will be generated.
                 type: string

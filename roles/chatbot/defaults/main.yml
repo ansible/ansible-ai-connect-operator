@@ -61,6 +61,16 @@ _chatbot_api:
 # ========================================
 
 
+# ----------------------------------------
+# Resource requirements for all ChatBot init containers
+# ----------------------------------------
+init_container_resource_requirements:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+# ========================================
+
+
 # ========================================
 # Proxy environment variables for chatbot containers.
 # Values are inherited from the operator pod environment.
