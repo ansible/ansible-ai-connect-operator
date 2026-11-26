@@ -82,3 +82,25 @@
         - unidled_deployment.resources[0].spec.replicas > 0
       retries: 60
       delay: 10
+
+    - name: Remove Chatbot from the AnsibleAIConnect instance
+      kubernetes.core.k8s:
+        state: present
+        definition:
+          apiVersion: aiconnect.ansible.com/v1alpha1
+          kind: AnsibleAIConnect
+          metadata:
+            name: ansibleaiconnect-sample
+            namespace: '{{ namespace }}'
+          spec:
+            chatbot_config_secret_name: ""
+
+    - name: Wait for the Chatbot Deployment to be removed
+      kubernetes.core.k8s_info:
+        namespace: '{{ namespace }}'
+        kind: Deployment
+        name: ansibleaiconnect-sample-chatbot-api
+      register: removed_deployment
+      until: removed_deployment.resources | length == 0
+      retries: 30
+      delay: 10
