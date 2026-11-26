@@ -61,6 +61,14 @@ _chatbot_api:
 # ========================================
 
 
+# ========================================
+# Idle deployment
+# ----------------------------------------
+# idle_deployment - Scale down deployments to put the Chatbot into an idle state
+idle_deployment: false
+# ========================================
+
+
 # ----------------------------------------
 # Resource requirements for all ChatBot init containers
 # ----------------------------------------
