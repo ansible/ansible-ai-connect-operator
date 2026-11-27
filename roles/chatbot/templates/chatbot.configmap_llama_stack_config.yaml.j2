@@ -33,6 +33,13 @@ data:
             api_key: ${env.PROVIDER_TOKEN}
             base_url: ${env.PROVIDER_URL}
             api_type: null
+{#
+  Azure's /openai/v1/models lists the model catalog (dall-e, whisper, ...), not the
+  deployments. Only offer the configured deployment as a model.
+#}
+{% if 'allowed_models' not in chatbot_model_config_extras %}
+            allowed_models: ['${env.INFERENCE_MODEL}']
+{% endif %}
 {% elif chatbot_llm_provider_type == "rhoai_vllm" %}
           provider_type: remote::vllm
           config:
