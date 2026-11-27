@@ -108,6 +108,41 @@
       register: deleted_configmap
       failed_when: deleted_configmap.resources | length > 0
 
+    # =========================================================
+    # Wait for the operator to settle after the deletions
+    # =========================================================
+    # The deleted resources are owned by the AnsibleMCPConnect CR, so
+    # deleting them triggers an operator reconcile. That reconcile
+    # observes both resources as missing and generates replacement
+    # values (new INSTALLER_ID, new HMAC key). If the restore CR is
+    # created while that reconcile is still in flight, its ConfigMap
+    # apply can land after the restore has pre-created the ConfigMap
+    # from the backup and overwrite the restored INSTALLER_ID.
+    #
+    # Once both resources exist again, the deletion-triggered
+    # reconcile has finished writing its replacement values. The
+    # restore then overwrites them with the backed-up originals, and
+    # any reconcile triggered afterwards reuses the restored values.
+    - name: Wait for operator to recreate the HMAC key secret
+      kubernetes.core.k8s_info:
+        kind: Secret
+        name: ansiblemcpconnect-sample-telemetry-hmac-secret
+        namespace: '{{ namespace }}'
+      register: recreated_hmac_secret
+      until: recreated_hmac_secret.resources | length == 1
+      retries: 30
+      delay: 10
+
+    - name: Wait for operator to recreate the ConfigMap
+      kubernetes.core.k8s_info:
+        kind: ConfigMap
+        name: ansiblemcpconnect-sample-ansible-mcp-connect-env-properties
+        namespace: '{{ namespace }}'
+      register: recreated_configmap
+      until: recreated_configmap.resources | length == 1
+      retries: 30
+      delay: 10
+
     # ========================
     # Restore from backup
     # ========================
@@ -168,12 +203,25 @@
           - restored_hmac_secret.resources[0].data.telemetry_hmac_key == original_hmac_key
         fail_msg: Restored HMAC key does not match original value.
 
-    - name: Get restored ConfigMap
+    # An operator reconcile whose installer-ID lookup ran while the
+    # ConfigMap was still absent can briefly overwrite the restored
+    # INSTALLER_ID after the restore completes. Keeping the lookup
+    # adjacent to the ConfigMap apply (roles/mcpserver/tasks/main.yml)
+    # makes that window sub-second, and this poll gives the cluster
+    # time to settle before the value is asserted. If the value does
+    # not converge within the window, the assertions below fail with
+    # the full context.
+    - name: Wait for restored ConfigMap to converge to original INSTALLER_ID
       kubernetes.core.k8s_info:
         kind: ConfigMap
         name: ansiblemcpconnect-sample-ansible-mcp-connect-env-properties
         namespace: '{{ namespace }}'
       register: restored_configmap
+      until: >-
+        restored_configmap.resources | length == 1
+        and restored_configmap.resources[0].data.INSTALLER_ID | default('') == original_installer_id
+      retries: 12
+      delay: 10
 
     - name: Assert restored ConfigMap exists
       ansible.builtin.assert:

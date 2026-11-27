@@ -33,14 +33,19 @@
 - name: Configure telemetry HMAC key
   ansible.builtin.include_tasks: telemetry_hmac_configuration.yml
 
-- name: Configure installer ID
-  ansible.builtin.include_tasks: installer_id_configuration.yml
-
 - name: Resolve MCP server URL
   ansible.builtin.include_tasks: resolve_mcp_server_url.yml
 
 - name: Apply NetworkPolicies for AnsibleMCPConnect operand pods
   ansible.builtin.include_tasks: networkpolicy.yml
+
+# Keep the installer ID lookup directly ahead of the ConfigMap apply in
+# deploy_mcpserver_api.yml. The lookup regenerates INSTALLER_ID when the
+# ConfigMap is missing, so a larger gap between the two lets a reconcile
+# that observed a deleted ConfigMap overwrite a value that was restored
+# (or otherwise created) in between.
+- name: Configure installer ID
+  ansible.builtin.include_tasks: installer_id_configuration.yml
 
 - name: Deploy MCP Server API service
   ansible.builtin.include_tasks: deploy_mcpserver_api.yml
