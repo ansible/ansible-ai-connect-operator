@@ -128,11 +128,13 @@ data:
           backend: kv_default
     registered_resources:
       models:
-{% if chatbot_llm_provider_type == "rhoai_vllm" %}
         - metadata: {}
           model_id: {{ chatbot_llm_provider_type }}/${env.INFERENCE_MODEL}
           provider_id: {{ chatbot_llm_provider_type }}
+{% if chatbot_llm_provider_type == "rhoai_vllm" %}
           provider_model_id: null
+{% else %}
+          provider_model_id: ${env.INFERENCE_MODEL}
 {% endif %}
         - metadata:
             embedding_dimension: 768
