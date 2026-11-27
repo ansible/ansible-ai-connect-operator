@@ -77,3 +77,6 @@ jobs:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
       if: ${{ always() }}
+      # The notification is informational only; a broken or rotated webhook
+      # must not turn a passing test run red.
+      continue-on-error: true
