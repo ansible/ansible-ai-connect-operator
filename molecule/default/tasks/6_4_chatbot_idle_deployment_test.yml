@@ -1,0 +1,106 @@
+---
+- block:
+    - name: Enable Chatbot on the AnsibleAIConnect instance
+      kubernetes.core.k8s:
+        state: present
+        definition:
+          apiVersion: aiconnect.ansible.com/v1alpha1
+          kind: AnsibleAIConnect
+          metadata:
+            name: ansibleaiconnect-sample
+            namespace: '{{ namespace }}'
+          spec:
+            chatbot_config_secret_name: chatbot-configuration-secret
+
+    - name: Wait for the Chatbot Deployment to be created
+      kubernetes.core.k8s_info:
+        namespace: '{{ namespace }}'
+        kind: Deployment
+        name: ansibleaiconnect-sample-chatbot-api
+      register: chatbot_deployment
+      until: chatbot_deployment.resources | length > 0
+      retries: 30
+      delay: 10
+
+    - name: Idle the Chatbot
+      kubernetes.core.k8s:
+        state: present
+        definition:
+          apiVersion: aiconnect.ansible.com/v1alpha1
+          kind: AnsibleAIConnect
+          metadata:
+            name: ansibleaiconnect-sample
+            namespace: '{{ namespace }}'
+          spec:
+            idle_deployment: true
+
+    - name: Wait for the Chatbot Deployment to scale down
+      kubernetes.core.k8s_info:
+        namespace: '{{ namespace }}'
+        kind: Deployment
+        name: ansibleaiconnect-sample-chatbot-api
+      register: idled_deployment
+      until:
+        - idled_deployment.resources | length > 0
+        - idled_deployment.resources[0].spec.replicas == 0
+        - idled_deployment.resources[0].status.replicas | default(0) == 0
+      retries: 30
+      delay: 10
+
+    - name: Assert no Chatbot Pods remain
+      kubernetes.core.k8s_info:
+        namespace: '{{ namespace }}'
+        kind: Pod
+        label_selectors:
+          - app.kubernetes.io/name = ansibleaiconnect-sample
+          - app.kubernetes.io/component = ansible-ai-connect-chatbot-api
+      register: idled_pods
+      until: idled_pods.resources | length == 0
+      retries: 30
+      delay: 10
+
+    - name: Un-idle the Chatbot
+      kubernetes.core.k8s:
+        state: present
+        definition:
+          apiVersion: aiconnect.ansible.com/v1alpha1
+          kind: AnsibleAIConnect
+          metadata:
+            name: ansibleaiconnect-sample
+            namespace: '{{ namespace }}'
+          spec:
+            idle_deployment: false
+
+    - name: Wait for the Chatbot Deployment to scale back up
+      kubernetes.core.k8s_info:
+        namespace: '{{ namespace }}'
+        kind: Deployment
+        name: ansibleaiconnect-sample-chatbot-api
+      register: unidled_deployment
+      until:
+        - unidled_deployment.resources | length > 0
+        - unidled_deployment.resources[0].spec.replicas > 0
+      retries: 60
+      delay: 10
+
+    - name: Remove Chatbot from the AnsibleAIConnect instance
+      kubernetes.core.k8s:
+        state: present
+        definition:
+          apiVersion: aiconnect.ansible.com/v1alpha1
+          kind: AnsibleAIConnect
+          metadata:
+            name: ansibleaiconnect-sample
+            namespace: '{{ namespace }}'
+          spec:
+            chatbot_config_secret_name: ""
+
+    - name: Wait for the Chatbot Deployment to be removed
+      kubernetes.core.k8s_info:
+        namespace: '{{ namespace }}'
+        kind: Deployment
+        name: ansibleaiconnect-sample-chatbot-api
+      register: removed_deployment
+      until: removed_deployment.resources | length == 0
+      retries: 30
+      delay: 10

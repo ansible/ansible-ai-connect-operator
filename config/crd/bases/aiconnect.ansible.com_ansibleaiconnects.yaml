@@ -1076,6 +1076,9 @@ spec:
                       x-kubernetes-preserve-unknown-fields: true
                   type: object
                 type: array
+              idle_deployment:
+                description: Scale down deployments to put the Chatbot into an idle state
+                type: boolean
           status:
             description: Status defines the observed state of AnsibleAIConnect
             x-kubernetes-preserve-unknown-fields: true

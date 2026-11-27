@@ -5,6 +5,10 @@
   - name: Combine default and custom vars for each component
     ansible.builtin.include_tasks: combine_defaults.yml
 
+  - name: Idle AnsibleAIConnect's Chatbot
+    ansible.builtin.include_tasks: idle_deployment.yml
+    when: idle_deployment | bool
+
   - name: Set AnsibleAIConnect's Chatbot service images
     ansible.builtin.include_tasks: set_images.yml
 

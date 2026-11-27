@@ -1,0 +1,19 @@
+---
+# Scale the Chatbot down to zero replicas so the AAP CR can idle/un-idle it
+# together with the other components during a maintenance window.
+
+- name: Scale down Chatbot Deployment
+  kubernetes.core.k8s:
+    state: patched
+    wait: true
+    definition:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: '{{ ansible_operator_meta.name }}-chatbot-api'
+        namespace: '{{ ansible_operator_meta.namespace }}'
+      spec:
+        replicas: 0
+
+- name: End Playbook
+  ansible.builtin.meta: end_play
